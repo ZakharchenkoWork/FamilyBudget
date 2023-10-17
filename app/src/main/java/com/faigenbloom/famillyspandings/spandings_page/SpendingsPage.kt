@@ -26,20 +26,17 @@ fun SpandingsPage(state: SpendingsState) {
             }
         })
 }
+
 @Composable
 fun SpendingItem(item: SpendingData) {
     Card(modifier = Modifier.padding(16.dp)) {
-        Box{
-
+        Box {
             Text(
                 text = item.name,
                 modifier = Modifier.padding(16.dp)
             )
         }
-
-
     }
-
 }
 
 @Preview(showBackground = true)
@@ -49,6 +46,5 @@ fun SpandingsPagePreview() {
         Scaffold { p ->
             SpandingsPage(state = SpendingsState(spendings = Mock.spendingsList))
         }
-
     }
 }
