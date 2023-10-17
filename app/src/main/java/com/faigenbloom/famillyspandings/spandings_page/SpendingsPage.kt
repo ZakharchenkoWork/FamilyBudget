@@ -38,7 +38,7 @@ fun SpendingItem(item: SpendingData) {
         }
     }
 }
-
+@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun SpandingsPagePreview() {

@@ -2,10 +2,14 @@ package com.faigenbloom.famillyspandings.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+//val name = Color(0xFF)
+val primaryDark = Color(0xFFE2CD96)
+val primaryLight = Color(0xFFE2CD96)
+val onPrimaryDark = Color(0xFF000000)
+val onPrimaryLight = Color(0xFF000000)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+
+val secondaryDark = Color(0xFF7C83B7)
+val secondaryLight = Color(0xFF7C83B7)
+val tertiaryDark = Color(0xFFFFFFFF)
+val tertiaryLight = Color(0xFFFFFFFF)
