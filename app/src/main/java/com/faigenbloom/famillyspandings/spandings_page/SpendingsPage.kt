@@ -43,7 +43,7 @@ fun SpendingItem(item: SpendingData) {
 @Composable
 fun SpandingsPagePreview() {
     FamillySpandingsTheme {
-        Scaffold { p ->
+        Scaffold { _ ->
             SpandingsPage(state = SpendingsState(spendings = Mock.spendingsList))
         }
     }

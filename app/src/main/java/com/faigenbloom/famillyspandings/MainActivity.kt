@@ -28,6 +28,8 @@ class MainActivity : ComponentActivity() {
                     val state by viewModel.spendingsStateFlow.collectAsState()
 
                     SpandingsPage(state)
+
+
                 }
             }
         }
