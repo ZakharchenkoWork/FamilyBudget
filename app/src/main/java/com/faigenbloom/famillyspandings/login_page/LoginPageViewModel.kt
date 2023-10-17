@@ -7,15 +7,18 @@ import kotlinx.coroutines.flow.asStateFlow
 class LoginPageViewModel : ViewModel() {
     var loginText: String = ""
     var passwordText: String = ""
-    var onLoginClicked: () -> Unit = {}
-    var onLoginChanged: (String) -> Unit = {
+    var onLoginClicked: () -> Unit = {
+        onLoggedIn()
+    }
+    var onLoggedIn: () -> Unit = {}
+    val onLoginChanged: (String) -> Unit = {
         loginText = it
     }
-    var onPasswordChanged: (String) -> Unit = {
+    val onPasswordChanged: (String) -> Unit = {
         passwordText = it
     }
 
-    var onForgotPasswordClicked: () -> Unit = {}
+    val onForgotPasswordClicked: () -> Unit = {}
 
     val loginState: LoginPageState
         get() = LoginPageState(
