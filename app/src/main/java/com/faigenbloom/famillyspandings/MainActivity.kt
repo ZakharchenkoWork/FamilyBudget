@@ -16,6 +16,8 @@ import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.login_page.LoginPage
 import com.faigenbloom.famillyspandings.login_page.LoginPageViewModel
 import com.faigenbloom.famillyspandings.onboarding.OnboardingPage
+import com.faigenbloom.famillyspandings.register_page.RegisterPage
+import com.faigenbloom.famillyspandings.register_page.RegisterPageViewModel
 import com.faigenbloom.famillyspandings.spandings_page.SpandingsPage
 import com.faigenbloom.famillyspandings.spandings_page.SpendingsPageViewModel
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
@@ -42,7 +44,7 @@ class MainActivity : ComponentActivity() {
                             OnboardingPage(onLogin = {
                                 mainNavController.navigate(Destination.Login.route)
                             }, onRegister = {
-
+                                mainNavController.navigate(Destination.Register.route)
                             })
                         }
 
@@ -50,15 +52,25 @@ class MainActivity : ComponentActivity() {
                             route = Destination.Login.route
                         ) {
                             val loginPageViewModel = koinViewModel<LoginPageViewModel>()
-
                             loginPageViewModel.onLoggedIn = {
                                 mainNavController.navigate(Destination.SpendingsPage.route)
                             }
-
                             val state by loginPageViewModel
                                 .loginStateFlow
                                 .collectAsState()
                             LoginPage(state)
+                        }
+                        composable(
+                            route = Destination.Register.route
+                        ) {
+                            val registerPageViewModel = koinViewModel<RegisterPageViewModel>()
+                            registerPageViewModel.onLoggedIn = {
+                                mainNavController.navigate(Destination.SpendingsPage.route)
+                            }
+                            val state by registerPageViewModel
+                                .loginStateFlow
+                                .collectAsState()
+                            RegisterPage(state)
                         }
                         composable(
                             route = Destination.SpendingsPage.route
