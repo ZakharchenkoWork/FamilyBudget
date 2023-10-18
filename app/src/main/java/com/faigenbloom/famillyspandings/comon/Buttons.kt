@@ -40,7 +40,6 @@ fun BaseButton(
     }
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPagePreview() {

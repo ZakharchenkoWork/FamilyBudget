@@ -15,8 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,23 +25,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseButton
+import com.faigenbloom.famillyspandings.comon.BaseTextField
+import com.faigenbloom.famillyspandings.comon.TextFieldType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
-import com.faigenbloom.famillyspandings.ui.theme.transparent
 
 @Composable
 fun LoginPage(state: LoginPageState) {
     Column {
         TopBar()
         StripeTitle(textId = R.string.authorization)
-        LoginTextField(
+        BaseTextField(
             modifier = Modifier.padding(top = 100.dp),
             labelId = R.string.email,
             text = state.loginText,
+            textFieldType = TextFieldType.Email,
             onTextChange = state.onLoginChanged,
         )
-        LoginTextField(
+        BaseTextField(
             labelId = R.string.password,
             text = state.passwordText,
+            textFieldType = TextFieldType.Password,
             onTextChange = state.onPasswordChanged,
         )
         ForgotPassword(onClick = state.onForgotPasswordClicked)
@@ -53,30 +54,6 @@ fun LoginPage(state: LoginPageState) {
             onClick = state.onLoginClicked,
         )
     }
-}
-
-@Composable
-private fun LoginTextField(
-    modifier: Modifier = Modifier,
-    text: String,
-    @StringRes labelId: Int,
-    onTextChange: (String) -> Unit,
-) {
-    TextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.transparent()
-        ),
-        value = text,
-        onValueChange = onTextChange,
-        label = {
-            Text(
-                text = stringResource(id = labelId)
-            )
-        }
-    )
 }
 
 @Composable
