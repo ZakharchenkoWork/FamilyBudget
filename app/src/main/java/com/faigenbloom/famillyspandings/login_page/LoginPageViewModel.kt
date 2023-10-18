@@ -3,24 +3,28 @@ package com.faigenbloom.famillyspandings.login_page
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class LoginPageViewModel : ViewModel() {
-    var loginText: String = ""
-    var passwordText: String = ""
-    var onLoginClicked: () -> Unit = {
+    private var loginText: String = ""
+    private var passwordText: String = ""
+    private var onLoginClicked: () -> Unit = {
         onLoggedIn()
     }
     var onLoggedIn: () -> Unit = {}
-    val onLoginChanged: (String) -> Unit = {
+
+    private val onLoginChanged: (String) -> Unit = {
         loginText = it
+        _loginStateFlow.update { loginState }
     }
-    val onPasswordChanged: (String) -> Unit = {
+    private val onPasswordChanged: (String) -> Unit = {
         passwordText = it
+        _loginStateFlow.update { loginState }
     }
 
-    val onForgotPasswordClicked: () -> Unit = {}
+    private val onForgotPasswordClicked: () -> Unit = {}
 
-    val loginState: LoginPageState
+    private val loginState: LoginPageState
         get() = LoginPageState(
             loginText = loginText,
             passwordText = passwordText,

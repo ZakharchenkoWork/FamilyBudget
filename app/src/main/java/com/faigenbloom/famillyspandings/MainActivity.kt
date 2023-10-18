@@ -68,10 +68,7 @@ class MainActivity : ComponentActivity() {
                                 .collectAsState()
                             SpandingsPage(state)
                         }
-
                     }
-
-
                 }
             }
         }
