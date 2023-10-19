@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.register_page
+package com.faigenbloom.famillyspandings.register
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,6 @@ class RegisterPageViewModel : ViewModel() {
     private var loginText: String = ""
     private var passwordText: String = ""
     private var passwordRepeatText: String = ""
-
 
     private var onLoginClicked: () -> Unit = {
         onLoggedIn()
@@ -39,7 +38,6 @@ class RegisterPageViewModel : ViewModel() {
         _loginStateFlow.update { registerState }
     }
 
-
     private val onPrivacyPolicyClicked: () -> Unit = {}
 
     private val registerState: RegisterPageState
@@ -55,7 +53,7 @@ class RegisterPageViewModel : ViewModel() {
             onPrivacyPolicyClicked = onPrivacyPolicyClicked,
             onFamilyNameChanged = onFamilyNameChanged,
             onPasswordRepeatChanged = onPasswordRepeatChanged,
-            onNameChanged = onNameChanged
+            onNameChanged = onNameChanged,
         )
 
     private val _loginStateFlow = MutableStateFlow(registerState)
@@ -74,5 +72,5 @@ data class RegisterPageState(
     val onNameChanged: (String) -> Unit,
     val onPasswordChanged: (String) -> Unit,
     val onPasswordRepeatChanged: (String) -> Unit,
-    val onPrivacyPolicyClicked: () -> Unit
+    val onPrivacyPolicyClicked: () -> Unit,
 )

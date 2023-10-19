@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.register_page
+package com.faigenbloom.famillyspandings.register
 
 class Mock {
     companion object {

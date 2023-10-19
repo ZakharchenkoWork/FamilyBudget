@@ -28,7 +28,7 @@ import com.faigenbloom.famillyspandings.ui.theme.circle
 @Composable
 fun OnboardingPage(
     onLogin: () -> Unit,
-    onRegister: () -> Unit
+    onRegister: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -40,7 +40,7 @@ fun OnboardingPage(
             modifier = Modifier
                 .padding(top = 24.dp)
                 .clip(MaterialTheme.shapes.circle())
-                .background(color = MaterialTheme.colorScheme.tertiary)
+                .background(color = MaterialTheme.colorScheme.tertiary),
         ) {
             Image(
                 modifier = Modifier
@@ -54,21 +54,20 @@ fun OnboardingPage(
             modifier = Modifier.padding(16.dp),
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
         BaseButton(
             modifier = Modifier.padding(top = 24.dp),
             textRes = R.string.login,
-            onClick = onLogin
+            onClick = onLogin,
         )
         BaseButton(
             modifier = Modifier.padding(top = 24.dp),
             textRes = R.string.registration,
-            onClick = onRegister
+            onClick = onRegister,
         )
     }
 }
-
 
 @Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
@@ -78,7 +77,7 @@ fun OnboardingPagePreview() {
         Scaffold { _ ->
             OnboardingPage(
                 onLogin = {},
-                onRegister = {}
+                onRegister = {},
             )
         }
     }

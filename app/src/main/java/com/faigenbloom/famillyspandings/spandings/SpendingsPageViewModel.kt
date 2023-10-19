@@ -1,8 +1,7 @@
-package com.faigenbloom.famillyspandings.spandings_page
+package com.faigenbloom.famillyspandings.spandings
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SpendingsPageViewModel : ViewModel() {
@@ -13,11 +12,11 @@ class SpendingsPageViewModel : ViewModel() {
         spendings = Mock.spendingsList
     }
 
-    val spendingsState: SpendingsState
+    private val spendingsState: SpendingsState
         get() = SpendingsState(spendings)
 
     private val _spendingsStateFlow = MutableStateFlow(spendingsState)
-    val spendingsStateFlow =_spendingsStateFlow.asStateFlow()
+    val spendingsStateFlow = _spendingsStateFlow.asStateFlow()
 }
 
 data class SpendingsState(val spendings: List<SpendingData>)

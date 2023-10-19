@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.login_page
+package com.faigenbloom.famillyspandings.login
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,5 +44,5 @@ data class LoginPageState(
     val onLoginClicked: () -> Unit,
     var onLoginChanged: (String) -> Unit = {},
     var onPasswordChanged: (String) -> Unit = {},
-    val onForgotPasswordClicked: () -> Unit
+    val onForgotPasswordClicked: () -> Unit,
 )

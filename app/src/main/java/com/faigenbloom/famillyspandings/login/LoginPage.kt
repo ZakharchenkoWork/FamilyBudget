@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.faigenbloom.famillyspandings.login_page
+package com.faigenbloom.famillyspandings.login
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -68,7 +68,7 @@ fun TopBar() {
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(id = R.drawable.arrow),
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.secondary
+                tint = MaterialTheme.colorScheme.secondary,
             )
         }
     }
@@ -86,7 +86,7 @@ fun StripeTitle(@StringRes textId: Int) {
                 .padding(16.dp),
             text = stringResource(id = textId),
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.tertiary,
         )
     }
 }
@@ -101,7 +101,7 @@ fun ForgotPassword(
             .clickable { onClick() },
         text = stringResource(id = R.string.forget_password),
         style = TextStyle(textDecoration = TextDecoration.Underline),
-        color = MaterialTheme.colorScheme.secondary
+        color = MaterialTheme.colorScheme.secondary,
     )
 }
 
@@ -119,7 +119,7 @@ fun LoginPagePreview() {
                     onLoginChanged = {},
                     onPasswordChanged = {},
                     onForgotPasswordClicked = {},
-                )
+                ),
             )
         }
     }

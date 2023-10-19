@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
-package com.faigenbloom.famillyspandings.register_page
+package com.faigenbloom.famillyspandings.register
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -87,7 +87,7 @@ fun TopBar() {
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(id = R.drawable.arrow),
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.secondary
+                tint = MaterialTheme.colorScheme.secondary,
             )
         }
     }
@@ -105,7 +105,7 @@ fun StripeTitle(@StringRes textId: Int) {
                 .padding(16.dp),
             text = stringResource(id = textId),
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.tertiary,
         )
     }
 }
@@ -114,7 +114,6 @@ fun StripeTitle(@StringRes textId: Int) {
 fun PrivacyPolicy(
     onClick: () -> Unit,
 ) {
-
     val annotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onPrimary)) {
             append("${stringResource(id = R.string.privacy_policy_start)} ")
@@ -131,7 +130,7 @@ fun PrivacyPolicy(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         text = annotatedString,
         style = MaterialTheme.typography.bodyMedium,
-        onClick = { onClick() }
+        onClick = { onClick() },
     )
 }
 
@@ -155,7 +154,7 @@ fun RegisterPagePreview() {
                     onNameChanged = {},
                     onFamilyNameChanged = {},
                     onPasswordRepeatChanged = {},
-                )
+                ),
             )
         }
     }

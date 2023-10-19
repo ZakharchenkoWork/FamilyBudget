@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.spandings_page
+package com.faigenbloom.famillyspandings.spandings
 
 class Mock {
     companion object {
@@ -27,6 +27,6 @@ class Mock {
             SpendingData("Home", 1500L),
             SpendingData("Car", 1000L),
             SpendingData("Bla bla", 100L),
-            )
+        )
     }
 }

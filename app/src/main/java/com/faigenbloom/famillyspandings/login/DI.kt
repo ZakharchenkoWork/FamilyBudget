@@ -1,5 +1,4 @@
-package com.faigenbloom.famillyspandings.login_page
-
+package com.faigenbloom.famillyspandings.login
 
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module

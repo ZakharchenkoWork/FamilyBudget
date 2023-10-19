@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.faigenbloom.famillyspandings.spandings_page
+package com.faigenbloom.famillyspandings.spandings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -16,15 +16,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
-
 @Composable
 fun SpandingsPage(state: SpendingsState) {
-    LazyVerticalGrid(columns = GridCells.Fixed(3),
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
         content = {
             items(state.spendings.size) {
                 SpendingItem(state.spendings[it])
             }
-        })
+        },
+    )
 }
 
 @Composable
@@ -33,11 +34,12 @@ fun SpendingItem(item: SpendingData) {
         Box {
             Text(
                 text = item.name,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
 }
+
 @Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable

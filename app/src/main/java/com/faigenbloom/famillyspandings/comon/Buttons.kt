@@ -18,12 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
-
 @Composable
 fun BaseButton(
     modifier: Modifier = Modifier,
     @StringRes textRes: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier
@@ -35,7 +34,7 @@ fun BaseButton(
         Text(
             text = stringResource(id = textRes),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }
@@ -46,7 +45,7 @@ fun OnboardingPagePreview() {
     FamillySpandingsTheme {
         BaseButton(
             onClick = {},
-            textRes = R.string.app_name
+            textRes = R.string.app_name,
         )
     }
 }

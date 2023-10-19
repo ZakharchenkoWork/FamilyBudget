@@ -44,19 +44,22 @@ fun BaseTextField(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.transparent()
+            containerColor = MaterialTheme.colorScheme.transparent(),
         ),
         label = {
             Text(
-                text = stringResource(id = labelId)
+                text = stringResource(id = labelId),
             )
         },
         value = text,
         onValueChange = onTextChange,
         singleLine = true,
 
-        visualTransformation = if (passwordVisible || textFieldType != TextFieldType.Password)
-            VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (passwordVisible || textFieldType != TextFieldType.Password) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
         keyboardOptions = when (textFieldType) {
             TextFieldType.Password ->
                 KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -73,10 +76,11 @@ fun BaseTextField(
 
         trailingIcon = {
             if (textFieldType == TextFieldType.Password) {
-                val image = if (passwordVisible)
+                val image = if (passwordVisible) {
                     painterResource(id = R.drawable.password_shown)
-                else
+                } else {
                     painterResource(id = R.drawable.password_hiden)
+                }
 
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -92,7 +96,7 @@ enum class TextFieldType {
     Normal,
     Email,
     Money,
-    Password
+    Password,
 }
 
 @Preview(showBackground = true)
@@ -109,6 +113,7 @@ fun LoginTextFieldPreview() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun LoginTextFieldPreviewEmpty() {
     FamillySpandingsTheme {
