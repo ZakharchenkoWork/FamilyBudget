@@ -1,24 +1,36 @@
 package com.faigenbloom.famillyspandings.login
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class LoginPageViewModel : ViewModel() {
+class LoginPageViewModel(private val repository: LoginRepository) : ViewModel() {
     private var loginText: String = ""
     private var passwordText: String = ""
+    private var authError: Boolean = false
     private var onLoginClicked: () -> Unit = {
-        onLoggedIn()
+        viewModelScope.launch {
+            if (repository.login(loginText, passwordText)) {
+                onLoggedIn()
+            } else {
+                authError = true
+                _loginStateFlow.update { loginState }
+            }
+        }
     }
     var onLoggedIn: () -> Unit = {}
 
     private val onLoginChanged: (String) -> Unit = {
         loginText = it
+        authError = false
         _loginStateFlow.update { loginState }
     }
     private val onPasswordChanged: (String) -> Unit = {
         passwordText = it
+        authError = false
         _loginStateFlow.update { loginState }
     }
 
@@ -28,6 +40,7 @@ class LoginPageViewModel : ViewModel() {
         get() = LoginPageState(
             loginText = loginText,
             passwordText = passwordText,
+            authError = authError,
             onLoginClicked = onLoginClicked,
             onLoginChanged = onLoginChanged,
             onPasswordChanged = onPasswordChanged,
@@ -41,6 +54,7 @@ class LoginPageViewModel : ViewModel() {
 data class LoginPageState(
     val loginText: String,
     val passwordText: String,
+    val authError: Boolean = false,
     val onLoginClicked: () -> Unit,
     var onLoginChanged: (String) -> Unit = {},
     var onPasswordChanged: (String) -> Unit = {},

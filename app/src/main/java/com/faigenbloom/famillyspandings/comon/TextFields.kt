@@ -35,6 +35,8 @@ fun BaseTextField(
     modifier: Modifier = Modifier,
     text: String,
     @StringRes labelId: Int,
+    @StringRes errorTextId: Int = R.string.empty,
+    isError: Boolean = false,
     textFieldType: TextFieldType = TextFieldType.Normal,
     onTextChange: (String) -> Unit,
 ) {
@@ -51,6 +53,7 @@ fun BaseTextField(
                 text = stringResource(id = labelId),
             )
         },
+        isError = isError,
         value = text,
         onValueChange = onTextChange,
         singleLine = true,
@@ -73,7 +76,11 @@ fun BaseTextField(
             TextFieldType.Money ->
                 KeyboardOptions(keyboardType = KeyboardType.Decimal)
         },
-
+        supportingText = {
+            if (isError) {
+                Text(text = stringResource(id = errorTextId))
+            }
+        },
         trailingIcon = {
             if (textFieldType == TextFieldType.Password) {
                 val image = if (passwordVisible) {
@@ -136,6 +143,21 @@ fun LoginTextFieldPasswordPreview() {
             labelId = R.string.password,
             textFieldType = TextFieldType.Password,
             text = "Password",
+            onTextChange = { },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TextFieldPreviewError() {
+    FamillySpandingsTheme {
+        BaseTextField(
+            modifier = Modifier.padding(8.dp),
+            labelId = R.string.password,
+            textFieldType = TextFieldType.Normal,
+            text = "Name",
+            isError = true,
             onTextChange = { },
         )
     }

@@ -38,16 +38,21 @@ fun LoginPage(state: LoginPageState) {
             modifier = Modifier.padding(top = 100.dp),
             labelId = R.string.email,
             text = state.loginText,
+            isError = state.authError,
             textFieldType = TextFieldType.Email,
             onTextChange = state.onLoginChanged,
         )
         BaseTextField(
             labelId = R.string.password,
             text = state.passwordText,
+            isError = state.authError,
             textFieldType = TextFieldType.Password,
             onTextChange = state.onPasswordChanged,
         )
         ForgotPassword(onClick = state.onForgotPasswordClicked)
+        if (state.authError) {
+            AuthError()
+        }
         BaseButton(
             modifier = Modifier.padding(top = 16.dp),
             textRes = R.string.login,
@@ -92,6 +97,17 @@ fun StripeTitle(@StringRes textId: Int) {
 }
 
 @Composable
+fun AuthError() {
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 16.dp),
+        text = stringResource(id = R.string.wrong_password),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.error,
+    )
+}
+
+@Composable
 fun ForgotPassword(
     onClick: () -> Unit,
 ) {
@@ -115,6 +131,7 @@ fun LoginPagePreview() {
                 state = LoginPageState(
                     loginText = Mock.loginText,
                     passwordText = Mock.passwordText,
+                    authError = true,
                     onLoginClicked = {},
                     onLoginChanged = {},
                     onPasswordChanged = {},
