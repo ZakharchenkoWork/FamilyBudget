@@ -39,37 +39,40 @@ fun RegisterPage(state: RegisterPageState) {
             modifier = Modifier.padding(top = 100.dp),
             labelId = R.string.family_name,
             text = state.familyNameText,
+            errorTextId = R.string.family_name_error,
+            isError = state.familyNameError,
             textFieldType = TextFieldType.Normal,
             onTextChange = state.onFamilyNameChanged,
         )
         BaseTextField(
             labelId = R.string.name,
             text = state.nameText,
+            errorTextId = R.string.name_error,
+            isError = state.nameError,
             textFieldType = TextFieldType.Normal,
             onTextChange = state.onNameChanged,
         )
         BaseTextField(
             labelId = R.string.email,
-            text = state.loginText,
+            text = state.emailText,
+            errorTextId = R.string.email_error,
+            isError = state.emailError,
             textFieldType = TextFieldType.Email,
-            onTextChange = state.onLoginChanged,
+            onTextChange = state.onEmailChanged,
         )
         BaseTextField(
             labelId = R.string.password,
             text = state.passwordText,
+            errorTextId = R.string.password_error,
+            isError = state.passwordError,
             textFieldType = TextFieldType.Password,
             onTextChange = state.onPasswordChanged,
-        )
-        BaseTextField(
-            labelId = R.string.repeat_password,
-            text = state.passwordRepeatText,
-            textFieldType = TextFieldType.Password,
-            onTextChange = state.onPasswordRepeatChanged,
         )
         PrivacyPolicy(onClick = state.onPrivacyPolicyClicked)
         BaseButton(
             modifier = Modifier.padding(top = 16.dp),
             textRes = R.string.registration,
+            isEnabled = state.isRegistrationEnabled,
             onClick = state.onLoginClicked,
         )
     }
@@ -142,18 +145,22 @@ fun RegisterPagePreview() {
         Scaffold { _ ->
             RegisterPage(
                 state = RegisterPageState(
-                    loginText = Mock.loginText,
+                    emailText = Mock.loginText,
                     nameText = Mock.nameText,
                     familyNameText = Mock.familyNameText,
                     passwordText = Mock.passwordText,
-                    passwordRepeatText = Mock.repeatPasswordText,
+                    nameError = false,
+                    familyNameError = false,
+                    registerError = false,
+                    passwordError = false,
+                    emailError = false,
+                    isRegistrationEnabled = false,
                     onLoginClicked = {},
-                    onLoginChanged = {},
+                    onEmailChanged = {},
                     onPasswordChanged = {},
                     onPrivacyPolicyClicked = {},
                     onNameChanged = {},
                     onFamilyNameChanged = {},
-                    onPasswordRepeatChanged = {},
                 ),
             )
         }

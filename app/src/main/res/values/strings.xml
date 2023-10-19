@@ -7,7 +7,10 @@
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
     <string name="name">Name</string>
-    <string name="repeat_password">Repeat Password</string>
+    <string name="email_error">Please provide correct email</string>
+    <string name="name_error">Name should not be empty</string>
+    <string name="family_name_error">Family name should not be empty</string>
+    <string name="password_error">Password should be at least 8 characters with no whitespace</string>
     <string name="forget_password">Forgot Password?</string>
     <string name="wrong_password">Wrong email or password.</string>
     <string name="privacy_policy_start">By clicking on \'Register\', you indicate that you have read and agreed with our</string>
