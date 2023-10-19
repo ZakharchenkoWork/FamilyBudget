@@ -39,7 +39,7 @@ fun OnboardingPage(
         Box(
             modifier = Modifier
                 .padding(top = 24.dp)
-                .clip(MaterialTheme.shapes.circle())
+                .clip(circle())
                 .background(color = MaterialTheme.colorScheme.tertiary),
         ) {
             Image(
