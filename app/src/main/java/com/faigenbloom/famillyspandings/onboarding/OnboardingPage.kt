@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.faigenbloom.famillyspandings.onboarding
 
@@ -39,7 +39,7 @@ fun OnboardingPage(
         Box(
             modifier = Modifier
                 .padding(top = 24.dp)
-                .clip(circle())
+                .clip(MaterialTheme.shapes.circle())
                 .background(color = MaterialTheme.colorScheme.tertiary),
         ) {
             Image(
