@@ -4,11 +4,13 @@ package com.faigenbloom.famillyspandings
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +43,11 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
             imageUnChecked = R.drawable.list_outlined,
         ),
         BarItem(
+            destination = Destination.SpendingEditPage,
+            imageChecked = R.drawable.plus,
+            imageUnChecked = R.drawable.plus,
+        ),
+        BarItem(
             destination = Destination.SpendingsPage,
             imageChecked = R.drawable.list_filled,
             imageUnChecked = R.drawable.list_outlined,
@@ -53,10 +60,11 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
     )
     var selectedIndex by rememberSaveable { mutableStateOf(0) }
     NavigationBar(
-        modifier = Modifier.fillMaxHeight(0.05f),
+        modifier = Modifier.height(32.dp),
     ) {
         items.forEachIndexed { index, barItem ->
             NavigationBarItem(
+                modifier = Modifier.padding(4.dp),
                 selected = selectedIndex == index,
                 onClick = {
                     selectedIndex = index
@@ -64,7 +72,7 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
                 },
                 icon = {
                     Image(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.fillMaxSize().padding(4.dp),
                         painter = painterResource(
                             id = if (selectedIndex == index) {
                                 barItem.imageChecked
@@ -85,6 +93,11 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
 @Composable
 fun HomePagePreview() {
     FamillySpandingsTheme {
-        BottomNavigationBar(onDestinationChanged = {})
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(onDestinationChanged = {})
+            },
+        ) {
+        }
     }
 }

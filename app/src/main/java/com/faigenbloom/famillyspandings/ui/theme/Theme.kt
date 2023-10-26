@@ -23,6 +23,9 @@ private val DarkColorScheme = darkColorScheme(
     secondary = secondaryDark,
     tertiary = tertiaryDark,
     onPrimary = onPrimaryDark,
+    primaryContainer = primaryContainerDark,
+    secondaryContainer = secondaryContainerDark,
+    onSecondaryContainer = onPrimaryContainerDark,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -30,6 +33,10 @@ private val LightColorScheme = lightColorScheme(
     secondary = secondaryLight,
     tertiary = tertiaryLight,
     onPrimary = onPrimaryLight,
+    primaryContainer = primaryContainerLight,
+    secondaryContainer = secondaryContainerLight,
+    onSecondaryContainer = onSecondaryContainerLight,
+
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
@@ -75,4 +82,5 @@ fun FamillySpandingsTheme(
 
 fun Shapes.circle() = CircleShape
 fun ColorScheme.transparent() = transparent
+fun ColorScheme.hint() = hint
 fun ColorScheme.error() = errorColor

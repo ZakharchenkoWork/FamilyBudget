@@ -1,14 +1,18 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+)
 
 package com.faigenbloom.famillyspandings.comon
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,10 +28,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
 
 @Composable
@@ -41,41 +47,32 @@ fun BaseTextField(
     onTextChange: (String) -> Unit,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val containerColor = MaterialTheme.colorScheme.transparent()
     TextField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.transparent(),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
         ),
         label = {
             Text(
                 text = stringResource(id = labelId),
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         },
         isError = isError,
         value = text,
         onValueChange = onTextChange,
         singleLine = true,
-
         visualTransformation = if (passwordVisible || textFieldType != TextFieldType.Password) {
             VisualTransformation.None
         } else {
             PasswordVisualTransformation()
         },
-        keyboardOptions = when (textFieldType) {
-            TextFieldType.Password ->
-                KeyboardOptions(keyboardType = KeyboardType.Password)
-
-            TextFieldType.Email ->
-                KeyboardOptions(keyboardType = KeyboardType.Email)
-
-            TextFieldType.Normal ->
-                KeyboardOptions(keyboardType = KeyboardType.Text)
-
-            TextFieldType.Money ->
-                KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        },
+        keyboardOptions = textFieldType.toKeyboardOptions(),
         supportingText = {
             if (isError) {
                 Text(text = stringResource(id = errorTextId))
@@ -99,11 +96,59 @@ fun BaseTextField(
     )
 }
 
+@Composable
+fun SimpleTextField(
+    modifier: Modifier = Modifier,
+    text: String,
+    label: String,
+    textAlign: TextAlign = TextAlign.Start,
+    textFieldType: TextFieldType = TextFieldType.Normal,
+    onValueChange: (String) -> Unit,
+) {
+    BasicTextField(
+        modifier = modifier,
+        value = text,
+        textStyle = LocalTextStyle.current.copy(textAlign = textAlign),
+        keyboardOptions = textFieldType.toKeyboardOptions(),
+        onValueChange = onValueChange,
+        decorationBox = { innerTextField ->
+            if (text.isEmpty()) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = label,
+                    textAlign = textAlign,
+                    color = MaterialTheme.colorScheme.hint(),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            } else {
+                innerTextField()
+            }
+        },
+    )
+}
+
 enum class TextFieldType {
     Normal,
     Email,
     Money,
     Password,
+    ;
+
+    fun toKeyboardOptions(): KeyboardOptions {
+        return when (this) {
+            Password ->
+                KeyboardOptions(keyboardType = KeyboardType.Password)
+
+            Email ->
+                KeyboardOptions(keyboardType = KeyboardType.Email)
+
+            Normal ->
+                KeyboardOptions(keyboardType = KeyboardType.Text)
+
+            Money ->
+                KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        }
+    }
 }
 
 @Preview(showBackground = true)

@@ -3,6 +3,8 @@
     <string name="login">Sign in</string>
     <string name="registration">Registration</string>
     <string name="authorization">Authorization</string>
+    <string name="choose_category">Choose category</string>
+    <string name="adding_spending_title">Adding new spending</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
@@ -15,5 +17,23 @@
     <string name="wrong_password">Wrong email or password.</string>
     <string name="privacy_policy_start">By clicking on \'Register\', you indicate that you have read and agreed with our</string>
     <string name="privacy_policy_end">Privacy Policy.</string>
+    <string name="category_new">New category</string>
+    <string name="category_beauty">Beauty</string>
+    <string name="category_education">Education</string>
+    <string name="category_entertaiment">Entertaiment</string>
+    <string name="category_food">Food</string>
+    <string name="category_health">Health</string>
+    <string name="category_home">Home</string>
+    <string name="category_pets">Pets</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_sport">Sport</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_travel">Travel</string>
     <string name="empty" />
+    <string name="spending_information">Information</string>
+    <string name="spending_details">Details</string>
+    <string name="spending_details_naming">Naming</string>
+    <string name="spending_details_amount">Amount</string>
+    <string name="spending_name">Name</string>
+    <string name="spending_add_detail_hint">Add bill component</string>
 </resources>

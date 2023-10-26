@@ -1,6 +1,7 @@
 package com.faigenbloom.famillyspandings
 
 import android.app.Application
+import com.faigenbloom.famillyspandings.edit.spendingEditModule
 import com.faigenbloom.famillyspandings.login.loginPageModule
 import com.faigenbloom.famillyspandings.register.registerPageModule
 import com.faigenbloom.famillyspandings.spandings.spendingsPageModule
@@ -16,6 +17,7 @@ class App : Application() {
                 spendingsPageModule,
                 loginPageModule,
                 registerPageModule,
+                spendingEditModule,
             )
         }
     }
