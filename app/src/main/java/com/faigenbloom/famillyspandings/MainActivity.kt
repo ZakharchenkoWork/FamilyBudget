@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,14 +26,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
-import com.faigenbloom.famillyspandings.edit.SpendingEditPage
-import com.faigenbloom.famillyspandings.edit.SpendingEditViewModel
+import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.login.LoginPage
 import com.faigenbloom.famillyspandings.login.LoginPageViewModel
 import com.faigenbloom.famillyspandings.onboarding.OnboardingPage
@@ -40,6 +42,10 @@ import com.faigenbloom.famillyspandings.register.RegisterPage
 import com.faigenbloom.famillyspandings.register.RegisterPageViewModel
 import com.faigenbloom.famillyspandings.spandings.SpandingsPage
 import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
+import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
+import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
+import com.faigenbloom.famillyspandings.spandings.show.SpendingShowPage
+import com.faigenbloom.famillyspandings.spandings.show.SpendingShowViewModel
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -76,7 +82,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         },
-                    ) { _ ->
+                    ) { padding ->
                         NavHost(
                             navController = mainNavController,
                             startDestination = if (!isLoggedIn) {
@@ -133,7 +139,19 @@ class MainActivity : ComponentActivity() {
                                 val state by koinViewModel<SpendingsPageViewModel>()
                                     .spendingsStateFlow
                                     .collectAsState()
-                                SpandingsPage(state)
+                                SpandingsPage(
+                                    modifier = Modifier.padding(
+                                        bottom = padding.calculateBottomPadding(),
+                                    ),
+                                    state = state,
+                                    onOpenSpending = {
+                                        mainNavController.navigate(
+                                            Destination.SpendingShowPage.withId(
+                                                it,
+                                            ),
+                                        )
+                                    },
+                                )
                             }
                             composable(
                                 route = Destination.SpendingEditPage.route,
@@ -166,6 +184,31 @@ class MainActivity : ComponentActivity() {
                                     executor = cameraExecutor,
                                     onImageCaptured = { handleImageCapture(it, mainNavController) },
                                     onError = { Log.e("kilo", "View error:", it) },
+                                )
+                            }
+                            composable(
+                                route = Destination.SpendingShowPage.route,
+                                arguments = listOf(
+                                    navArgument(SPENDING_ID_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                ),
+                            ) {
+                                withBottomNavigation = false
+
+                                val state by koinViewModel<SpendingShowViewModel>()
+                                    .spendingsStateFlow
+                                    .collectAsState()
+
+                                SpendingShowPage(
+                                    state = state,
+                                    onEditClicked = {
+                                        mainNavController.navigate(
+                                            Destination.SpendingEditPage.withId(
+                                                it,
+                                            ),
+                                        )
+                                    },
                                 )
                             }
                         }

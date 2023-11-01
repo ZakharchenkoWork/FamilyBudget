@@ -2,41 +2,32 @@
 
 package com.faigenbloom.famillyspandings.spandings
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Card
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.comon.DynamicPlatesHolder
+import com.faigenbloom.famillyspandings.comon.Pattern
+import com.faigenbloom.famillyspandings.comon.PlateSizeType
+import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun SpandingsPage(state: SpendingsState) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        content = {
-            items(state.spendings.size) {
-                SpendingItem(state.spendings[it])
-            }
-        },
-    )
-}
-
-@Composable
-fun SpendingItem(item: SpendingData) {
-    Card(modifier = Modifier.padding(16.dp)) {
-        Box {
-            Text(
-                text = item.name,
-                modifier = Modifier.padding(16.dp),
-            )
-        }
+fun SpandingsPage(
+    modifier: Modifier = Modifier,
+    state: SpendingsState,
+    onOpenSpending: (String) -> Unit,
+) {
+    Column(modifier = modifier) {
+        TopBar(title = stringResource(id = R.string.last_spendings_title))
+        DynamicPlatesHolder(
+            datedPatterns = state.spendings,
+            onSpendingClicked = onOpenSpending,
+        )
     }
 }
 
@@ -46,7 +37,67 @@ fun SpendingItem(item: SpendingData) {
 fun SpandingsPagePreview() {
     FamillySpandingsTheme {
         Scaffold { _ ->
-            SpandingsPage(state = SpendingsState(spendings = Mock.spendingsList))
+            SpandingsPage(
+                onOpenSpending = {},
+                state = SpendingsState(
+                    spendings =
+                    listOf(
+                        listOf(
+                            Pattern<SpendingData>(
+                                listOf(
+                                    PlateSizeType.SIZE_THREE_BY_ONE,
+                                ),
+                            ).apply {
+                                items = listOf(
+                                    Mock.spendingsList[0],
+                                )
+                            },
+                            Pattern<SpendingData>(
+                                listOf(
+                                    PlateSizeType.SIZE_TWO_BY_ONE,
+                                ),
+                            ).apply {
+                                items = listOf(
+                                    Mock.spendingsList[0],
+                                )
+                            },
+                            Pattern<SpendingData>(
+                                listOf(
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                ),
+                            ).apply {
+                                items = listOf(
+                                    Mock.spendingsList[0],
+                                    Mock.spendingsList[1],
+                                    Mock.spendingsList[2],
+                                )
+                            },
+                            Pattern<SpendingData>(
+                                listOf(
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                ),
+                            ).apply {
+                                items = listOf(
+                                    Mock.spendingsList[0],
+                                    Mock.spendingsList[1],
+                                )
+                            },
+                            Pattern<SpendingData>(
+                                listOf(
+                                    PlateSizeType.SIZE_ONE_BY_ONE,
+                                ),
+                            ).apply {
+                                items = listOf(
+                                    Mock.spendingsList[0],
+                                )
+                            },
+                        ),
+                    ),
+                ),
+            )
         }
     }
 }

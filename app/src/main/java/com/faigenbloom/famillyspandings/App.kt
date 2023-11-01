@@ -1,9 +1,10 @@
 package com.faigenbloom.famillyspandings
 
 import android.app.Application
-import com.faigenbloom.famillyspandings.edit.spendingEditModule
 import com.faigenbloom.famillyspandings.login.loginPageModule
 import com.faigenbloom.famillyspandings.register.registerPageModule
+import com.faigenbloom.famillyspandings.spandings.edit.spendingEditModule
+import com.faigenbloom.famillyspandings.spandings.show.spendingShowModule
 import com.faigenbloom.famillyspandings.spandings.spendingsPageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -18,6 +19,7 @@ class App : Application() {
                 loginPageModule,
                 registerPageModule,
                 spendingEditModule,
+                spendingShowModule,
             )
         }
     }

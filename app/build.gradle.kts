@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.faigenbloom.famillyspandings"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -66,10 +66,11 @@ dependencies {
     val koinVersion = "3.4.2"
     implementation("io.insert-koin:koin-androidx-compose-navigation:3.4.5")
     implementation("io.insert-koin:koin-core:$koinVersion")
-
     implementation("io.coil-kt:coil-compose:1.4.0")
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("io.kotest:kotest-assertions-core:5.7.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))

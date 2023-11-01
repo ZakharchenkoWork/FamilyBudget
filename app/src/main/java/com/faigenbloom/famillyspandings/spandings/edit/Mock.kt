@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.edit
+package com.faigenbloom.famillyspandings.spandings.edit
 
 class Mock {
     companion object {

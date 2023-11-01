@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.edit
+package com.faigenbloom.famillyspandings.spandings.edit
 
 import com.faigenbloom.famillyspandings.categories.CategoriesRepository
 import com.faigenbloom.famillyspandings.datasources.BaseDataSource

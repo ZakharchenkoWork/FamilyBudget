@@ -5,6 +5,7 @@ package com.faigenbloom.famillyspandings.comon
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,11 @@ import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun TopBar(title: String = "") {
+fun TopBar(
+    title: String = "",
+    endIcon: Int? = null,
+    onEndIconCLicked: (() -> Unit)? = null,
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp),
@@ -37,6 +42,7 @@ fun TopBar(title: String = "") {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
@@ -44,6 +50,19 @@ fun TopBar(title: String = "") {
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.secondary,
             )
+            endIcon?.let { icon ->
+                Icon(
+                    modifier = Modifier.size(24.dp)
+                        .clickable {
+                            onEndIconCLicked?.let {
+                                onEndIconCLicked()
+                            }
+                        },
+                    painter = painterResource(id = icon),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+            }
         }
         if (title.isEmpty()) {
             Spacer(
@@ -134,7 +153,7 @@ fun StripeBar(
 fun TopBarPreview() {
     FamillySpandingsTheme {
         Column(modifier = Modifier.background(Color.White)) {
-            TopBar(title = "Auth")
+            TopBar(title = "Auth", endIcon = R.drawable.pen)
             StripeBar(R.string.authorization)
         }
     }

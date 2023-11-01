@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.edit
+package com.faigenbloom.famillyspandings.spandings.edit
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.categories.CategoriesRepository
 import com.faigenbloom.famillyspandings.categories.CategoriesState
 import com.faigenbloom.famillyspandings.categories.CategoriesViewModel
+import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,7 +44,7 @@ class SpendingEditViewModel(
                     id = spendingId,
                     name = namingText,
                     amount = amountText.toDatabaseLong(),
-                    date = dateText.toDatabaseTime(),
+                    date = dateText.toLocalDate(),
                     category = getSelectedCategory(),
                     photoUri = photoUri,
                     details = detailsList,

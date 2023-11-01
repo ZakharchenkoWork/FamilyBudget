@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.edit
+package com.faigenbloom.famillyspandings.spandings.edit
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -353,34 +353,3 @@ fun SpendingEditPageDetailsPreview() {
         }
     }
 }
-
-/*
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(showBackground = true)
-@Composable
-fun SpendingEditPageDetailsWithCalendarPreview() {
-    FamillySpandingsTheme {
-        Scaffold { _ ->
-            SpendingEditPage(
-                SpendingEditState(
-                    categoryState = CategoriesState(
-                        categoriesList = CategoriesMock.categoriesList,
-                        selectedIndex = 1,
-                        onSelectionChanged = {},
-                    ),
-                    isCategoriesOpened = false,
-                    onPageChanged = {},
-                    namingText = "Food",
-                    amountText = "19.50",
-                    dateText = "19.10.2023",
-                    isCalendarOpen = true,
-                    detailsList = Mock.mockDetailsList,
-                    onCalendarVisibilityChanged = {},
-                    onNamingTextChanged = {},
-                    onAmountTextChanged = {},
-                ),
-            )
-        }
-    }
-}
-*/

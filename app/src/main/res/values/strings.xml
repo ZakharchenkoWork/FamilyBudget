@@ -3,6 +3,7 @@
     <string name="login">Sign in</string>
     <string name="registration">Registration</string>
     <string name="authorization">Authorization</string>
+    <string name="last_spendings_title">Previous spendings</string>
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
     <string name="email">Email</string>
@@ -29,6 +30,7 @@
     <string name="category_sport">Sport</string>
     <string name="category_transport">Transport</string>
     <string name="category_travel">Travel</string>
+    <string name="category">Category:</string>
     <string name="empty" />
     <string name="spending_information">Information</string>
     <string name="spending_details">Details</string>
