@@ -2,10 +2,12 @@ package com.faigenbloom.famillyspandings.spandings.edit
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.categories.CategoriesRepository
 import com.faigenbloom.famillyspandings.categories.CategoriesState
 import com.faigenbloom.famillyspandings.categories.CategoriesViewModel
+import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,10 +18,11 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 class SpendingEditViewModel(
+    savedStateHandle: SavedStateHandle,
     private val spendingsRepository: SpendingsRepository,
     private val categoriesRepository: CategoriesRepository,
 ) : CategoriesViewModel(categoriesRepository) {
-    private var spendingId: String = ""
+    private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
     private var namingText: String = ""
     private var amountText: String = ""
     private var dateText: String = ""
