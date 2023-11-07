@@ -5,11 +5,13 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
+import com.faigenbloom.famillyspandings.statistics.CategorySummary
 
 typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
 typealias SpendingsEditMock = Mock
 typealias SpendingsShowMock = com.faigenbloom.famillyspandings.spandings.show.Mock
 typealias SpendingsPageMock = com.faigenbloom.famillyspandings.spandings.Mock
+typealias StatisticsPageMock = com.faigenbloom.famillyspandings.statistics.Mock
 
 class MockDataSource : BaseDataSource {
     override suspend fun login(email: String, password: String): Boolean {
@@ -40,5 +42,9 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getSpending(id: String): SpendingEntity {
         return SpendingsShowMock.mockSpendingEntity
+    }
+
+    override suspend fun getCategoriesSumaries(): List<CategorySummary> {
+        return StatisticsPageMock.categoriesList
     }
 }

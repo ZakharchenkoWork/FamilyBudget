@@ -46,6 +46,8 @@ import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
 import com.faigenbloom.famillyspandings.spandings.show.SpendingShowPage
 import com.faigenbloom.famillyspandings.spandings.show.SpendingShowViewModel
+import com.faigenbloom.famillyspandings.statistics.StatisticsPage
+import com.faigenbloom.famillyspandings.statistics.StatisticsPageViewModel
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -210,6 +212,17 @@ class MainActivity : ComponentActivity() {
                                         )
                                     },
                                 )
+                            }
+                            composable(
+                                route = Destination.StatisticsPage.route,
+                            ) {
+                                withBottomNavigation = true
+
+                                val state by koinViewModel<StatisticsPageViewModel>()
+                                    .statisicsStateFlow
+                                    .collectAsState()
+
+                                StatisticsPage(state)
                             }
                         }
                     }

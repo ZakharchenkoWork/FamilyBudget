@@ -5,6 +5,8 @@ sealed class Destination(val route: String) {
     object Login : Destination(route = "Login")
     object Register : Destination(route = "Register")
     object SpendingsPage : Destination(route = "SpendingsPage")
+    object StatisticsPage : Destination(route = "StatisticsPage")
+
     object SpendingEditPage : Destination(route = "SpendingEditPage/$SPENDING_ID_KEY") {
         fun withId(id: String): String {
             return route.replace(SPENDING_ID_KEY, id)

@@ -48,9 +48,9 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
             imageUnChecked = R.drawable.plus,
         ),
         BarItem(
-            destination = Destination.SpendingsPage,
-            imageChecked = R.drawable.list_filled,
-            imageUnChecked = R.drawable.list_outlined,
+            destination = Destination.StatisticsPage,
+            imageChecked = R.drawable.icon_statistics,
+            imageUnChecked = R.drawable.icon_statistics,
         ),
         BarItem(
             destination = Destination.SpendingsPage,
