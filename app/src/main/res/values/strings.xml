@@ -39,5 +39,10 @@
     <string name="spending_name">Name</string>
     <string name="spending_add_detail_hint">Add bill component</string>
     <string name="statistics">Statistics</string>
+    <string name="statistics_pie">Pie Chart</string>
+    <string name="statistics_bar">Bar Chart</string>
     <string name="this_month_spending_s_title">This month spending\'s</string>
+    <string name="budget_title">Budget</string>
+    <string name="budget_personal">Personal</string>
+    <string name="budget_family">Family</string>
 </resources>

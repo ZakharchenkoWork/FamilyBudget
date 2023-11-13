@@ -31,6 +31,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.faigenbloom.famillyspandings.budget.BudgetPage
+import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
@@ -223,6 +225,17 @@ class MainActivity : ComponentActivity() {
                                     .collectAsState()
 
                                 StatisticsPage(state)
+                            }
+                            composable(
+                                route = Destination.BudgetPage.route,
+                            ) {
+                                withBottomNavigation = true
+
+                                val state by koinViewModel<BudgetPageViewModel>()
+                                    .budgetStateFlow
+                                    .collectAsState()
+
+                                BudgetPage(state)
                             }
                         }
                     }

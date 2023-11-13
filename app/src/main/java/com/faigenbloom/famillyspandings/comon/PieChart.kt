@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 private val IndicatorSize = 48.0.dp
-val ActiveIndicatorWidth = 4.0.dp
+private val ActiveIndicatorWidth = 4.0.dp
 
 @Composable
 fun CircularArc(

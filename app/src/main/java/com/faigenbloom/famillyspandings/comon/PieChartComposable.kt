@@ -91,7 +91,7 @@ fun PieChart(
 fun CircleIndicator(
     data: PieChartData,
 ) {
-    var currentProgress by remember { mutableStateOf(data.getRealValue()) }
+    var currentProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
 
     if (currentProgress < data.getRealValue()) {

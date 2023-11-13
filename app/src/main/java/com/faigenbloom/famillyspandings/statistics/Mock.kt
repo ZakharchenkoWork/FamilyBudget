@@ -11,6 +11,8 @@ class Mock {
                 iconId = it.iconId,
                 amount = (Math.random() * 900 + 100).toLong(),
             )
+        }.filterIndexed { index: Int, cat: CategorySummary ->
+            return@filterIndexed index != 0
         }
     }
 }
