@@ -2,6 +2,12 @@ package com.faigenbloom.famillyspandings.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val backgroundLight = Color(0xFFFFFFFF)
+val backgroundDark = Color(0xFFFFFFFF)
+
+val onBackgroundLight = Color(0xFF2C3269)
+val onBackgroundDark = Color(0xFF2C3269)
+
 // val name = Color(0xFF)
 val primaryDark = Color(0xFFE2CD96)
 val primaryLight = Color(0xFFE2CD96)

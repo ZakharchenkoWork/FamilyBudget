@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -143,13 +144,21 @@ private fun BarChartContent(state: StatisicsState) {
                                         )
                                     }
                                 }
-                                Spacer(
+                                Box(
                                     modifier = Modifier
-                                        .width(barLeftPadding)
                                         .background(
                                             color = MaterialTheme.colorScheme.primaryContainer,
-                                        ),
-                                )
+                                        )
+                                        .padding(vertical = 16.dp),
+                                ) {
+                                    Divider(
+                                        modifier = Modifier
+                                            .width(barLeftPadding)
+                                            .height(barWidth),
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        thickness = barLeftPadding,
+                                    )
+                                }
                             }
                         },
                     )

@@ -45,4 +45,6 @@
     <string name="budget_title">Budget</string>
     <string name="budget_personal">Personal</string>
     <string name="budget_family">Family</string>
+    <string name="budget_balance">Balance</string>
+    <string name="budget_for_month_label">Till end of the month</string>
 </resources>
