@@ -235,7 +235,15 @@ class MainActivity : ComponentActivity() {
                                     .budgetStateFlow
                                     .collectAsState()
 
-                                BudgetPage(state)
+                                BudgetPage(
+                                    state = state,
+                                    onAddSpendingClicked = {
+                                        mainNavController.navigate(Destination.SpendingEditPage.route)
+                                    },
+                                    onAddPlannedSpendingClicked = {
+                                        mainNavController.navigate(Destination.SpendingEditPage.route)
+                                    },
+                                )
                             }
                         }
                     }

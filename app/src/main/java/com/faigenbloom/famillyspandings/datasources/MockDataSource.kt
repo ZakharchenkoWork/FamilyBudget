@@ -50,6 +50,11 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun getBudgetData(): BudgetData {
-        return BudgetData(141L)
+        return BudgetData(
+            familyTotal = 475500L,
+            plannedBudget = 2000000L,
+            spent = 1524500L,
+            plannedSpendings = 310000L,
+        )
     }
 }
