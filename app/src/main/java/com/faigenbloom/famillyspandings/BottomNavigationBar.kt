@@ -39,28 +39,28 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
         ),
         BarItem(
             destination = Destination.BudgetPage,
-            imageChecked = R.drawable.icon_budget,
+            imageChecked = R.drawable.icon_budget_filled,
             imageUnChecked = R.drawable.icon_budget,
         ),
         BarItem(
             destination = Destination.SpendingEditPage,
-            imageChecked = R.drawable.plus,
-            imageUnChecked = R.drawable.plus,
+            imageChecked = R.drawable.plus_filled,
+            imageUnChecked = R.drawable.plus_not_filled,
         ),
         BarItem(
             destination = Destination.StatisticsPage,
-            imageChecked = R.drawable.icon_statistics,
+            imageChecked = R.drawable.icon_statistics_filled,
             imageUnChecked = R.drawable.icon_statistics,
         ),
         BarItem(
             destination = Destination.SpendingsPage,
-            imageChecked = R.drawable.list_filled,
-            imageUnChecked = R.drawable.list_outlined,
+            imageChecked = R.drawable.icon_settings_filled,
+            imageUnChecked = R.drawable.icon_settings,
         ),
     )
     var selectedIndex by rememberSaveable { mutableStateOf(0) }
     NavigationBar(
-        modifier = Modifier.height(32.dp),
+        modifier = Modifier.height(40.dp),
     ) {
         items.forEachIndexed { index, barItem ->
             NavigationBarItem(
