@@ -1,6 +1,6 @@
-package com.faigenbloom.famillyspandings.budget
+package com.faigenbloom.famillyspandings.datasources.entities
 
-data class BudgetData(
+data class BudgetEntity(
     val familyTotal: Long,
     val plannedBudget: Long,
     val spent: Long,

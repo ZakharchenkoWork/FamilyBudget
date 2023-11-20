@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import com.faigenbloom.famillyspandings.budget.BudgetData
 import com.faigenbloom.famillyspandings.categories.CategoryData
+import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
@@ -49,8 +49,8 @@ class MockDataSource : BaseDataSource {
         return StatisticsPageMock.categoriesList
     }
 
-    override suspend fun getBudgetData(): BudgetData {
-        return BudgetData(
+    override suspend fun getBudgetData(): BudgetEntity {
+        return BudgetEntity(
             familyTotal = 475500L,
             plannedBudget = 2000000L,
             spent = 1524500L,

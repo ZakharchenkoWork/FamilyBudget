@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import com.faigenbloom.famillyspandings.budget.BudgetData
 import com.faigenbloom.famillyspandings.categories.CategoryData
+import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
@@ -22,5 +22,5 @@ interface BaseDataSource {
     suspend fun getAllSpendings(): List<SpendingData>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>
-    suspend fun getBudgetData(): BudgetData
+    suspend fun getBudgetData(): BudgetEntity
 }

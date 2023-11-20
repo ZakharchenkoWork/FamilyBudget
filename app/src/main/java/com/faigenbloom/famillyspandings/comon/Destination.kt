@@ -5,6 +5,7 @@ sealed class Destination(val route: String) {
     object Login : Destination(route = "Login")
     object Register : Destination(route = "Register")
     object SpendingsPage : Destination(route = "SpendingsPage")
+    object SettingsPage : Destination(route = "SettingsPage")
     object StatisticsPage : Destination(route = "StatisticsPage")
     object BudgetPage : Destination(route = "BudgetPage")
 

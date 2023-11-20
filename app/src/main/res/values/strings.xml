@@ -9,6 +9,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
+    <string name="surname">Surname</string>
     <string name="name">Name</string>
     <string name="email_error">Please provide correct email</string>
     <string name="name_error">Name should not be empty</string>
@@ -51,4 +52,10 @@
     <string name="budget_spent">Spent</string>
     <string name="budget_label_total">Total</string>
     <string name="budget_planned_spendings">Planned spendings</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_personal">Personal Settings</string>
+    <string name="settings_currency">Currency</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_password_protection">Ask password</string>
+    <string name="settings_family">Family Settings</string>
 </resources>

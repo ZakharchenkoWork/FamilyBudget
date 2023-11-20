@@ -42,6 +42,8 @@ import com.faigenbloom.famillyspandings.login.LoginPageViewModel
 import com.faigenbloom.famillyspandings.onboarding.OnboardingPage
 import com.faigenbloom.famillyspandings.register.RegisterPage
 import com.faigenbloom.famillyspandings.register.RegisterPageViewModel
+import com.faigenbloom.famillyspandings.settings.SettingsPage
+import com.faigenbloom.famillyspandings.settings.SettingsPageViewModel
 import com.faigenbloom.famillyspandings.spandings.SpandingsPage
 import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
@@ -243,6 +245,19 @@ class MainActivity : ComponentActivity() {
                                     onAddPlannedSpendingClicked = {
                                         mainNavController.navigate(Destination.SpendingEditPage.route)
                                     },
+                                )
+                            }
+                            composable(
+                                route = Destination.SettingsPage.route,
+                            ) {
+                                withBottomNavigation = true
+
+                                val state by koinViewModel<SettingsPageViewModel>()
+                                    .budgetStateFlow
+                                    .collectAsState()
+
+                                SettingsPage(
+                                    state = state,
                                 )
                             }
                         }
