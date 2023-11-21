@@ -6,6 +6,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
+import java.util.Currency
+import java.util.Locale
 
 interface BaseDataSource {
     suspend fun login(email: String, password: String): Boolean
@@ -23,4 +25,11 @@ interface BaseDataSource {
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>
     suspend fun getBudgetData(): BudgetEntity
+    fun getAllCurrencies(): List<Currency> {
+        return Currency.getAvailableCurrencies().toList()
+    }
+
+    fun getChoosenCurrency(): Currency {
+        return Currency.getInstance(Locale.getDefault())
+    }
 }

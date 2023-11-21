@@ -2,13 +2,18 @@ package com.faigenbloom.famillyspandings.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -19,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseTextField
@@ -26,6 +32,8 @@ import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun SettingsPage(
@@ -75,25 +83,30 @@ fun SettingsPage(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        Column(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth(),
-        ) {
-            Text(
+        Box {
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                text = stringResource(R.string.settings_currency),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                text = stringResource(R.string.settings_currency),
-                color = MaterialTheme.colorScheme.hint(),
-                style = MaterialTheme.typography.titleSmall,
-            )
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
+                    .clickable { state.onCurrenciesDropdownVisibilityChanged(true) },
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    text = stringResource(R.string.settings_currency),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    text = "(" + state.chosenCurrency.symbol + ") " +
+                        state.chosenCurrency.getDisplayName(Locale.getDefault()),
+                    color = MaterialTheme.colorScheme.hint(),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+            CurrencyChooseDropDown(state = state)
         }
         Row(
             modifier = Modifier
@@ -149,6 +162,34 @@ fun SettingsPage(
     }
 }
 
+@Composable
+fun CurrencyChooseDropDown(state: SettingsState) {
+    DropdownMenu(
+        expanded = state.isCurrenciesDropdownVisible,
+        onDismissRequest = { state.onCurrenciesDropdownVisibilityChanged(false) },
+        offset = DpOffset(16.dp, 0.dp),
+        content = {
+            Box(modifier = Modifier.size(width = 300.dp, height = 300.dp)) {
+                LazyColumn {
+                    items(state.currenciesList.size) { index ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "(" + state.currenciesList[index].symbol + ") " +
+                                        state.currenciesList[index].getDisplayName(Locale.getDefault()),
+                                )
+                            },
+                            onClick = {
+                                state.onCurrencyChanged(state.currenciesList[index])
+                            },
+                        )
+                    }
+                }
+            }
+        },
+    )
+}
+
 @Preview
 @Composable
 fun StatisticsPagePreview() {
@@ -160,8 +201,13 @@ fun StatisticsPagePreview() {
                     surname = "Zakharchenko",
                     onNameChanged = {},
                     onSurnameChanged = {},
+                    currenciesList = Currency.getAvailableCurrencies().toList(),
                     isNotificationsEnabled = true,
                     onNotificationsCheckChanged = { },
+                    isCurrenciesDropdownVisible = true,
+                    onCurrenciesDropdownVisibilityChanged = {},
+                    chosenCurrency = Currency.getInstance(Locale.getDefault()),
+                    onCurrencyChanged = { },
                 ),
             )
         }
