@@ -38,6 +38,7 @@ import java.util.Locale
 @Composable
 fun SettingsPage(
     state: SettingsState,
+    onFamilyPageClicked: () -> Unit,
 ) {
     Column {
         TopBar(title = stringResource(id = R.string.budget_title))
@@ -149,7 +150,10 @@ fun SettingsPage(
         Column(
             modifier = Modifier
                 .padding(top = 32.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable {
+                    onFamilyPageClicked()
+                },
         ) {
             Text(
                 modifier = Modifier
@@ -209,6 +213,7 @@ fun StatisticsPagePreview() {
                     chosenCurrency = Currency.getInstance(Locale.getDefault()),
                     onCurrencyChanged = { },
                 ),
+                onFamilyPageClicked = {},
             )
         }
     }

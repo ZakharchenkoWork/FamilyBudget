@@ -37,6 +37,8 @@ import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
+import com.faigenbloom.famillyspandings.family.FamilyPage
+import com.faigenbloom.famillyspandings.family.FamilyPageViewModel
 import com.faigenbloom.famillyspandings.login.LoginPage
 import com.faigenbloom.famillyspandings.login.LoginPageViewModel
 import com.faigenbloom.famillyspandings.onboarding.OnboardingPage
@@ -257,6 +259,21 @@ class MainActivity : ComponentActivity() {
                                     .collectAsState()
 
                                 SettingsPage(
+                                    state = state,
+                                    onFamilyPageClicked = {
+                                        mainNavController.navigate(Destination.FamilyPage.route)
+                                    },
+                                )
+                            }
+                            composable(
+                                route = Destination.FamilyPage.route,
+                            ) {
+                                withBottomNavigation = false
+
+                                val state by koinViewModel<FamilyPageViewModel>()
+                                    .familyStateFlow
+                                    .collectAsState()
+                                FamilyPage(
                                     state = state,
                                 )
                             }

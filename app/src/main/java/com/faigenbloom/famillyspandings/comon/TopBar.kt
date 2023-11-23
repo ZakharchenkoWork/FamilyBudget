@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,8 @@ fun TopBar(
     title: String = "",
     endIcon: Int? = null,
     onEndIconCLicked: (() -> Unit)? = null,
+    preEndIcon: Int? = null,
+    onPreEndIconCLicked: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
@@ -51,18 +54,37 @@ fun TopBar(
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.secondary,
             )
-            endIcon?.let { icon ->
-                Icon(
-                    modifier = Modifier.size(24.dp)
-                        .clickable {
-                            onEndIconCLicked?.let {
-                                onEndIconCLicked()
-                            }
-                        },
-                    painter = painterResource(id = icon),
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.secondary,
-                )
+            Row(
+                modifier = Modifier.wrapContentWidth(),
+            ) {
+                preEndIcon?.let { icon ->
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(24.dp)
+                            .clickable {
+                                onPreEndIconCLicked?.let {
+                                    onPreEndIconCLicked()
+                                }
+                            },
+                        painter = painterResource(id = icon),
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.secondary,
+                    )
+                }
+                endIcon?.let { icon ->
+                    Icon(
+                        modifier = Modifier.size(24.dp)
+                            .clickable {
+                                onEndIconCLicked?.let {
+                                    onEndIconCLicked()
+                                }
+                            },
+                        painter = painterResource(id = icon),
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.secondary,
+                    )
+                }
             }
         }
         if (title.isEmpty()) {
@@ -155,7 +177,11 @@ fun StripeBar(
 fun TopBarPreview() {
     FamillySpandingsTheme {
         Column(modifier = Modifier.background(Color.White)) {
-            TopBar(title = "Auth", endIcon = R.drawable.pen)
+            TopBar(
+                title = "Auth",
+                endIcon = R.drawable.pen,
+                preEndIcon = R.drawable.pen,
+            )
             StripeBar(R.string.authorization)
         }
     }

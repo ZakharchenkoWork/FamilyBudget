@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings
 
 import android.app.Application
 import com.faigenbloom.famillyspandings.budget.budgetPageModule
+import com.faigenbloom.famillyspandings.family.familyPageModule
 import com.faigenbloom.famillyspandings.login.loginPageModule
 import com.faigenbloom.famillyspandings.register.registerPageModule
 import com.faigenbloom.famillyspandings.settings.settingsPageModule
@@ -26,6 +27,7 @@ class App : Application() {
                 statisticsPageModule,
                 budgetPageModule,
                 settingsPageModule,
+                familyPageModule,
             )
         }
     }

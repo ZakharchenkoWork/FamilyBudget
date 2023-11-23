@@ -8,6 +8,7 @@ sealed class Destination(val route: String) {
     object SettingsPage : Destination(route = "SettingsPage")
     object StatisticsPage : Destination(route = "StatisticsPage")
     object BudgetPage : Destination(route = "BudgetPage")
+    object FamilyPage : Destination(route = "FamilyPage")
 
     object SpendingEditPage : Destination(route = "SpendingEditPage/$SPENDING_ID_KEY") {
         fun withId(id: String): String {

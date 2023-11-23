@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    val koinVersion = "3.4.2"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -63,9 +64,10 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.0")
     implementation("androidx.camera:camera-view:1.3.0")
     implementation("androidx.camera:camera-camera2:1.3.0")
-    val koinVersion = "3.4.2"
+    implementation("io.github.g0dkar:qrcode-kotlin:4.0.6")
     implementation("io.insert-koin:koin-androidx-compose-navigation:3.4.5")
     implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.github.g00fy2.quickie:quickie-bundled:1.8.0")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
