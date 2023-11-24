@@ -33,14 +33,17 @@ import com.faigenbloom.famillyspandings.comon.painterQR
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun FamilyPage(state: FamilyState) {
+fun FamilyPage(
+    state: FamilyState,
+    onQRScanRequested: () -> Unit,
+) {
     Box {
         Column {
             TopBar(
                 endIcon = R.drawable.icon_qrcode,
                 onEndIconCLicked = { state.onQRVisibilityChanged(true) },
                 preEndIcon = R.drawable.icon_qrcode_scan,
-                onPreEndIconCLicked = { state.onQRVisibilityChanged(true) },
+                onPreEndIconCLicked = { onQRScanRequested() },
             )
             StripeBar(
                 textId = R.string.settings_family,
@@ -138,7 +141,9 @@ fun StatisticsPagePreview() {
                     ),
                     isQRDialogOpened = true,
                     onQRVisibilityChanged = {},
+                    onQrScanned = {},
                 ),
+                onQRScanRequested = {},
             )
         }
     }

@@ -18,6 +18,9 @@ class FamilyPageViewModel(
         isQRDialogOpened = it
         _familyStateFlow.update { familyState }
     }
+
+    private val onQrScanned: (String?) -> Unit = {
+    }
     private val familyState: FamilyState
         get() = FamilyState(
             familyId = familyId,
@@ -25,6 +28,7 @@ class FamilyPageViewModel(
             familyList = familyList,
             onQRVisibilityChanged = onQRVisibilityChanged,
             isQRDialogOpened = isQRDialogOpened,
+            onQrScanned = onQrScanned,
         )
 
     private val _familyStateFlow = MutableStateFlow(familyState)
@@ -37,4 +41,5 @@ data class FamilyState(
     val familyList: List<String>,
     val isQRDialogOpened: Boolean,
     val onQRVisibilityChanged: (Boolean) -> Unit,
+    val onQrScanned: (String?) -> Unit,
 )

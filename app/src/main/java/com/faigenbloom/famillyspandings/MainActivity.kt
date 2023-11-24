@@ -36,6 +36,7 @@ import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
+import com.faigenbloom.famillyspandings.comon.QR_KEY
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.family.FamilyPage
 import com.faigenbloom.famillyspandings.family.FamilyPageViewModel
@@ -55,6 +56,8 @@ import com.faigenbloom.famillyspandings.spandings.show.SpendingShowViewModel
 import com.faigenbloom.famillyspandings.statistics.StatisticsPage
 import com.faigenbloom.famillyspandings.statistics.StatisticsPageViewModel
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import io.github.g00fy2.quickie.QRResult
+import io.github.g00fy2.quickie.ScanQRCode
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
@@ -69,11 +72,24 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             var withBottomNavigation by remember {
                 mutableStateOf(false)
             }
             val mainNavController = rememberNavController()
+            val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
+                when (result) {
+                    is QRResult.QRSuccess -> {
+                        result.content.rawValue?.let {
+                            handleQRCapture(it, mainNavController)
+                        }
+                    }
+
+                    else -> {
+                    }
+                }
+            }
             FamillySpandingsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -273,8 +289,14 @@ class MainActivity : ComponentActivity() {
                                 val state by koinViewModel<FamilyPageViewModel>()
                                     .familyStateFlow
                                     .collectAsState()
+                                val qrCodeScanned = mainNavController.currentBackStackEntry
+                                    ?.savedStateHandle?.get<String>(QR_KEY)
+                                state.onQrScanned(qrCodeScanned)
                                 FamilyPage(
                                     state = state,
+                                    onQRScanRequested = {
+                                        scanQrCodeLauncher.launch(null)
+                                    },
                                 )
                             }
                         }
@@ -316,6 +338,15 @@ class MainActivity : ComponentActivity() {
             }
         }
         return false
+    }
+
+    private fun handleQRCapture(text: String, mainNavController: NavController) {
+        lifecycleScope.launch {
+            mainNavController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set(QR_KEY, text)
+            mainNavController.popBackStack(Destination.SpendingEditPage.route, false)
+        }
     }
 
     private fun handleImageCapture(uri: Uri, mainNavController: NavController) {

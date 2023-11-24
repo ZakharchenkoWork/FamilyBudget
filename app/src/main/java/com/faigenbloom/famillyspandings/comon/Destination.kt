@@ -9,6 +9,7 @@ sealed class Destination(val route: String) {
     object StatisticsPage : Destination(route = "StatisticsPage")
     object BudgetPage : Destination(route = "BudgetPage")
     object FamilyPage : Destination(route = "FamilyPage")
+    object QRScanPage : Destination(route = "QRScanPage")
 
     object SpendingEditPage : Destination(route = "SpendingEditPage/$SPENDING_ID_KEY") {
         fun withId(id: String): String {
@@ -28,3 +29,5 @@ sealed class Destination(val route: String) {
 const val PHOTO_KEY: String = "PHOTO_URI"
 const val SPENDING_ID_ARG = "spendingId"
 const val SPENDING_ID_KEY: String = "{$SPENDING_ID_ARG}"
+
+const val QR_KEY: String = "QR_TEXT"
