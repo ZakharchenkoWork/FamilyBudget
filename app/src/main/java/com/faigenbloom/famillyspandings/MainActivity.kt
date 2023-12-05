@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -67,7 +69,24 @@ import java.util.concurrent.Executors
 class MainActivity : ComponentActivity() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var mainNavController: NavHostController
+    private lateinit var scanQrCodeLauncher: ActivityResultLauncher<Nothing?>
     private val isLoggedIn: Boolean = true
+    override fun onStart() {
+        super.onStart()
+        scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
+            when (result) {
+                is QRResult.QRSuccess -> {
+                    result.content.rawValue?.let {
+                        handleQRCapture(it, mainNavController)
+                    }
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,19 +96,8 @@ class MainActivity : ComponentActivity() {
             var withBottomNavigation by remember {
                 mutableStateOf(false)
             }
-            val mainNavController = rememberNavController()
-            val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
-                when (result) {
-                    is QRResult.QRSuccess -> {
-                        result.content.rawValue?.let {
-                            handleQRCapture(it, mainNavController)
-                        }
-                    }
+            mainNavController = rememberNavController()
 
-                    else -> {
-                    }
-                }
-            }
             FamillySpandingsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(

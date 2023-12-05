@@ -1,7 +1,9 @@
 package com.faigenbloom.famillyspandings.comon
 
-fun Long.toReadableMoney(): String {
-    val value: Double = (this.toDouble()) / 100
-    return value.toString()
-    // String.format("%.2f", value)
+fun Long.toReadableMoney(): String = ((this.toDouble()) / 100).toString()
+
+fun String.toLongMoney(): Long = if (this.contains(".")) {
+    this.replace(".", "").toLong()
+} else {
+    this.toLong() * 100
 }

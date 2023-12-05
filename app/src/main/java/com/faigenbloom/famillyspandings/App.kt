@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings
 
 import android.app.Application
 import com.faigenbloom.famillyspandings.budget.budgetPageModule
+import com.faigenbloom.famillyspandings.datasources.databaseModule
 import com.faigenbloom.famillyspandings.family.familyPageModule
 import com.faigenbloom.famillyspandings.login.loginPageModule
 import com.faigenbloom.famillyspandings.register.registerPageModule
@@ -14,11 +15,13 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App : Application() {
+
     override fun onCreate() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
             modules(
+                databaseModule,
                 spendingsPageModule,
                 loginPageModule,
                 registerPageModule,

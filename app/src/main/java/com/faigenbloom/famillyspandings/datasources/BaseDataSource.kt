@@ -25,6 +25,7 @@ interface BaseDataSource {
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>
     suspend fun getBudgetData(): BudgetEntity
+    suspend fun saveBudgetData(budget: BudgetEntity)
     fun getAllCurrencies(): List<Currency> {
         return Currency.getAvailableCurrencies().toList()
     }
