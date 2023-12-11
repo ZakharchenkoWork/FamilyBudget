@@ -1,7 +1,8 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import com.faigenbloom.famillyspandings.categories.CategoryData
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
+import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
@@ -28,8 +29,10 @@ class MockDataSource : BaseDataSource {
         return email == "a" && password == "aaaaaaaa"
     }
 
-    override suspend fun getCategories(): List<CategoryData> {
-        return CategoriesMock.categoriesList
+    override suspend fun getCategories(): List<CategoryEntity> {
+        return DefaultCategories.values().map { defaultCategory ->
+            CategoryEntity(id = defaultCategory.name, isDefault = true)
+        }
     }
 
     override suspend fun saveSpending(spending: SpendingEntity) {}

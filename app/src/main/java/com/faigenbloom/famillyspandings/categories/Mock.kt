@@ -21,20 +21,37 @@ class Mock {
                 nameId = R.string.category_entertaiment,
                 iconId = R.drawable.entertaiment,
             ),
-            CategoryData(id = "food", nameId = R.string.category_food, iconId = R.drawable.food),
+            CategoryData(
+                id = "food",
+                nameId = R.string.category_food,
+                iconId = R.drawable.food,
+            ),
             CategoryData(
                 id = "health",
                 nameId = R.string.category_health,
                 iconId = R.drawable.health,
             ),
-            CategoryData(id = "home", nameId = R.string.category_home, iconId = R.drawable.home),
-            CategoryData(id = "pets", nameId = R.string.category_pets, iconId = R.drawable.pets),
+            CategoryData(
+
+                id = "home",
+                nameId = R.string.category_home,
+                iconId = R.drawable.home,
+            ),
+            CategoryData(
+                id = "pets",
+                nameId = R.string.category_pets,
+                iconId = R.drawable.pets,
+            ),
             CategoryData(
                 id = "shopping",
                 nameId = R.string.category_shopping,
                 iconId = R.drawable.shopping,
             ),
-            CategoryData(id = "sport", nameId = R.string.category_sport, iconId = R.drawable.sport),
+            CategoryData(
+                id = "sport",
+                nameId = R.string.category_sport,
+                iconId = R.drawable.sport,
+            ),
             CategoryData(
                 id = "transport",
                 nameId = R.string.category_transport,

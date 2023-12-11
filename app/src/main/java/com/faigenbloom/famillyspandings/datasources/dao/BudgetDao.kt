@@ -12,5 +12,5 @@ interface BudgetDao {
     fun getBudget(): BudgetEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun update(users: BudgetEntity)
+    fun update(budgetEntity: BudgetEntity)
 }

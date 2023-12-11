@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import com.faigenbloom.famillyspandings.categories.CategoryData
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
+import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
@@ -21,8 +21,8 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getCategories(): List<CategoryData> {
-        TODO("Not yet implemented")
+    override suspend fun getCategories(): List<CategoryEntity> {
+        return appDatabase.categoriesDao().getCategories()
     }
 
     override suspend fun saveSpending(spending: SpendingEntity) {
