@@ -63,4 +63,10 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun saveBudgetData(budget: BudgetEntity) {
     }
+
+    override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
+    }
+
+    override suspend fun addCategory(categoryEntity: CategoryEntity) {
+    }
 }

@@ -5,7 +5,6 @@ import com.faigenbloom.famillyspandings.R
 class Mock {
     companion object {
         val categoriesList = listOf(
-            CategoryData(id = "", nameId = R.string.category_new, iconId = R.drawable.plus),
             CategoryData(
                 id = "beauty",
                 nameId = R.string.category_beauty,

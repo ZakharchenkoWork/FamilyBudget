@@ -19,8 +19,8 @@ import java.text.SimpleDateFormat
 
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
+    categoriesRepository: CategoriesRepository,
     private val spendingsRepository: SpendingsRepository,
-    private val categoriesRepository: CategoriesRepository,
 ) : CategoriesViewModel(categoriesRepository) {
     private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
     private var namingText: String = ""
@@ -31,6 +31,12 @@ class SpendingEditViewModel(
     private var isCategoriesOpened: Boolean = true
     private var isCalendarOpen: Boolean = false
     private var isManualTotal: Boolean = false
+
+    private fun addSpendingPhoto(photoUri: String?, id: String?) {
+        if (id == spendingId) {
+            onPhotoUriChanged(Uri.parse(photoUri))
+        }
+    }
 
     private val onDetailAmountChanged: (Int, String) -> Unit = { detailIndex, amount ->
         detailsList = ArrayList(detailsList)
@@ -105,6 +111,7 @@ class SpendingEditViewModel(
     }
     private val spendingEditState: SpendingEditState
         get() = SpendingEditState(
+            spendingId = spendingId,
             categoryState = categoriesStateFlow.value,
             isCategoriesOpened = isCategoriesOpened,
             onPageChanged = onPageChanged,
@@ -134,9 +141,23 @@ class SpendingEditViewModel(
                 detailsList = spendingsRepository.getDetails(spendingId)
             }
         }
+
+    init {
+        /* viewModelScope.launch {
+             savedStateHandle.getStateFlow<String?>(PHOTO_REASON_ARG, null)
+                 .collectLatest {
+                     if (it == SPENDING_PHOTO) {
+                         addSpendingPhoto(savedStateHandle[PHOTO_KEY], savedStateHandle[ID_ARG])
+                     }
+                 }
+         }*/
+
+        // spendingEditState.categoryState.onCategoryPhotoUriChanged(categoryPhotoUri?.value.toString())
+    }
 }
 
 data class SpendingEditState(
+    val spendingId: String,
     val categoryState: CategoriesState,
     val isCategoriesOpened: Boolean,
     val onPageChanged: (Boolean) -> Unit,

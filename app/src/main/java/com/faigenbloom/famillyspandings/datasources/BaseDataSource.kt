@@ -19,6 +19,8 @@ interface BaseDataSource {
     ): Boolean
 
     suspend fun getCategories(): List<CategoryEntity>
+    suspend fun addCategory(categoryEntity: CategoryEntity)
+
     suspend fun saveSpending(spending: SpendingEntity)
     suspend fun getDetails(spendingId: String): List<SpendingDetail>
     suspend fun getAllSpendings(): List<SpendingData>
@@ -33,4 +35,6 @@ interface BaseDataSource {
     fun getChoosenCurrency(): Currency {
         return Currency.getInstance(Locale.getDefault())
     }
+
+    suspend fun updateCategoryPhoto(id: String, photoUri: String)
 }

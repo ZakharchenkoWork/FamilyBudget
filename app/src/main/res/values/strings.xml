@@ -58,5 +58,8 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_password_protection">Ask password</string>
     <string name="settings_family">Family Settings</string>
+    <string name="photo_chooser_title">Choose source</string>
+    <string name="photo_chooser_gallery">Gallery</string>
+    <string name="photo_chooser_camera">Photo</string>
 
 </resources>

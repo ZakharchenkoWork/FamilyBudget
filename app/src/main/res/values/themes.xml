@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Body_ThemeOverlay.MaterialComponents.MaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MyApp.Dialog</item>
+    </style>
+
+    <style name="ThemeOverlay.MyApp.Dialog" parent="@style/Theme.FamillySpandings" />
+
     <style name="Theme.FamillySpandings" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

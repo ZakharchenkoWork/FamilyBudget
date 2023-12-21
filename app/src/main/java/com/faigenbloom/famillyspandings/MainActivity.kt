@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -31,15 +32,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.faigenbloom.famillyspandings.budget.BudgetPage
 import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
+import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
+import com.faigenbloom.famillyspandings.comon.ID_ARG
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
+import com.faigenbloom.famillyspandings.comon.PHOTO_REASON_ARG
+import com.faigenbloom.famillyspandings.comon.PhotoChooser
 import com.faigenbloom.famillyspandings.comon.QR_KEY
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
+import com.faigenbloom.famillyspandings.comon.SPENDING_PHOTO
 import com.faigenbloom.famillyspandings.family.FamilyPage
 import com.faigenbloom.famillyspandings.family.FamilyPageViewModel
 import com.faigenbloom.famillyspandings.login.LoginPage
@@ -185,6 +192,9 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
+                            val savedStateHandle = mainNavController
+                                .currentBackStackEntry
+                                ?.savedStateHandle
                             composable(
                                 route = Destination.SpendingEditPage.route,
                             ) {
@@ -193,28 +203,82 @@ class MainActivity : ComponentActivity() {
                                 val state by koinViewModel<SpendingEditViewModel>()
                                     .spendingEditStateFlow
                                     .collectAsState()
+                                savedStateHandle
+                                    ?.getStateFlow<String?>(PHOTO_REASON_ARG, null)
+                                    ?.collectAsState()?.value?.let { reason ->
+                                        val id: String? = savedStateHandle[ID_ARG]
+                                        when (reason) {
+                                            SPENDING_PHOTO -> {
+                                                if (id == state.spendingId) {
+                                                    state.onPhotoUriChanged(
+                                                        savedStateHandle[PHOTO_KEY],
+                                                    )
+                                                } else {
+                                                }
+                                            }
 
-                                val photoUri = mainNavController.currentBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.getStateFlow<Uri?>(PHOTO_KEY, null)?.collectAsState()
-                                state.onPhotoUriChanged(photoUri?.value)
+                                            CATEGORY_PHOTO -> {
+                                                val uri: Uri? = savedStateHandle[PHOTO_KEY]
+                                                uri?.let {
+                                                    state.categoryState.onCategoryPhotoUriChanged(
+                                                        id ?: "",
+                                                        it,
+                                                    )
+                                                }
+                                            }
+
+                                            else -> {}
+                                        }
+                                    }
                                 SpendingEditPage(
                                     state = state,
-                                    onPhotoRequest = {
+                                    onPhotoRequest = { spendingId ->
                                         if (requestCameraPermission()) {
-                                            mainNavController.navigate(Destination.Camera.route)
+                                            mainNavController.navigate(
+                                                Destination.PhotoChooserDialog.withReason(
+                                                    SPENDING_PHOTO,
+                                                    spendingId,
+                                                ),
+                                            )
+                                        }
+                                    },
+                                    onCategoryPhotoRequest = { categoryId ->
+                                        if (requestCameraPermission()) {
+                                            mainNavController.navigate(
+                                                Destination.Camera.withReason(
+                                                    CATEGORY_PHOTO,
+                                                    categoryId,
+                                                ),
+                                            )
                                         }
                                     },
                                 )
                             }
                             composable(
                                 route = Destination.Camera.route,
-                            ) {
+                                arguments = listOf(
+                                    navArgument(PHOTO_REASON_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                    navArgument(ID_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                ),
+                            ) { backStackEntry ->
+                                val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
+                                val id = backStackEntry.arguments?.getString(ID_ARG)
                                 withBottomNavigation = false
                                 CameraScreen(
                                     outputDirectory = outputDirectory,
                                     executor = cameraExecutor,
-                                    onImageCaptured = { handleImageCapture(it, mainNavController) },
+                                    onImageCaptured = {
+                                        handleImageCapture(
+                                            uri = it,
+                                            photoReason = reason,
+                                            id = id,
+                                            mainNavController,
+                                        )
+                                    },
                                     onError = { Log.e("kilo", "View error:", it) },
                                 )
                             }
@@ -297,13 +361,49 @@ class MainActivity : ComponentActivity() {
                                 val state by koinViewModel<FamilyPageViewModel>()
                                     .familyStateFlow
                                     .collectAsState()
-                                val qrCodeScanned = mainNavController.currentBackStackEntry
-                                    ?.savedStateHandle?.get<String>(QR_KEY)
+                                val qrCodeScanned = savedStateHandle?.get<String>(QR_KEY)
                                 state.onQrScanned(qrCodeScanned)
                                 FamilyPage(
                                     state = state,
                                     onQRScanRequested = {
                                         scanQrCodeLauncher.launch(null)
+                                    },
+                                )
+                            }
+                            dialog(
+                                route = Destination.PhotoChooserDialog.route,
+                                dialogProperties = DialogProperties(
+                                    dismissOnBackPress = true,
+                                    dismissOnClickOutside = true,
+                                ),
+                                arguments = listOf(
+                                    navArgument(PHOTO_REASON_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                    navArgument(ID_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                ),
+                            ) { backStackEntry ->
+                                val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
+                                val id = backStackEntry.arguments?.getString(ID_ARG)
+
+                                PhotoChooser(
+                                    onDismissRequest = {
+                                        mainNavController.popBackStack()
+                                    },
+                                    onGalleryChoosen = {
+                                    },
+                                    onCameraChoosen = {
+                                        if (requestCameraPermission()) {
+                                            mainNavController.navigate(
+                                                Destination.Camera
+                                                    .withReason(
+                                                        reason = reason,
+                                                        id = id,
+                                                    ),
+                                            )
+                                        }
                                     },
                                 )
                             }
@@ -353,15 +453,23 @@ class MainActivity : ComponentActivity() {
             mainNavController.previousBackStackEntry
                 ?.savedStateHandle
                 ?.set(QR_KEY, text)
-            mainNavController.popBackStack(Destination.SpendingEditPage.route, false)
+            mainNavController.popBackStack(Destination.FamilyPage.route, false)
         }
     }
 
-    private fun handleImageCapture(uri: Uri, mainNavController: NavController) {
+    private fun handleImageCapture(
+        uri: Uri,
+        photoReason: String?,
+        id: String?,
+        mainNavController: NavController,
+    ) {
         lifecycleScope.launch {
             mainNavController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set(PHOTO_KEY, uri)
+                ?.savedStateHandle?.apply {
+                    set(PHOTO_REASON_ARG, photoReason)
+                    set(PHOTO_KEY, uri)
+                    set(ID_ARG, id)
+                }
             mainNavController.popBackStack(Destination.SpendingEditPage.route, false)
         }
     }

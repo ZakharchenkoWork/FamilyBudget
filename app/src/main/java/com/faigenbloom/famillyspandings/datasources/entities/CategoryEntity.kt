@@ -9,11 +9,18 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity.Comp
 @Entity(tableName = TABLE_NAME)
 data class CategoryEntity(
     @PrimaryKey
+    @ColumnInfo(name = COLUMN_ID)
     val id: String,
-    @ColumnInfo(name = "is_default") val isDefault: Boolean,
+    @ColumnInfo(name = COLUMN_IS_DEFAULT) val isDefault: Boolean,
+    @ColumnInfo(name = COLUMN_NAME) val name: String? = null,
+    @ColumnInfo(name = COLUMN_PHOTO) val photoUri: String? = null,
 ) {
     companion object {
         const val TABLE_NAME = "categories"
+        const val COLUMN_IS_DEFAULT = "is_default"
+        const val COLUMN_ID = "id"
+        const val COLUMN_NAME = "name"
+        const val COLUMN_PHOTO = "photo"
     }
 }
 

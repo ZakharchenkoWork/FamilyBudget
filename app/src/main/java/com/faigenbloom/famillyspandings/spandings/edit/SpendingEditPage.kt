@@ -43,7 +43,11 @@ import com.faigenbloom.famillyspandings.ui.theme.hint
 typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
 
 @Composable
-fun SpendingEditPage(state: SpendingEditState, onPhotoRequest: () -> Unit) {
+fun SpendingEditPage(
+    state: SpendingEditState,
+    onPhotoRequest: (id: String) -> Unit,
+    onCategoryPhotoRequest: (id: String) -> Unit,
+) {
     Column {
         TopBar(title = stringResource(id = R.string.adding_spending_title))
         StripeBar(
@@ -53,7 +57,10 @@ fun SpendingEditPage(state: SpendingEditState, onPhotoRequest: () -> Unit) {
             onSelectionChanged = state.onPageChanged,
         )
         if (state.isCategoriesOpened) {
-            Categories(state = state.categoryState)
+            Categories(
+                state = state.categoryState,
+                onCategoryPhotoRequest = onCategoryPhotoRequest,
+            )
         } else {
             Information(
                 state = state,
@@ -64,7 +71,7 @@ fun SpendingEditPage(state: SpendingEditState, onPhotoRequest: () -> Unit) {
 }
 
 @Composable
-fun Information(state: SpendingEditState, onPhotoRequest: () -> Unit) {
+fun Information(state: SpendingEditState, onPhotoRequest: (id: String) -> Unit) {
     Box {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -73,7 +80,7 @@ fun Information(state: SpendingEditState, onPhotoRequest: () -> Unit) {
                         .weight(0.5f)
                         .wrapContentSize()
                         .clickable {
-                            onPhotoRequest()
+                            onPhotoRequest(state.spendingId)
                         },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -288,11 +295,18 @@ fun SpendingEditPageCategoriesPreview() {
     FamillySpandingsTheme {
         Scaffold { _ ->
             SpendingEditPage(
-                SpendingEditState(
+                state = SpendingEditState(
+                    spendingId = "",
                     categoryState = CategoriesState(
                         categoriesList = CategoriesMock.categoriesList,
                         selectedIndex = 1,
                         onSelectionChanged = {},
+                        newCategoryName = "",
+                        onNewCategoryNameChanged = { },
+                        isSaveCategoryVisible = false,
+                        onNewCategorySaved = { },
+                        onCategoryPhotoUriChanged = { _, _ -> },
+                        categoryPhotoChooserId = null,
                     ),
                     isCategoriesOpened = true,
                     onPageChanged = {},
@@ -312,6 +326,7 @@ fun SpendingEditPageCategoriesPreview() {
                     onSave = { },
                 ),
                 onPhotoRequest = {},
+                onCategoryPhotoRequest = { _ -> },
             )
         }
     }
@@ -324,12 +339,19 @@ fun SpendingEditPageDetailsPreview() {
     FamillySpandingsTheme {
         Scaffold { _ ->
             SpendingEditPage(
-                SpendingEditState(
+                state = SpendingEditState(
+                    spendingId = "",
                     categoryState = CategoriesState(
                         categoriesList =
                         CategoriesMock.categoriesList,
                         selectedIndex = 1,
                         onSelectionChanged = {},
+                        newCategoryName = "",
+                        onNewCategoryNameChanged = { },
+                        isSaveCategoryVisible = false,
+                        onNewCategorySaved = { },
+                        onCategoryPhotoUriChanged = { _, _ -> },
+                        categoryPhotoChooserId = null,
                     ),
                     isCategoriesOpened = false,
                     onPageChanged = {},
@@ -349,6 +371,7 @@ fun SpendingEditPageDetailsPreview() {
                     onSave = {},
                 ),
                 onPhotoRequest = { },
+                onCategoryPhotoRequest = { _ -> },
             )
         }
     }

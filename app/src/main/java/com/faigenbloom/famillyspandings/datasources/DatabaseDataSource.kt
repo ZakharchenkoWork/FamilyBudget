@@ -25,6 +25,10 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return appDatabase.categoriesDao().getCategories()
     }
 
+    override suspend fun addCategory(categoryEntity: CategoryEntity) {
+        appDatabase.categoriesDao().insert(categoryEntity)
+    }
+
     override suspend fun saveSpending(spending: SpendingEntity) {
         TODO("Not yet implemented")
     }
@@ -56,5 +60,9 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun saveBudgetData(budget: BudgetEntity) {
         appDatabase.budgetDao().update(budget)
+    }
+
+    override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
+        appDatabase.categoriesDao().updatePhoto(id, photoUri)
     }
 }
