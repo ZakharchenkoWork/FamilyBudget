@@ -3,9 +3,11 @@
 package com.faigenbloom.famillyspandings
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,6 +42,8 @@ import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
 import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.Destination
+import com.faigenbloom.famillyspandings.comon.GalleryPhotoContract
+import com.faigenbloom.famillyspandings.comon.GalleryRequest
 import com.faigenbloom.famillyspandings.comon.ID_ARG
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
 import com.faigenbloom.famillyspandings.comon.PHOTO_REASON_ARG
@@ -78,6 +82,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var mainNavController: NavHostController
     private lateinit var scanQrCodeLauncher: ActivityResultLauncher<Nothing?>
+    private lateinit var galleryLauncher: ActivityResultLauncher<GalleryRequest>
     private val isLoggedIn: Boolean = true
     override fun onStart() {
         super.onStart()
@@ -93,6 +98,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        galleryLauncher =
+            registerForActivityResult(GalleryPhotoContract()) { galleryResponse ->
+                galleryResponse?.uri?.let {
+                    handleImageCapture(
+                        uri = it,
+                        photoReason = galleryResponse.reason,
+                        id = galleryResponse.id,
+                        mainNavController = mainNavController,
+                    )
+                }
+            }
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -245,7 +261,7 @@ class MainActivity : ComponentActivity() {
                                     onCategoryPhotoRequest = { categoryId ->
                                         if (requestCameraPermission()) {
                                             mainNavController.navigate(
-                                                Destination.Camera.withReason(
+                                                Destination.PhotoChooserDialog.withReason(
                                                     CATEGORY_PHOTO,
                                                     categoryId,
                                                 ),
@@ -393,6 +409,12 @@ class MainActivity : ComponentActivity() {
                                         mainNavController.popBackStack()
                                     },
                                     onGalleryChoosen = {
+                                        galleryLauncher.launch(
+                                            GalleryRequest(
+                                                id = id,
+                                                reason = reason,
+                                            ),
+                                        )
                                     },
                                     onCameraChoosen = {
                                         if (requestCameraPermission()) {
@@ -424,6 +446,14 @@ class MainActivity : ComponentActivity() {
         } else {
             Log.i("Spendings", "Permission NOT Granted")
         }
+    }
+
+    private fun requestGallery() {
+        val pickPhoto = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        )
+        startActivityForResult(pickPhoto, 1) // one can be replaced with any action code
     }
 
     private fun requestCameraPermission(): Boolean {
