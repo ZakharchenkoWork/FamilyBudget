@@ -47,6 +47,7 @@ fun SpendingEditPage(
     state: SpendingEditState,
     onPhotoRequest: (id: String) -> Unit,
     onCategoryPhotoRequest: (id: String) -> Unit,
+    onCalendarOpened: (String) -> Unit,
 ) {
     Column {
         TopBar(title = stringResource(id = R.string.adding_spending_title))
@@ -65,13 +66,18 @@ fun SpendingEditPage(
             Information(
                 state = state,
                 onPhotoRequest = onPhotoRequest,
+                onCalendarOpened = onCalendarOpened,
             )
         }
     }
 }
 
 @Composable
-fun Information(state: SpendingEditState, onPhotoRequest: (id: String) -> Unit) {
+fun Information(
+    state: SpendingEditState,
+    onPhotoRequest: (id: String) -> Unit,
+    onCalendarOpened: (String) -> Unit,
+) {
     Box {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -113,9 +119,16 @@ fun Information(state: SpendingEditState, onPhotoRequest: (id: String) -> Unit) 
                         modifier = Modifier
                             .padding(horizontal = 32.dp, vertical = 4.dp)
                             .clickable {
-                                state.onCalendarVisibilityChanged(true)
+                                onCalendarOpened(state.dateText)
                             },
-                        text = state.dateText,
+                        text = if (state.dateText.isNotEmpty()) {
+                            state.dateText
+                        } else {
+                            stringResource(
+                                id = R.string.date,
+                            )
+                        },
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -124,9 +137,6 @@ fun Information(state: SpendingEditState, onPhotoRequest: (id: String) -> Unit) 
                 textId = R.string.spending_details,
             )
             DatailsList(state)
-        }
-        if (state.isCalendarOpen) {
-            // Calendar()
         }
     }
 }
@@ -314,8 +324,6 @@ fun SpendingEditPageCategoriesPreview() {
                     amountText = "",
                     dateText = "",
                     detailsList = emptyList(),
-                    isCalendarOpen = false,
-                    onCalendarVisibilityChanged = { },
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     onAddNewDetail = {},
@@ -324,9 +332,11 @@ fun SpendingEditPageCategoriesPreview() {
                     photoUri = null,
                     onPhotoUriChanged = { _ -> },
                     onSave = { },
+                    onDateChanged = { },
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
+                onCalendarOpened = { },
             )
         }
     }
@@ -359,8 +369,6 @@ fun SpendingEditPageDetailsPreview() {
                     amountText = "19.50",
                     dateText = "19.10.2023",
                     detailsList = Mock.mockDetailsList,
-                    isCalendarOpen = false,
-                    onCalendarVisibilityChanged = {},
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     onAddNewDetail = {},
@@ -369,9 +377,11 @@ fun SpendingEditPageDetailsPreview() {
                     photoUri = null,
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
+                    onDateChanged = { },
                 ),
                 onPhotoRequest = { },
                 onCategoryPhotoRequest = { _ -> },
+                onCalendarOpened = { },
             )
         }
     }

@@ -29,14 +29,7 @@ class SpendingEditViewModel(
     private var photoUri: Uri? = null
     private var detailsList: List<SpendingDetail> = emptyList()
     private var isCategoriesOpened: Boolean = true
-    private var isCalendarOpen: Boolean = false
     private var isManualTotal: Boolean = false
-
-    private fun addSpendingPhoto(photoUri: String?, id: String?) {
-        if (id == spendingId) {
-            onPhotoUriChanged(Uri.parse(photoUri))
-        }
-    }
 
     private val onDetailAmountChanged: (Int, String) -> Unit = { detailIndex, amount ->
         detailsList = ArrayList(detailsList)
@@ -65,7 +58,7 @@ class SpendingEditViewModel(
     private fun updateTotal(): String {
         if (!isManualTotal) {
             var total = 0.0
-            detailsList.forEach { total += it.amount.toDouble() }
+            detailsList.forEach { total += if (it.amount.isNotEmpty()) it.amount.toDouble() else 0.0 }
             amountText = total.toString()
         }
         return amountText
@@ -87,12 +80,12 @@ class SpendingEditViewModel(
         }
         _spendingEditStateFlow.update { spendingEditState }
     }
-    private val onPhotoUriChanged: (photoUri: Uri?) -> Unit = {
-        photoUri = it
+    private val onDateChanged: (String) -> Unit = {
+        dateText = it
         _spendingEditStateFlow.update { spendingEditState }
     }
-    private val onCalendarVisibilityChanged: (Boolean) -> Unit = {
-        isCalendarOpen = it
+    private val onPhotoUriChanged: (photoUri: Uri?) -> Unit = {
+        photoUri = it
         _spendingEditStateFlow.update { spendingEditState }
     }
 
@@ -119,8 +112,6 @@ class SpendingEditViewModel(
             amountText = updateTotal(),
             detailsList = detailsList,
             dateText = dateText,
-            isCalendarOpen = isCalendarOpen,
-            onCalendarVisibilityChanged = onCalendarVisibilityChanged,
             onNamingTextChanged = onNamingTextChanged,
             onAmountTextChanged = onAmountTextChanged,
             onAddNewDetail = onAddNewDetail,
@@ -129,6 +120,7 @@ class SpendingEditViewModel(
             photoUri = photoUri,
             onPhotoUriChanged = onPhotoUriChanged,
             onSave = onSave,
+            onDateChanged = onDateChanged,
         )
 
     private val _spendingEditStateFlow = MutableStateFlow(spendingEditState)
@@ -141,19 +133,6 @@ class SpendingEditViewModel(
                 detailsList = spendingsRepository.getDetails(spendingId)
             }
         }
-
-    init {
-        /* viewModelScope.launch {
-             savedStateHandle.getStateFlow<String?>(PHOTO_REASON_ARG, null)
-                 .collectLatest {
-                     if (it == SPENDING_PHOTO) {
-                         addSpendingPhoto(savedStateHandle[PHOTO_KEY], savedStateHandle[ID_ARG])
-                     }
-                 }
-         }*/
-
-        // spendingEditState.categoryState.onCategoryPhotoUriChanged(categoryPhotoUri?.value.toString())
-    }
 }
 
 data class SpendingEditState(
@@ -166,14 +145,13 @@ data class SpendingEditState(
     val dateText: String,
     var photoUri: Uri?,
     val detailsList: List<SpendingDetail>,
-    val isCalendarOpen: Boolean,
-    val onCalendarVisibilityChanged: (Boolean) -> Unit,
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onAddNewDetail: () -> Unit,
     val onDetailNameChanged: (Int, String) -> Unit,
     val onDetailAmountChanged: (Int, String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
+    val onDateChanged: (String) -> Unit,
     val onSave: () -> Unit,
 )
 

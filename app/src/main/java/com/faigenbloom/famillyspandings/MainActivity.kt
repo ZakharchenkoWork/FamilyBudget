@@ -39,8 +39,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.faigenbloom.famillyspandings.budget.BudgetPage
 import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
+import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
 import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
+import com.faigenbloom.famillyspandings.comon.Calendar
 import com.faigenbloom.famillyspandings.comon.CameraScreen
+import com.faigenbloom.famillyspandings.comon.DATE
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.GalleryPhotoContract
 import com.faigenbloom.famillyspandings.comon.GalleryRequest
@@ -215,37 +218,41 @@ class MainActivity : ComponentActivity() {
                                 route = Destination.SpendingEditPage.route,
                             ) {
                                 withBottomNavigation = false
-
+                                val savedStateHandle = it.savedStateHandle
                                 val state by koinViewModel<SpendingEditViewModel>()
                                     .spendingEditStateFlow
                                     .collectAsState()
-                                savedStateHandle
-                                    ?.getStateFlow<String?>(PHOTO_REASON_ARG, null)
-                                    ?.collectAsState()?.value?.let { reason ->
-                                        val id: String? = savedStateHandle[ID_ARG]
-                                        when (reason) {
-                                            SPENDING_PHOTO -> {
-                                                if (id == state.spendingId) {
-                                                    state.onPhotoUriChanged(
-                                                        savedStateHandle[PHOTO_KEY],
-                                                    )
-                                                } else {
-                                                }
-                                            }
+                                savedStateHandle.getStateFlow<String?>(DATE, "")
+                                    .collectAsState().value?.let { calendarDate ->
+                                    state.onDateChanged(calendarDate)
+                                }
 
-                                            CATEGORY_PHOTO -> {
-                                                val uri: Uri? = savedStateHandle[PHOTO_KEY]
-                                                uri?.let {
-                                                    state.categoryState.onCategoryPhotoUriChanged(
-                                                        id ?: "",
-                                                        it,
-                                                    )
-                                                }
+                                savedStateHandle.getStateFlow<String?>(PHOTO_REASON_ARG, null)
+                                    .collectAsState().value?.let { reason ->
+                                    val id: String? = savedStateHandle[ID_ARG]
+                                    when (reason) {
+                                        SPENDING_PHOTO -> {
+                                            if (id == state.spendingId) {
+                                                state.onPhotoUriChanged(
+                                                    savedStateHandle[PHOTO_KEY],
+                                                )
+                                            } else {
                                             }
-
-                                            else -> {}
                                         }
+
+                                        CATEGORY_PHOTO -> {
+                                            val uri: Uri? = savedStateHandle[PHOTO_KEY]
+                                            uri?.let {
+                                                state.categoryState.onCategoryPhotoUriChanged(
+                                                    id ?: "",
+                                                    it,
+                                                )
+                                            }
+                                        }
+
+                                        else -> {}
                                     }
+                                }
                                 SpendingEditPage(
                                     state = state,
                                     onPhotoRequest = { spendingId ->
@@ -267,6 +274,11 @@ class MainActivity : ComponentActivity() {
                                                 ),
                                             )
                                         }
+                                    },
+                                    onCalendarOpened = {
+                                        mainNavController.navigate(
+                                            Destination.CalendarDialog.withDate(it),
+                                        )
                                     },
                                 )
                             }
@@ -429,6 +441,34 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
+                            dialog(
+                                route = Destination.CalendarDialog.route,
+                                dialogProperties = DialogProperties(
+                                    usePlatformDefaultWidth = false,
+                                    dismissOnBackPress = true,
+                                    dismissOnClickOutside = true,
+                                ),
+                                arguments = listOf(
+                                    navArgument(CALENDAR_START_DATE_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                ),
+                            ) { backStackEntry ->
+                                val startDate =
+                                    backStackEntry.arguments?.getString(CALENDAR_START_DATE_ARG)
+                                        ?: ""
+
+                                Calendar(
+                                    startDate = startDate,
+                                    onDatePicked = { date ->
+                                        mainNavController.popBack(
+                                            hashMapOf(
+                                                DATE to date,
+                                            ),
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -480,10 +520,11 @@ class MainActivity : ComponentActivity() {
 
     private fun handleQRCapture(text: String, mainNavController: NavController) {
         lifecycleScope.launch {
-            mainNavController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set(QR_KEY, text)
-            mainNavController.popBackStack(Destination.FamilyPage.route, false)
+            mainNavController.popBack(
+                hashMapOf(
+                    QR_KEY to text,
+                ),
+            )
         }
     }
 
@@ -494,14 +535,24 @@ class MainActivity : ComponentActivity() {
         mainNavController: NavController,
     ) {
         lifecycleScope.launch {
-            mainNavController.previousBackStackEntry
-                ?.savedStateHandle?.apply {
-                    set(PHOTO_REASON_ARG, photoReason)
-                    set(PHOTO_KEY, uri)
-                    set(ID_ARG, id)
-                }
-            mainNavController.popBackStack(Destination.SpendingEditPage.route, false)
+            mainNavController.popBack(
+                hashMapOf(
+                    PHOTO_REASON_ARG to photoReason,
+                    PHOTO_KEY to uri,
+                    ID_ARG to id,
+                ),
+            )
         }
+    }
+
+    fun NavController.popBack(data: HashMap<String, Any?>) {
+        previousBackStackEntry
+            ?.savedStateHandle?.apply {
+                data.forEach {
+                    set(it.key, it.value)
+                }
+            }
+        mainNavController.popBackStack()
     }
 
     private fun getOutputDirectory(): File {

@@ -61,5 +61,6 @@
     <string name="photo_chooser_title">Choose source</string>
     <string name="photo_chooser_gallery">Gallery</string>
     <string name="photo_chooser_camera">Photo</string>
+    <string name="date">Date</string>
 
 </resources>
