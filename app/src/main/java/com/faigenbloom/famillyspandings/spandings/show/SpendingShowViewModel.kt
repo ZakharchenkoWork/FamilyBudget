@@ -6,11 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.categories.CategoryData
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.toLocalDate
-import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class SpendingShowViewModel(
     savedStateHandle: SavedStateHandle,
@@ -20,7 +21,7 @@ class SpendingShowViewModel(
 
     private val _spendingsStateFlow = MutableStateFlow(
         SpendingShowState(
-            spending = SpendingEntity(
+            spending = SpendingForUI(
                 id = "",
                 name = "",
                 amount = 0L,
@@ -40,14 +41,37 @@ class SpendingShowViewModel(
         viewModelScope.launch {
             if (spendingId.isNotEmpty()) {
                 val spending = repository.getSpending(spendingId)
+                val category = repository.getCategory(spending.categoryId)
+                val spendingDetails = repository.getSpendingDetails(spendingId)
+
                 _spendingsStateFlow.update {
-                    SpendingShowState(spending = spending)
+                    SpendingShowState(
+                        spending = SpendingForUI(
+                            id = spending.id,
+                            name = spending.name,
+                            amount = spending.amount,
+                            date = spending.date.toLocalDate(),
+                            category = CategoryData.fromEntity(category),
+                            photoUri = spending.photoUri,
+                            details = spendingDetails.map { SpendingDetail.fromEntity(it) },
+                        ),
+                    )
                 }
             }
         }
     }
 }
 
+data class SpendingForUI(
+    val id: String,
+    val name: String,
+    val amount: Long,
+    val date: LocalDate,
+    val category: CategoryData,
+    val photoUri: String?,
+    val details: List<SpendingDetail>,
+)
+
 data class SpendingShowState(
-    val spending: SpendingEntity,
+    val spending: SpendingForUI,
 )

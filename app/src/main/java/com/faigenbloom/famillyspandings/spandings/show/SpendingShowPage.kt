@@ -35,7 +35,6 @@ import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.comon.toReadable
 import com.faigenbloom.famillyspandings.comon.toReadableMoney
-import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
@@ -106,7 +105,7 @@ fun Stripe(modifier: Modifier = Modifier, text: String, textColor: Color) {
 @Composable
 fun Information(
     modifier: Modifier = Modifier,
-    spending: SpendingEntity,
+    spending: SpendingForUI,
 ) {
     Box(modifier = modifier) {
         Column {
@@ -209,7 +208,7 @@ fun SpendingEditPageDetailsPreview() {
         Scaffold { _ ->
             SpendingShowPage(
                 state = SpendingShowState(
-                    spending = Mock.mockSpendingEntity,
+                    spending = Mock.mockSpendingForUI,
                 ),
                 onEditClicked = {},
             )

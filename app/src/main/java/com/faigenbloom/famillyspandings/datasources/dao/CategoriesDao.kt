@@ -22,4 +22,7 @@ interface CategoriesDao {
 
     @Query("UPDATE $TABLE_NAME SET $COLUMN_PHOTO = :photoUri WHERE $COLUMN_ID = :id")
     suspend fun updatePhoto(id: String, photoUri: String)
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id")
+    suspend fun getCategory(id: String): CategoryEntity
 }

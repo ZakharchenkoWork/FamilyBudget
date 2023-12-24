@@ -8,7 +8,7 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity.Comp
 
 @Entity(tableName = TABLE_NAME)
 data class CategoryEntity(
-    @PrimaryKey
+    @PrimaryKey()
     @ColumnInfo(name = COLUMN_ID)
     val id: String,
     @ColumnInfo(name = COLUMN_IS_DEFAULT) val isDefault: Boolean,

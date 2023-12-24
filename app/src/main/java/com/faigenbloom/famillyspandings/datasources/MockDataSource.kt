@@ -3,6 +3,7 @@ package com.faigenbloom.famillyspandings.datasources
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
@@ -35,7 +36,12 @@ class MockDataSource : BaseDataSource {
         }
     }
 
-    override suspend fun saveSpending(spending: SpendingEntity) {}
+    override suspend fun saveSpending(
+        spending: SpendingEntity,
+        details: List<SpendingDetailEntity>,
+    ) {
+    }
+
     override suspend fun getDetails(spendingId: String): List<SpendingDetail> {
         return SpendingsEditMock.mockDetailsList
     }
@@ -45,7 +51,14 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
-        return SpendingsShowMock.mockSpendingEntity
+        return SpendingEntity(
+            id = "",
+            name = "",
+            amount = 0L,
+            date = 0L,
+            categoryId = "",
+            photoUri = null,
+        )
     }
 
     override suspend fun getCategoriesSumaries(): List<CategorySummary> {
@@ -65,6 +78,14 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
+    }
+
+    override suspend fun getCategory(id: String): CategoryEntity {
+        return CategoryEntity("sadf", false)
+    }
+
+    override suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity> {
+        return emptyList()
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

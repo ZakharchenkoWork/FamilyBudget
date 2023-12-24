@@ -1,14 +1,13 @@
 package com.faigenbloom.famillyspandings.spandings.show
 
 import com.faigenbloom.famillyspandings.comon.toLocalDate
-import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 
 typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
 
 class Mock {
     companion object {
-        val mockSpendingEntity = SpendingEntity(
+        val mockSpendingForUI = SpendingForUI(
             id = "asdfasd",
             name = "Home",
             amount = 1000L,

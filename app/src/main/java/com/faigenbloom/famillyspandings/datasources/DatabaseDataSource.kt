@@ -2,6 +2,8 @@ package com.faigenbloom.famillyspandings.datasources
 
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
@@ -29,8 +31,20 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         appDatabase.categoriesDao().insert(categoryEntity)
     }
 
-    override suspend fun saveSpending(spending: SpendingEntity) {
-        TODO("Not yet implemented")
+    override suspend fun saveSpending(
+        spending: SpendingEntity,
+        details: List<SpendingDetailEntity>,
+    ) {
+        appDatabase.spendingsDao().addSpending(spending)
+        appDatabase.spendingsDao().addSpendingDetails(details)
+        appDatabase.spendingsDao().addSpendingsCrossRef(
+            details.map { detail ->
+                SpendingDetailsCrossRef(
+                    spendingId = spending.id,
+                    detailId = detail.id,
+                )
+            },
+        )
     }
 
     override suspend fun getDetails(spendingId: String): List<SpendingDetail> {
@@ -64,5 +78,14 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
         appDatabase.categoriesDao().updatePhoto(id, photoUri)
+    }
+
+    override suspend fun getCategory(id: String): CategoryEntity {
+        return appDatabase.categoriesDao().getCategory(id)
+    }
+
+    override suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity> {
+        val spendingsCrossRef = appDatabase.spendingsDao().getSpendingsCrossRef(spendingId)
+        return appDatabase.spendingsDao().getSpendingDetails(spendingsCrossRef.map { it.detailId })
     }
 }

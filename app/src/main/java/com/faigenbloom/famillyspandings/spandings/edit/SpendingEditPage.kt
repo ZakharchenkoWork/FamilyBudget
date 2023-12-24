@@ -50,7 +50,11 @@ fun SpendingEditPage(
     onCalendarOpened: (String) -> Unit,
 ) {
     Column {
-        TopBar(title = stringResource(id = R.string.adding_spending_title))
+        TopBar(
+            title = stringResource(id = R.string.adding_spending_title),
+            endIcon = R.drawable.ok,
+            onEndIconCLicked = { state.onSave() },
+        )
         StripeBar(
             textId = R.string.choose_category,
             secondTabTextId = R.string.spending_information,

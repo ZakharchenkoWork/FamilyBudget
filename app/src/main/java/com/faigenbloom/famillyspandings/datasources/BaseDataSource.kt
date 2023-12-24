@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.datasources
 
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
@@ -21,7 +22,7 @@ interface BaseDataSource {
     suspend fun getCategories(): List<CategoryEntity>
     suspend fun addCategory(categoryEntity: CategoryEntity)
 
-    suspend fun saveSpending(spending: SpendingEntity)
+    suspend fun saveSpending(spending: SpendingEntity, details: List<SpendingDetailEntity>)
     suspend fun getDetails(spendingId: String): List<SpendingDetail>
     suspend fun getAllSpendings(): List<SpendingData>
     suspend fun getSpending(id: String): SpendingEntity
@@ -37,4 +38,6 @@ interface BaseDataSource {
     }
 
     suspend fun updateCategoryPhoto(id: String, photoUri: String)
+    suspend fun getCategory(id: String): CategoryEntity
+    suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>
 }

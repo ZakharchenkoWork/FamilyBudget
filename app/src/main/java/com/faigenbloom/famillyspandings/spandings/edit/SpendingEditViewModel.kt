@@ -8,8 +8,9 @@ import com.faigenbloom.famillyspandings.categories.CategoriesRepository
 import com.faigenbloom.famillyspandings.categories.CategoriesState
 import com.faigenbloom.famillyspandings.categories.CategoriesViewModel
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
-import com.faigenbloom.famillyspandings.comon.toLocalDate
-import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.comon.checkOrGenId
+import com.faigenbloom.famillyspandings.comon.toReadableMoney
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -42,15 +43,13 @@ class SpendingEditViewModel(
     private val onSave: () -> Unit = {
         viewModelScope.launch {
             spendingsRepository.saveSpending(
-                SpendingEntity(
-                    id = spendingId,
-                    name = namingText,
-                    amount = amountText.toDatabaseLong(),
-                    date = dateText.toLocalDate(),
-                    category = getSelectedCategory(),
-                    photoUri = photoUri,
-                    details = detailsList,
-                ),
+                id = spendingId,
+                name = namingText,
+                amount = amountText,
+                date = dateText,
+                category = getSelectedCategory(),
+                photoUri = photoUri,
+                details = detailsList.map { it.mapToEntity() },
             )
         }
     }
@@ -155,7 +154,25 @@ data class SpendingEditState(
     val onSave: () -> Unit,
 )
 
-data class SpendingDetail(val id: String, val name: String, val amount: String)
+data class SpendingDetail(val id: String, val name: String, val amount: String) {
+    fun mapToEntity(): SpendingDetailEntity {
+        return SpendingDetailEntity(
+            id = id.checkOrGenId(),
+            name = name,
+            amount = amount.toDatabaseLong(),
+        )
+    }
+
+    companion object {
+        fun fromEntity(entity: SpendingDetailEntity): SpendingDetail {
+            return SpendingDetail(
+                id = entity.id,
+                name = entity.name,
+                amount = entity.amount.toReadableMoney(),
+            )
+        }
+    }
+}
 
 fun String.toDatabaseLong(): Long {
     return (this.toDouble() * 100).toLong()
