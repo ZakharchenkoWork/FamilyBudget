@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.spandings.Mock
 import com.faigenbloom.famillyspandings.spandings.SpendingData
@@ -1131,9 +1132,13 @@ fun SpendingItem(
         Image(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-            painter = painterResource(
-                id = item.category.iconId ?: R.drawable.icon,
-            ),
+            painter = item.category.iconUri?.let {
+                rememberImagePainter(it)
+            } ?: item.category.iconId?.let {
+                painterResource(
+                    id = it,
+                )
+            } ?: painterResource(R.drawable.icon),
             contentDescription = null,
         )
         Box(

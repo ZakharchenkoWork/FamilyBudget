@@ -27,6 +27,10 @@ fun LocalDate.toSortableDate(): Int {
     return this.format(DateTimeFormatter.ofPattern("yyyyMMdd")).toInt()
 }
 
+fun LocalDate.toLongDate(): Long {
+    return this.toEpochDay() * 24 * 60 * 60 * 1000
+}
+
 fun String.toLongDate(): Long {
     return this.toLocalDate().toEpochDay() * 24 * 60 * 60 * 1000
 }

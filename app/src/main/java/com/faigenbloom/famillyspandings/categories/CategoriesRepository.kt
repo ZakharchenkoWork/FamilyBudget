@@ -6,7 +6,7 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 
 class CategoriesRepository(private val dataSource: BaseDataSource) {
     suspend fun getCategories(): List<CategoryData> {
-        return dataSource.getCategories().map {
+        return dataSource.getAllCategories().map {
             CategoryData.fromEntity(it)
         }
     }

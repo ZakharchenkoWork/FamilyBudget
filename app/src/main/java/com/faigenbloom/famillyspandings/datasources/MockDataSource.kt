@@ -1,12 +1,12 @@
 package com.faigenbloom.famillyspandings.datasources
 
 import android.util.Log
+import com.faigenbloom.famillyspandings.comon.toLongDate
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
 
@@ -30,7 +30,7 @@ class MockDataSource : BaseDataSource {
         return email == "a" && password == "aaaaaaaa"
     }
 
-    override suspend fun getCategories(): List<CategoryEntity> {
+    override suspend fun getAllCategories(): List<CategoryEntity> {
         return DefaultCategories.values().map { defaultCategory ->
             CategoryEntity(id = defaultCategory.name, isDefault = true)
         }
@@ -42,8 +42,18 @@ class MockDataSource : BaseDataSource {
     ) {
         Log.i(MockDataSource::class.simpleName, "saveSpending")
     }
-    override suspend fun getAllSpendings(): List<SpendingData> {
-        return SpendingsPageMock.spendingsList
+
+    override suspend fun getAllSpendings(): List<SpendingEntity> {
+        return SpendingsPageMock.spendingsList.map {
+            SpendingEntity(
+                id = it.id,
+                name = it.name,
+                amount = it.amount,
+                date = it.date.toLongDate(),
+                categoryId = it.category.id,
+                photoUri = null,
+            )
+        }
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {

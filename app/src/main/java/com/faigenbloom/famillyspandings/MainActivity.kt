@@ -66,7 +66,7 @@ import com.faigenbloom.famillyspandings.register.RegisterPage
 import com.faigenbloom.famillyspandings.register.RegisterPageViewModel
 import com.faigenbloom.famillyspandings.settings.SettingsPage
 import com.faigenbloom.famillyspandings.settings.SettingsPageViewModel
-import com.faigenbloom.famillyspandings.spandings.SpandingsPage
+import com.faigenbloom.famillyspandings.spandings.SpendingsPage
 import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
@@ -200,7 +200,7 @@ class MainActivity : ComponentActivity() {
                                 val state by koinViewModel<SpendingsPageViewModel>()
                                     .spendingsStateFlow
                                     .collectAsState()
-                                SpandingsPage(
+                                SpendingsPage(
                                     modifier = Modifier.padding(
                                         bottom = padding.calculateBottomPadding(),
                                     ),

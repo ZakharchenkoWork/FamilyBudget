@@ -17,7 +17,7 @@ import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun SpandingsPage(
+fun SpendingsPage(
     modifier: Modifier = Modifier,
     state: SpendingsState,
     onOpenSpending: (String) -> Unit,
@@ -37,7 +37,7 @@ fun SpandingsPage(
 fun SpandingsPagePreview() {
     FamillySpandingsTheme {
         Scaffold { _ ->
-            SpandingsPage(
+            SpendingsPage(
                 onOpenSpending = {},
                 state = SpendingsState(
                     spendings =
