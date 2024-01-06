@@ -52,7 +52,7 @@ fun SpendingEditPage(
     Column {
         TopBar(
             title = stringResource(id = R.string.adding_spending_title),
-            endIcon = R.drawable.ok,
+            endIcon = if (state.isOkActive) R.drawable.icon_ok else R.drawable.icon_ok_inactive,
             onEndIconCLicked = { state.onSave() },
         )
         StripeBar(
@@ -125,9 +125,7 @@ fun Information(
                             .clickable {
                                 onCalendarOpened(state.dateText)
                             },
-                        text = if (state.dateText.isNotEmpty()) {
-                            state.dateText
-                        } else {
+                        text = state.dateText.ifEmpty {
                             stringResource(
                                 id = R.string.date,
                             )
@@ -214,6 +212,7 @@ fun DetailsItem(
                     .weight(0.5f)
                     .padding(horizontal = 8.dp),
                 text = spendingDetail.name,
+                textStyle = MaterialTheme.typography.bodyMedium,
                 label = stringResource(R.string.spending_name),
                 onValueChange = { state.onDetailNameChanged(detailIndex, it) },
             )
@@ -224,6 +223,7 @@ fun DetailsItem(
                 textAlign = TextAlign.End,
                 text = spendingDetail.amount,
                 textFieldType = TextFieldType.Money,
+                textStyle = MaterialTheme.typography.bodyMedium,
                 label = stringResource(R.string.spending_details_amount),
                 onValueChange = { state.onDetailAmountChanged(detailIndex, it) },
             )
@@ -337,6 +337,8 @@ fun SpendingEditPageCategoriesPreview() {
                     onPhotoUriChanged = { _ -> },
                     onSave = { },
                     onDateChanged = { },
+                    onNext = {},
+                    isOkActive = false,
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
@@ -382,10 +384,12 @@ fun SpendingEditPageDetailsPreview() {
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
                     onDateChanged = { },
+                    onNext = {},
+                    isOkActive = true,
                 ),
-                onPhotoRequest = { },
+                onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
-                onCalendarOpened = { },
+                onCalendarOpened = {},
             )
         }
     }

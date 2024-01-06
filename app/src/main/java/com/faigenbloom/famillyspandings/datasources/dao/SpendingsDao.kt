@@ -25,6 +25,9 @@ interface SpendingsDao {
     @Query("SELECT * FROM ${SpendingDetailsCrossRef.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_ID} = :id")
     suspend fun getSpendingsCrossRef(id: String): List<SpendingDetailsCrossRef>
 
+    @Query("SELECT * FROM ${SpendingEntity.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_ID} = :id")
+    suspend fun getSpending(id: String): SpendingEntity
+
     @Query("SELECT * FROM ${SpendingDetailEntity.TABLE_NAME} WHERE ${SpendingDetailEntity.COLUMN_ID} IN (:iDs)")
     suspend fun getSpendingDetails(iDs: List<String>): List<SpendingDetailEntity>
 }

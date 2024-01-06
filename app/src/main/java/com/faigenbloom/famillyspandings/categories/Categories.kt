@@ -98,7 +98,7 @@ fun Category(
             Image(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                painter = painterResource(id = R.drawable.ok),
+                painter = painterResource(id = R.drawable.icon_ok),
                 contentDescription = null,
             )
         }
@@ -147,7 +147,7 @@ fun AddNewCategory(state: CategoriesState) {
                     },
                 )
                 .padding(horizontal = 8.dp),
-            painter = painterResource(id = R.drawable.ok),
+            painter = painterResource(id = R.drawable.icon_ok),
             contentDescription = null,
         )
     }

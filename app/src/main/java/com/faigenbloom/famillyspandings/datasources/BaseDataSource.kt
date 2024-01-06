@@ -5,7 +5,6 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
 import java.util.Currency
 import java.util.Locale
@@ -23,7 +22,6 @@ interface BaseDataSource {
     suspend fun addCategory(categoryEntity: CategoryEntity)
 
     suspend fun saveSpending(spending: SpendingEntity, details: List<SpendingDetailEntity>)
-    suspend fun getDetails(spendingId: String): List<SpendingDetail>
     suspend fun getAllSpendings(): List<SpendingData>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>

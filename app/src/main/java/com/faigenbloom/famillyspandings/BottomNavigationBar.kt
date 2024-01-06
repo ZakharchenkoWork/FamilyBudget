@@ -43,7 +43,7 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
             imageUnChecked = R.drawable.icon_budget,
         ),
         BarItem(
-            destination = Destination.SpendingEditPage,
+            destination = Destination.NewSpendingPage,
             imageChecked = R.drawable.plus_filled,
             imageUnChecked = R.drawable.plus_not_filled,
         ),

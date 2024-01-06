@@ -8,6 +8,7 @@ import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 
 @Dao
 interface BudgetDao {
+
     @Query("SELECT * FROM ${BudgetEntity.TABLE_NAME}")
     fun getBudget(): BudgetEntity?
 

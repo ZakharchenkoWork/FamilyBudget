@@ -17,10 +17,11 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
         category: CategoryData,
         photoUri: Uri?,
         details: List<SpendingDetailEntity>,
-    ) {
+    ): String {
+        val spendingId = id.checkOrGenId()
         dataSource.saveSpending(
             SpendingEntity(
-                id = id.checkOrGenId(),
+                id = spendingId,
                 name = name,
                 amount = amount.toDatabaseLong(),
                 date = date.toLongDate(),
@@ -29,11 +30,16 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
             ),
             details = details,
         )
+        return spendingId
     }
 
-    suspend fun getDetails(spendingId: String) = if (spendingId.isEmpty()) {
+    suspend fun getSpending(id: String): SpendingEntity {
+        return dataSource.getSpending(id)
+    }
+
+    suspend fun getSpendingDetails(spendingId: String) = if (spendingId.isEmpty()) {
         emptyList()
     } else {
-        dataSource.getDetails(spendingId)
+        dataSource.getSpendingDetails(spendingId)
     }
 }

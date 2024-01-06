@@ -50,9 +50,10 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
             val (topStripe, info, bottomStripe) = createRefs()
 
             Stripe(
-                modifier = Modifier.constrainAs(topStripe) {
-                    top.linkTo(parent.top, margin = 32.dp)
-                }
+                modifier = Modifier
+                    .constrainAs(topStripe) {
+                        top.linkTo(parent.top, margin = 32.dp)
+                    }
                     .background(
                         color = MaterialTheme.colorScheme.secondary,
                     ),
@@ -60,17 +61,21 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
                 textColor = MaterialTheme.colorScheme.tertiary,
             )
             Information(
-                modifier = Modifier.constrainAs(info) {
-                    top.linkTo(topStripe.top, margin = 8.dp)
-                }.padding(bottom = 32.dp),
+                modifier = Modifier
+                    .constrainAs(info) {
+                        top.linkTo(topStripe.top, margin = 8.dp)
+                    }
+                    .padding(bottom = 32.dp),
                 spending = state.spending,
             )
             Stripe(
-                modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                ).constrainAs(bottomStripe) {
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
-                },
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                    )
+                    .constrainAs(bottomStripe) {
+                        bottom.linkTo(parent.bottom, margin = 16.dp)
+                    },
                 text = state.spending.amount.toReadableMoney(),
                 textColor = MaterialTheme.colorScheme.onPrimary,
             )
@@ -117,7 +122,8 @@ fun Information(
                     contentAlignment = Alignment.Center,
                 ) {
                     Image(
-                        modifier = Modifier.size(170.dp)
+                        modifier = Modifier
+                            .size(170.dp)
                             .clip(CircleShape),
                         painter = spending.photoUri?.let {
                             rememberImagePainter(it) {
@@ -125,6 +131,10 @@ fun Information(
                             }
                         } ?: spending.category.iconId?.let {
                             painterResource(spending.category.iconId)
+                        } ?: spending.category.iconUri?.let {
+                            rememberImagePainter(it) {
+                                transformations(CircleCropTransformation())
+                            }
                         } ?: painterResource(id = R.drawable.photo),
                         contentDescription = "",
                     )
@@ -137,13 +147,16 @@ fun Information(
                         text = stringResource(id = R.string.category),
                         color = MaterialTheme.colorScheme.secondary,
                     )
-                    spending.category.nameId?.let {
-                        Text(
-                            text = stringResource(id = it),
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                    val categoryName = spending.category.nameId?.let {
+                        stringResource(id = it)
+                    } ?: spending.category.name ?: ""
+
+                    Text(
+                        text = categoryName,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold,
+                    )
+
                     Text(
                         text = spending.date.toReadable(),
                         color = MaterialTheme.colorScheme.secondary,
@@ -181,6 +194,7 @@ fun DetailsItem(
                 modifier = Modifier
                     .weight(0.5f)
                     .padding(horizontal = 8.dp),
+                color = MaterialTheme.colorScheme.onBackground,
                 text = spendingDetail.name,
             )
             Text(
@@ -188,6 +202,7 @@ fun DetailsItem(
                     .weight(0.5f)
                     .padding(horizontal = 8.dp),
                 textAlign = TextAlign.End,
+                color = MaterialTheme.colorScheme.onBackground,
                 text = spendingDetail.amount,
             )
         }

@@ -6,7 +6,6 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntit
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
 
 class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
@@ -47,16 +46,12 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         )
     }
 
-    override suspend fun getDetails(spendingId: String): List<SpendingDetail> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun getAllSpendings(): List<SpendingData> {
         TODO("Not yet implemented")
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
-        TODO("Not yet implemented")
+        return appDatabase.spendingsDao().getSpending(id)
     }
 
     override suspend fun getCategoriesSumaries(): List<CategorySummary> {

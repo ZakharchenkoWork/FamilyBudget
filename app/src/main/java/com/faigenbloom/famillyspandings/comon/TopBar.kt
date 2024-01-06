@@ -3,6 +3,7 @@
 package com.faigenbloom.famillyspandings.comon
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +59,7 @@ fun TopBar(
                 modifier = Modifier.wrapContentWidth(),
             ) {
                 preEndIcon?.let { icon ->
-                    Icon(
+                    Image(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(24.dp)
@@ -69,11 +70,10 @@ fun TopBar(
                             },
                         painter = painterResource(id = icon),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary,
                     )
                 }
                 endIcon?.let { icon ->
-                    Icon(
+                    Image(
                         modifier = Modifier.size(24.dp)
                             .clickable {
                                 onEndIconCLicked?.let {
@@ -82,7 +82,6 @@ fun TopBar(
                             },
                         painter = painterResource(id = icon),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }

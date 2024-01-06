@@ -1,5 +1,6 @@
 package com.faigenbloom.famillyspandings.datasources
 
+import android.util.Log
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
@@ -7,7 +8,6 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntit
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.spandings.edit.Mock
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
 
 typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
@@ -40,12 +40,8 @@ class MockDataSource : BaseDataSource {
         spending: SpendingEntity,
         details: List<SpendingDetailEntity>,
     ) {
+        Log.i(MockDataSource::class.simpleName, "saveSpending")
     }
-
-    override suspend fun getDetails(spendingId: String): List<SpendingDetail> {
-        return SpendingsEditMock.mockDetailsList
-    }
-
     override suspend fun getAllSpendings(): List<SpendingData> {
         return SpendingsPageMock.spendingsList
     }

@@ -71,7 +71,7 @@ fun Calendar(
                             onDatePicked(it.toReadableDate())
                         }
                     },
-                painter = painterResource(id = R.drawable.ok),
+                painter = painterResource(id = R.drawable.icon_ok),
                 contentDescription = null,
             )
         }

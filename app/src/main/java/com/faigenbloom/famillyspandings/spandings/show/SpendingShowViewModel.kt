@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.categories.CategoryData
-import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
+import com.faigenbloom.famillyspandings.comon.ID_ARG
 import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +17,12 @@ class SpendingShowViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: SpendingsRepository,
 ) : ViewModel() {
-    private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
+    private var spendingId: String = savedStateHandle[ID_ARG] ?: ""
 
     private val _spendingsStateFlow = MutableStateFlow(
         SpendingShowState(
             spending = SpendingForUI(
-                id = "",
+                id = spendingId,
                 name = "",
                 amount = 0L,
                 date = "01.01.1970".toLocalDate(),
