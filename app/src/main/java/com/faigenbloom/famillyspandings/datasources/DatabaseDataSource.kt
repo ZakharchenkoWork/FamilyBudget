@@ -1,5 +1,6 @@
 package com.faigenbloom.famillyspandings.datasources
 
+import com.faigenbloom.famillyspandings.categories.CategoryData
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
@@ -54,7 +55,33 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     }
 
     override suspend fun getCategoriesSumaries(): List<CategorySummary> {
-        TODO("Not yet implemented")
+        val allCategories = getAllCategories().map {
+            CategoryData.fromEntity(it)
+        }
+        val spendings = appDatabase.spendingsDao().getSpendings()
+        val summaries = ArrayList<CategorySummary>()
+        spendings.forEach { spending ->
+            summaries.firstOrNull {
+                it.id == spending.categoryId
+            }?.let {
+                it.amount += spending.amount
+            } ?: kotlin.run {
+                val category = allCategories.first {
+                    it.id == spending.categoryId
+                }
+                summaries.add(
+                    CategorySummary(
+                        id = spending.categoryId,
+                        nameId = category.nameId,
+                        name = category.name,
+                        iconId = category.iconId,
+                        iconUri = category.iconUri,
+                        amount = spending.amount,
+                    ),
+                )
+            }
+        }
+        return summaries
     }
 
     override suspend fun getBudgetData(): BudgetEntity {

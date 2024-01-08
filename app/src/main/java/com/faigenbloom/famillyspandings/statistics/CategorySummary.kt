@@ -3,8 +3,10 @@ package com.faigenbloom.famillyspandings.statistics
 data class CategorySummary(
     val id: String,
     val nameId: Int?,
+    val name: String?,
     val iconId: Int?,
-    val amount: Long,
+    val iconUri: String?,
+    var amount: Long,
 ) {
     var amountPercent: Double = 0.0
 }

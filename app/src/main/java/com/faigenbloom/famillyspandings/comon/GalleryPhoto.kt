@@ -1,28 +1,64 @@
 package com.faigenbloom.famillyspandings.comon
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
+import com.faigenbloom.famillyspandings.R
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class GalleryPhotoContract : ActivityResultContract<GalleryRequest, GalleryResponse?>() {
+class GalleryPhotoContract(activity: Activity) :
+    ActivityResultContract<GalleryRequest, GalleryResponse?>() {
     val visualMedia = ActivityResultContracts.PickVisualMedia()
     var lastInput: GalleryRequest? = null
+    private val outputDirectory: File
+    private val contentResolver = activity.contentResolver
+
+    init {
+        val mediaDir = activity.externalMediaDirs.firstOrNull()?.let {
+            File(it, activity.getString(R.string.app_name)).apply { mkdirs() }
+        }
+
+        outputDirectory = if (mediaDir != null && mediaDir.exists()) mediaDir else activity.filesDir
+    }
+
     override fun createIntent(context: Context, input: GalleryRequest): Intent {
         lastInput = input
-        return visualMedia.createIntent(
-            context,
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+        return Intent.createChooser(
+            Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+            },
+            "Please select...",
         )
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): GalleryResponse {
+        val bitmap = BitmapFactory.decodeStream(
+            contentResolver.openInputStream(
+                visualMedia.parseResult(resultCode, intent) ?: "".toUri(),
+            ),
+        )
+        val outputFile = File(
+            outputDirectory,
+            SimpleDateFormat(
+                "yyyy-MM-dd-HH-mm-ss-SSS",
+                Locale.US,
+            ).format(System.currentTimeMillis()) + ".jpg",
+        )
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(outputFile))
         val galleryResponse = GalleryResponse(
             id = lastInput?.id,
             reason = lastInput?.reason,
-            uri = visualMedia.parseResult(resultCode, intent),
+            uri = outputFile.toUri(),
         )
         lastInput = null
         return galleryResponse

@@ -77,10 +77,10 @@ fun Category(
                 },
             contentScale = ContentScale.Crop,
             painter =
-            item.iconId?.let {
-                painterResource(id = it)
-            } ?: item.iconUri?.let {
+            item.iconUri?.let {
                 rememberImagePainter(it)
+            } ?: item.iconId?.let {
+                painterResource(id = it)
             } ?: painterResource(id = R.drawable.photo),
             contentDescription = null,
         )

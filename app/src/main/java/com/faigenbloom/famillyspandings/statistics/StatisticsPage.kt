@@ -3,6 +3,7 @@ package com.faigenbloom.famillyspandings.statistics
 import BarChart
 import BarData
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.palette.graphics.Palette
+import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.PieChart
 import com.faigenbloom.famillyspandings.comon.PieChartData
@@ -85,7 +90,7 @@ private fun BarChartContent(state: StatisicsState) {
                 bars = state.categorySummary.map {
                     BarData(
                         value = it.amount.toFloat() / state.max.toFloat(),
-                        color = asColor(icon = it.iconId),
+                        color = asColor(it),
                     )
                 },
                 sideLabel = {
@@ -111,7 +116,8 @@ private fun BarChartContent(state: StatisicsState) {
                         modifier = Modifier
                             .background(
                                 color = MaterialTheme.colorScheme.primary,
-                            ).syncronizer(
+                            )
+                            .syncronizer(
                                 scope = rememberCoroutineScope(),
                                 fromState = rememberScrollState,
                                 toState = innerScrollState,
@@ -136,10 +142,8 @@ private fun BarChartContent(state: StatisicsState) {
                                             modifier = Modifier
                                                 .size(barWidth)
                                                 .aspectRatio(1f),
-                                            painter = painterResource(
-                                                id = state.categorySummary[index].iconId
-                                                    ?: R.drawable.photo,
-                                            ),
+                                            painter = state.categorySummary[index].getImage(),
+                                            contentScale = ContentScale.Crop,
                                             contentDescription = "",
                                         )
                                     }
@@ -197,7 +201,7 @@ private fun PieChartContent(state: StatisicsState) {
         chartData = state.categorySummary.map {
             PieChartData(
                 valuePercent = it.amountPercent.toFloat(),
-                color = asColor(icon = it.iconId),
+                color = asColor(categorySummary = it),
             )
         },
         central = {
@@ -247,8 +251,11 @@ fun BottomRow(state: StatisicsState) {
             val categorySummary = state.categorySummary[it]
             Row {
                 Image(
-                    modifier = Modifier.width(80.dp),
-                    painter = painterResource(id = categorySummary.iconId ?: R.drawable.photo),
+                    modifier = Modifier
+                        .width(80.dp)
+                        .aspectRatio(1f),
+                    painter = categorySummary.getImage(),
+                    contentScale = ContentScale.Crop,
                     contentDescription = "",
                 )
                 Column(
@@ -280,17 +287,52 @@ fun BottomRow(state: StatisicsState) {
 }
 
 @Composable
-fun asColor(icon: Int?): Color {
-    return icon?.let {
-        Color(
-            Palette.from(
-                BitmapFactory.decodeResource(
-                    LocalContext.current.resources,
-                    icon,
-                ),
-            ).generate().dominantSwatch?.rgb ?: Color.White.toArgb(),
-        )
-    } ?: Color.White
+fun asColor(categorySummary: CategorySummary): Color {
+    return categorySummary.iconUri?.let {
+        asColor(iconUri = it.toUri())
+    } ?: categorySummary.iconId?.let {
+        asColor(icon = it)
+    } ?: asColor(
+        categorySummary.name ?: categorySummary.nameId?.let { stringResource(id = it) }
+            ?: "",
+    )
+}
+
+@Composable
+fun asColor(name: String): Color {
+    return Color(name.hashCode() and 0xFFFFFF)
+}
+
+@Composable
+fun asColor(icon: Int): Color {
+    return Color(
+        Palette.from(
+            BitmapFactory.decodeResource(
+                LocalContext.current.resources,
+                icon,
+            ),
+        ).generate().dominantSwatch?.rgb ?: Color.White.toArgb(),
+    )
+}
+
+@Composable
+fun asColor(iconUri: Uri): Color {
+    return Color(
+        Palette.from(
+            BitmapFactory.decodeStream(
+                LocalContext.current.contentResolver.openInputStream(iconUri),
+            ),
+        ).generate().dominantSwatch?.rgb ?: Color.White.toArgb(),
+    )
+}
+
+@Composable
+fun CategorySummary.getImage(): Painter {
+    return this.iconUri?.let {
+        rememberImagePainter(it)
+    } ?: this.iconId?.let {
+        painterResource(id = it)
+    } ?: painterResource(id = R.drawable.photo)
 }
 
 @Preview

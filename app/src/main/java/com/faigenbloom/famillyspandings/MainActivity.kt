@@ -3,11 +3,9 @@
 package com.faigenbloom.famillyspandings
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -105,7 +103,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         galleryLauncher =
-            registerForActivityResult(GalleryPhotoContract()) { galleryResponse ->
+            registerForActivityResult(GalleryPhotoContract(this)) { galleryResponse ->
                 galleryResponse?.uri?.let {
                     handleImageCapture(
                         uri = it,
@@ -222,7 +220,7 @@ class MainActivity : ComponentActivity() {
                                         defaultValue = ""
                                     },
                                 ),
-                            ) {
+                            ) { backStack ->
                                 withBottomNavigation = false
 
                                 val viewModel = koinViewModel<SpendingEditViewModel>()
@@ -235,37 +233,37 @@ class MainActivity : ComponentActivity() {
                                 val state by viewModel
                                     .spendingEditStateFlow
                                     .collectAsState()
-                                it.savedStateHandle.getStateFlow<String?>(DATE, "")
-                                    .collectAsState().value?.let { calendarDate ->
+                                backStack.getPoppedArgument(DATE, "")?.let { calendarDate ->
                                     state.onDateChanged(calendarDate)
                                 }
+                                backStack.getPoppedArgument<String>(PHOTO_REASON_ARG)
+                                    ?.let { reason ->
 
-                                it.savedStateHandle.getStateFlow<String?>(PHOTO_REASON_ARG, null)
-                                    .collectAsState().value?.let { reason ->
-                                    val id: String? = it.savedStateHandle[ID_ARG]
-                                    when (reason) {
-                                        SPENDING_PHOTO -> {
-                                            if (id == state.spendingId) {
-                                                state.onPhotoUriChanged(
-                                                    it.savedStateHandle[PHOTO_KEY],
-                                                )
-                                            } else {
+                                        val id: String? = backStack.getPoppedArgument(ID_ARG)
+                                        when (reason) {
+                                            SPENDING_PHOTO -> {
+                                                if (id == state.spendingId) {
+                                                    state.onPhotoUriChanged(
+                                                        backStack.getPoppedArgument(PHOTO_KEY),
+                                                    )
+                                                } else {
+                                                }
                                             }
-                                        }
 
-                                        CATEGORY_PHOTO -> {
-                                            val uri: Uri? = it.savedStateHandle[PHOTO_KEY]
-                                            uri?.let {
-                                                state.categoryState.onCategoryPhotoUriChanged(
-                                                    id ?: "",
-                                                    it,
-                                                )
+                                            CATEGORY_PHOTO -> {
+                                                val uri: Uri? =
+                                                    backStack.getPoppedArgument(PHOTO_KEY)
+                                                uri?.let {
+                                                    state.categoryState.onCategoryPhotoUriChanged(
+                                                        id ?: "",
+                                                        it,
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        else -> {}
+                                            else -> {}
+                                        }
                                     }
-                                }
 
                                 SpendingEditPage(
                                     state = state,
@@ -506,14 +504,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun requestGallery() {
-        val pickPhoto = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        )
-        startActivityForResult(pickPhoto, 1) // one can be replaced with any action code
-    }
-
     private fun requestCameraPermission(): Boolean {
         when {
             ContextCompat.checkSelfPermission(
@@ -574,7 +564,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun <T> NavBackStackEntry.getPoppedArgument(argumentKey: String, initial: T) =
+    fun <T> NavBackStackEntry.getPoppedArgument(argumentKey: String, initial: T? = null) =
         this.savedStateHandle
             .getStateFlow(argumentKey, initial)
             .collectAsState().value

@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings
 
 import android.app.Application
 import com.faigenbloom.famillyspandings.budget.budgetPageModule
+import com.faigenbloom.famillyspandings.categories.categoriesModule
 import com.faigenbloom.famillyspandings.datasources.databaseModule
 import com.faigenbloom.famillyspandings.family.familyPageModule
 import com.faigenbloom.famillyspandings.login.loginPageModule
@@ -22,9 +23,10 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 databaseModule,
-                spendingsPageModule,
                 loginPageModule,
                 registerPageModule,
+                categoriesModule,
+                spendingsPageModule,
                 spendingEditModule,
                 spendingShowModule,
                 statisticsPageModule,
