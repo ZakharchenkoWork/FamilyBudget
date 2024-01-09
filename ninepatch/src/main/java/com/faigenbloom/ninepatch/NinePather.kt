@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 @Composable
 fun painterResourceNinePath(@DrawableRes id: Int): Painter {
     return BitmapFactory.decodeResource(LocalContext.current.resources, id)?.let { bitmap ->
+
         NinePathPainter(bitmap)
     } ?: painterResource(id)
 }
@@ -30,11 +31,20 @@ class NinePathPainter(private val bitmap: Bitmap) : Painter() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun DrawScope.onDraw() {
         drawIntoCanvas { canvas ->
-            canvas.nativeCanvas.drawPatch(
-                NinePatch(bitmap, bitmap.ninePatchChunk),
-                canvas.nativeCanvas.clipBounds,
-                Paint(),
-            )
+            try {
+                canvas.nativeCanvas.drawPatch(
+                    NinePatch(bitmap, bitmap.ninePatchChunk),
+                    canvas.nativeCanvas.clipBounds,
+                    Paint(),
+                )
+            } catch (e: Exception) {
+                canvas.nativeCanvas.drawBitmap(
+                    bitmap,
+                    canvas.nativeCanvas.clipBounds,
+                    canvas.nativeCanvas.clipBounds,
+                    Paint(),
+                )
+            }
         }
     }
 }

@@ -3,7 +3,8 @@
     <string name="login">Sign in</string>
     <string name="registration">Registration</string>
     <string name="authorization">Authorization</string>
-    <string name="last_spendings_title">Previous spendings</string>
+    <string name="spendings_previous_title">Previous spendings</string>
+    <string name="spendings_planned_title">Planned spendings</string>
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
     <string name="email">Email</string>

@@ -39,6 +39,8 @@ class SpendingsPageViewModel(
     }
 
     private fun reloadData() {
+        isLoading = true
+        updateUI()
         viewModelScope.launch(Dispatchers.IO) {
             spendings = sorter.prepareByDates(
                 repository.getSpendings(isPlanned).map {

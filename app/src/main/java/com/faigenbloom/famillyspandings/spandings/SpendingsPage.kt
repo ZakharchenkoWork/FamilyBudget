@@ -34,7 +34,13 @@ fun SpendingsPage(
 ) {
     Column(modifier = modifier) {
         TopBar(
-            title = stringResource(id = R.string.last_spendings_title),
+            title = stringResource(
+                id = if (state.isPlannedListShown) {
+                    R.string.spendings_planned_title
+                } else {
+                    R.string.spendings_previous_title
+                },
+            ),
             endIcon = if (state.isPlannedListShown) {
                 R.drawable.icon_list_outlined
             } else {
@@ -84,12 +90,6 @@ fun EmptySpendings(
         )
         Image(
             modifier = Modifier.fillMaxHeight(),
-            /*painter = rememberImagePainter(
-                ContextCompat.getDrawable(
-                    LocalContext.current,
-                    R.drawable.icon_arrow_down,
-                ),
-            ),*/
             painter = painterResourceNinePath(id = R.drawable.icon_arrow_down),
             contentDescription = "",
         )
