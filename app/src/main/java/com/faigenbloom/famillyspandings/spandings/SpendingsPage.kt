@@ -1,9 +1,12 @@
 package com.faigenbloom.famillyspandings.spandings
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,13 +42,22 @@ fun SpendingsPage(
             },
             onEndIconCLicked = state.onPlannedSwitched,
         )
-        if (state.spendings.isEmpty()) {
-            EmptySpendings(modifier = modifier)
+        if (state.isLoading.not()) {
+            if (state.spendings.isEmpty()) {
+                EmptySpendings(modifier = modifier)
+            } else {
+                DynamicPlatesHolder(
+                    datedPatterns = state.spendings,
+                    onSpendingClicked = onOpenSpending,
+                )
+            }
         } else {
-            DynamicPlatesHolder(
-                datedPatterns = state.spendings,
-                onSpendingClicked = onOpenSpending,
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 }
@@ -95,6 +107,7 @@ fun SpandingsEmptyPagePreview() {
                 state = SpendingsState(
                     spendings = emptyList(),
                     isPlannedListShown = false,
+                    isLoading = false,
                     onPlannedSwitched = {},
                 ),
             )
@@ -168,6 +181,7 @@ fun SpandingsPagePreview() {
                         ),
                     ),
                     isPlannedListShown = false,
+                    isLoading = false,
                     onPlannedSwitched = {},
                 ),
             )

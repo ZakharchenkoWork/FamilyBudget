@@ -20,6 +20,7 @@ class SpendingsPageViewModel(
     private val sorter = PlatesSorter<SpendingData>()
     private var spendings: List<List<Pattern<SpendingData>>> = emptyList()
     private var isPlanned: Boolean = false
+    private var isLoading: Boolean = true
     private val onPlannedSwitched: (() -> Unit) = {
         isPlanned = isPlanned.not()
         reloadData()
@@ -28,6 +29,7 @@ class SpendingsPageViewModel(
         get() = SpendingsState(
             spendings,
             isPlannedListShown = isPlanned,
+            isLoading = isLoading,
             onPlannedSwitched,
         )
 
@@ -49,6 +51,7 @@ class SpendingsPageViewModel(
                     sorter.preparePlatesSizes(it),
                 )
             }
+            isLoading = false
             updateUI()
         }
     }
@@ -61,6 +64,7 @@ class SpendingsPageViewModel(
 data class SpendingsState(
     val spendings: List<List<Pattern<SpendingData>>>,
     val isPlannedListShown: Boolean,
+    val isLoading: Boolean,
     val onPlannedSwitched: (() -> Unit),
 )
 
