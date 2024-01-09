@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 @Composable
 fun painterResourceNinePath(@DrawableRes id: Int): Painter {
     return BitmapFactory.decodeResource(LocalContext.current.resources, id)?.let { bitmap ->
-
         NinePathPainter(bitmap)
     } ?: painterResource(id)
 }
