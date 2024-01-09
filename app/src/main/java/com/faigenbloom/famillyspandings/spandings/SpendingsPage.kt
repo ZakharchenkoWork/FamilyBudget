@@ -23,7 +23,15 @@ fun SpendingsPage(
     onOpenSpending: (String) -> Unit,
 ) {
     Column(modifier = modifier) {
-        TopBar(title = stringResource(id = R.string.last_spendings_title))
+        TopBar(
+            title = stringResource(id = R.string.last_spendings_title),
+            endIcon = if (state.isPlannedListShown) {
+                R.drawable.icon_list_outlined
+            } else {
+                R.drawable.icon_list_planned_outlined
+            },
+            onEndIconCLicked = state.onPlannedSwitched,
+        )
         DynamicPlatesHolder(
             datedPatterns = state.spendings,
             onSpendingClicked = onOpenSpending,
@@ -96,6 +104,8 @@ fun SpandingsPagePreview() {
                             },
                         ),
                     ),
+                    isPlannedListShown = false,
+                    onPlannedSwitched = {},
                 ),
             )
         }

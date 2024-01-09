@@ -1,6 +1,5 @@
 package com.faigenbloom.famillyspandings.spandings.edit
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,6 +8,7 @@ import com.faigenbloom.famillyspandings.categories.CategoriesState
 import com.faigenbloom.famillyspandings.categories.CategoriesViewModel
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.checkOrGenId
+import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.comon.toReadableDate
 import com.faigenbloom.famillyspandings.comon.toReadableMoney
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
@@ -63,7 +62,7 @@ class SpendingEditViewModel(
     }
 
     private fun checkAllFilled(): Boolean {
-        if (namingText.isEmpty() || dateText.isEmpty() || amountText.isEmpty() || isCategorySelected.not()) {
+        if (namingText.isEmpty() || amountText.isEmpty() || isCategorySelected.not()) {
             return false
         }
         return true
@@ -196,7 +195,7 @@ data class SpendingDetail(val id: String, val name: String, val amount: String) 
         return SpendingDetailEntity(
             id = id.checkOrGenId(),
             name = name,
-            amount = amount.toDatabaseLong(),
+            amount = amount.toLongMoney(),
         )
     }
 
@@ -210,11 +209,3 @@ data class SpendingDetail(val id: String, val name: String, val amount: String) 
         }
     }
 }
-
-fun String.toDatabaseLong(): Long {
-    return (this.toDouble() * 100).toLong()
-}
-
-@SuppressLint("SimpleDateFormat")
-fun String.toDatabaseTime() =
-    SimpleDateFormat("dd.MM.yyyy").parse(this)?.time ?: System.currentTimeMillis()

@@ -46,8 +46,8 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         )
     }
 
-    override suspend fun getAllSpendings(): List<SpendingEntity> {
-        return appDatabase.spendingsDao().getSpendings()
+    override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
+        return appDatabase.spendingsDao().getSpendings(isPlanned)
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
@@ -58,7 +58,7 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         val allCategories = getAllCategories().map {
             CategoryData.fromEntity(it)
         }
-        val spendings = appDatabase.spendingsDao().getSpendings()
+        val spendings = appDatabase.spendingsDao().getSpendings(false)
         val summaries = ArrayList<CategorySummary>()
         spendings.forEach { spending ->
             summaries.firstOrNull {

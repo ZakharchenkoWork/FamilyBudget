@@ -10,8 +10,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 
 @Dao
 interface SpendingsDao {
-    @Query("SELECT * FROM ${SpendingEntity.TABLE_NAME}")
-    suspend fun getSpendings(): List<SpendingEntity>
+    @Query("SELECT * FROM ${SpendingEntity.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned")
+    suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSpending(entity: SpendingEntity)

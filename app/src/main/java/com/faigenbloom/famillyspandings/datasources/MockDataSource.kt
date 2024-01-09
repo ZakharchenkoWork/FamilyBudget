@@ -43,7 +43,7 @@ class MockDataSource : BaseDataSource {
         Log.i(MockDataSource::class.simpleName, "saveSpending")
     }
 
-    override suspend fun getAllSpendings(): List<SpendingEntity> {
+    override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
         return SpendingsPageMock.spendingsList.map {
             SpendingEntity(
                 id = it.id,
@@ -52,6 +52,7 @@ class MockDataSource : BaseDataSource {
                 date = it.date.toLongDate(),
                 categoryId = it.category.id,
                 photoUri = null,
+                isPlanned = false,
             )
         }
     }
@@ -64,6 +65,7 @@ class MockDataSource : BaseDataSource {
             date = 0L,
             categoryId = "",
             photoUri = null,
+            isPlanned = false,
         )
     }
 

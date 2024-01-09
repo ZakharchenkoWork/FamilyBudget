@@ -34,28 +34,28 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
     val items = listOf(
         BarItem(
             destination = Destination.SpendingsPage,
-            imageChecked = R.drawable.list_filled,
-            imageUnChecked = R.drawable.list_outlined,
+            imageChecked = R.drawable.icon_list_filled,
+            imageUnChecked = R.drawable.icon_list_outlined,
         ),
         BarItem(
             destination = Destination.BudgetPage,
             imageChecked = R.drawable.icon_budget_filled,
-            imageUnChecked = R.drawable.icon_budget,
+            imageUnChecked = R.drawable.icon_budget_outlined,
         ),
         BarItem(
             destination = Destination.NewSpendingPage,
-            imageChecked = R.drawable.plus_filled,
-            imageUnChecked = R.drawable.plus_not_filled,
+            imageChecked = R.drawable.icon_plus_filled,
+            imageUnChecked = R.drawable.icon_plus_outlined,
         ),
         BarItem(
             destination = Destination.StatisticsPage,
             imageChecked = R.drawable.icon_statistics_filled,
-            imageUnChecked = R.drawable.icon_statistics,
+            imageUnChecked = R.drawable.icon_statistics_outlined,
         ),
         BarItem(
             destination = Destination.SettingsPage,
             imageChecked = R.drawable.icon_settings_filled,
-            imageUnChecked = R.drawable.icon_settings,
+            imageUnChecked = R.drawable.icon_settings_outlined,
         ),
     )
     var selectedIndex by rememberSaveable { mutableStateOf(0) }

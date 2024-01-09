@@ -21,7 +21,7 @@ interface BaseDataSource {
     suspend fun addCategory(categoryEntity: CategoryEntity)
 
     suspend fun saveSpending(spending: SpendingEntity, details: List<SpendingDetailEntity>)
-    suspend fun getAllSpendings(): List<SpendingEntity>
+    suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>
     suspend fun getBudgetData(): BudgetEntity

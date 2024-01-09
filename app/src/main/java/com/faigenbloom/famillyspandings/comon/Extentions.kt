@@ -1,5 +1,6 @@
 package com.faigenbloom.famillyspandings.comon
 
+import android.util.Log
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -35,10 +36,15 @@ fun String.toLongDate(): Long {
     return this.toLocalDate().toEpochDay() * 24 * 60 * 60 * 1000
 }
 
+fun getCurrentDate(): Long {
+    return LocalDate.now().toEpochDay() * 24 * 60 * 60 * 1000
+}
+
 fun String.toLocalDate(): LocalDate {
     try {
         return LocalDate.parse(this, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     } catch (e: DateTimeParseException) {
+        Log.e("Dates", e.localizedMessage ?: "String.toLocalDate failed on $this")
     }
     return LocalDate.now()
 }

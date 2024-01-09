@@ -168,7 +168,7 @@ fun SpendingEditPagePreview() {
                     onNewCategoryNameChanged = {},
                     isSaveCategoryVisible = false,
                     onNewCategorySaved = { },
-                    onCategoryPhotoUriChanged = { a, b -> },
+                    onCategoryPhotoUriChanged = { _, _ -> },
                     categoryPhotoChooserId = null,
                 ),
                 onCategoryPhotoRequest = {},

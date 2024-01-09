@@ -22,6 +22,8 @@ data class SpendingEntity(
     val categoryId: String,
     @ColumnInfo(name = COLUMN_PHOTO)
     val photoUri: String?,
+    @ColumnInfo(name = COLUMN_IS_PLANNED)
+    val isPlanned: Boolean,
 ) : Countable {
     override fun getSortableValue(): Long {
         return amount
@@ -39,5 +41,6 @@ data class SpendingEntity(
         const val COLUMN_AMOUNT = "amount"
         const val COLUMN_DATE = "date"
         const val COLUMN_CATEGORY = "category"
+        const val COLUMN_IS_PLANNED = "is_planned"
     }
 }

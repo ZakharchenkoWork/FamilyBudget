@@ -5,8 +5,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 
 class SpendingsPageRepository(private val dataSource: BaseDataSource) {
-    suspend fun getAllSpendings(): List<SpendingEntity> {
-        return dataSource.getAllSpendings()
+    suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
+        return dataSource.getSpendings(isPlanned)
     }
 
     suspend fun getCategoryById(id: String): CategoryEntity {

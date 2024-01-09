@@ -19,18 +19,32 @@ class SpendingsPageViewModel(
 ) : ViewModel() {
     private val sorter = PlatesSorter<SpendingData>()
     private var spendings: List<List<Pattern<SpendingData>>> = emptyList()
-
+    private var isPlanned: Boolean = false
+    private val onPlannedSwitched: (() -> Unit) = {
+        isPlanned = isPlanned.not()
+        reloadData()
+    }
     private val spendingsState: SpendingsState
-        get() = SpendingsState(spendings)
+        get() = SpendingsState(
+            spendings,
+            isPlannedListShown = isPlanned,
+            onPlannedSwitched,
+        )
 
     private val _spendingsStateFlow = MutableStateFlow(spendingsState)
     val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
+        reloadData()
+    }
+
+    private fun reloadData() {
         viewModelScope.launch(Dispatchers.IO) {
             spendings = sorter.prepareByDates(
-                repository.getAllSpendings().map {
+                repository.getSpendings(isPlanned).map {
                     it.toSpendingData(repository.getCategoryById(it.categoryId))
                 },
-            ).map {
+            ).sortedByDescending {
+                it[0].getSortableDate()
+            }.map {
                 sorter.findPattern(
                     sorter.preparePlatesSizes(it),
                 )
@@ -39,13 +53,15 @@ class SpendingsPageViewModel(
         }
     }
 
-    fun updateUI() {
+    private fun updateUI() {
         _spendingsStateFlow.update { spendingsState }
     }
 }
 
 data class SpendingsState(
     val spendings: List<List<Pattern<SpendingData>>>,
+    val isPlannedListShown: Boolean,
+    val onPlannedSwitched: (() -> Unit),
 )
 
 fun SpendingEntity.toSpendingData(category: CategoryEntity): SpendingData {
