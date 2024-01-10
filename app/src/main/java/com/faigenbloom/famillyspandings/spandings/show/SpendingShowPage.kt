@@ -34,9 +34,6 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.TopBar
-import com.faigenbloom.famillyspandings.comon.toLocalDate
-import com.faigenbloom.famillyspandings.comon.toReadable
-import com.faigenbloom.famillyspandings.comon.toReadableMoney
 import com.faigenbloom.famillyspandings.spandings.CategoriesMock
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
@@ -46,6 +43,8 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
     Column {
         TopBar(
             title = "",
+            preEndIcon = R.drawable.icon_duplicate,
+            onPreEndIconCLicked = { state.onDuplicateClicked(onEditClicked) },
             endIcon = R.drawable.pen,
             onEndIconCLicked = { onEditClicked(state.id) },
         )
@@ -79,7 +78,7 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
                     .constrainAs(bottomStripe) {
                         bottom.linkTo(parent.bottom, margin = 16.dp)
                     },
-                text = state.amount.toReadableMoney(),
+                text = state.amount,
                 textColor = MaterialTheme.colorScheme.onPrimary,
                 isPlanned = state.isPlanned,
                 onMarkPurchasedClicked = state.onMarkPurchasedClicked,
@@ -192,7 +191,7 @@ fun Information(
                     )
 
                     Text(
-                        text = state.date.toReadable(),
+                        text = state.date,
                         color = MaterialTheme.colorScheme.secondary,
                     )
                 }
@@ -259,8 +258,8 @@ fun SpendingEditPageDetailsPreview() {
                 state = SpendingShowState(
                     id = "asdfasd",
                     name = "Home",
-                    amount = 1000L,
-                    date = "01.11.2023".toLocalDate(),
+                    amount = "10.00",
+                    date = "01.11.2023",
                     category = CategoriesMock.categoriesList[1],
                     photoUri = null,
                     isPlanned = true,
@@ -270,6 +269,7 @@ fun SpendingEditPageDetailsPreview() {
                         SpendingDetail("asdfasddddd", "Drops", "50"),
                     ),
                     onMarkPurchasedClicked = { },
+                    onDuplicateClicked = {},
                 ),
                 onEditClicked = {},
             )

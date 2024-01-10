@@ -40,11 +40,12 @@ class AppDatabaseCallback(private val appDatabase: AppDatabase) : RoomDatabase.C
         val entities =
             DefaultCategories.values().map { defaultCategory ->
                 CategoryEntity(id = defaultCategory.name, isDefault = true)
-            }.toTypedArray()
+            }
         CoroutineScope(Dispatchers.IO).launch {
             appDatabase.categoriesDao().insertAll(
-                *entities,
+                entities,
             )
+            appDatabase.spendingsDao().deleteDuplicates()
         }
     }
 }

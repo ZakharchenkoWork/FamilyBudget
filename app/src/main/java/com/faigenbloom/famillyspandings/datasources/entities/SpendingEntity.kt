@@ -24,6 +24,8 @@ data class SpendingEntity(
     val photoUri: String?,
     @ColumnInfo(name = COLUMN_IS_PLANNED)
     val isPlanned: Boolean,
+    @ColumnInfo(name = COLUMN_IS_DUPLICATE)
+    val isDuplicate: Boolean = false,
 ) : Countable {
     override fun getSortableValue(): Long {
         return amount
@@ -42,5 +44,6 @@ data class SpendingEntity(
         const val COLUMN_DATE = "date"
         const val COLUMN_CATEGORY = "category"
         const val COLUMN_IS_PLANNED = "is_planned"
+        const val COLUMN_IS_DUPLICATE = "is_duplicate"
     }
 }

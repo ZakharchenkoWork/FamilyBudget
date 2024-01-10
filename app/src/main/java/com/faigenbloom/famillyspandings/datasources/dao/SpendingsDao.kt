@@ -10,7 +10,12 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 
 @Dao
 interface SpendingsDao {
-    @Query("SELECT * FROM ${SpendingEntity.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned")
+    companion object {
+        const val TRUE = true
+        const val FALSE = false
+    }
+
+    @Query("SELECT * FROM ${SpendingEntity.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned AND ${SpendingEntity.COLUMN_IS_DUPLICATE} = $FALSE")
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -33,4 +38,7 @@ interface SpendingsDao {
 
     @Query("UPDATE ${SpendingEntity.TABLE_NAME} SET ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned WHERE ${SpendingEntity.COLUMN_ID} = :spendingId")
     suspend fun updatePlanned(spendingId: String, isPlanned: Boolean)
+
+    @Query("DELETE FROM ${SpendingEntity.TABLE_NAME} WHERE ${SpendingEntity.COLUMN_IS_DUPLICATE} = $TRUE")
+    suspend fun deleteDuplicates()
 }

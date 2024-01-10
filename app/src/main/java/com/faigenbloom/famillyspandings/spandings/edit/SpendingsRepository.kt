@@ -35,6 +35,7 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
                 categoryId = category.id.checkOrGenId(),
                 photoUri = photoUri?.toString(),
                 isPlanned = spendingDate > getCurrentDate(),
+                isDuplicate = false,
             ),
             details = details,
         )

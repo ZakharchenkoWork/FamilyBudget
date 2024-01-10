@@ -62,7 +62,7 @@ fun DynamicPlatesHolder(
                     Text(
                         modifier = Modifier
                             .padding(16.dp),
-                        text = datedPatterns[dateIndex][0].items[0].date.toReadable(),
+                        text = datedPatterns[dateIndex][0].items[0].date.toReadableDate(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                     )

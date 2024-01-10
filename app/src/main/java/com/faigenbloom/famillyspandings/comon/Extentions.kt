@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.UUID
 
-fun LocalDate.toReadable(): String {
+fun LocalDate.toReadableDate(): String {
     return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 }
 

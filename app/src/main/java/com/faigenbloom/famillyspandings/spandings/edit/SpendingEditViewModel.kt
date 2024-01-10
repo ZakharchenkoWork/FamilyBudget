@@ -1,6 +1,7 @@
 package com.faigenbloom.famillyspandings.spandings.edit
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.categories.CategoriesRepository
@@ -35,7 +36,7 @@ class SpendingEditViewModel(
 
     var onNext: (String) -> Unit = {}
 
-    private val onDetailAmountChanged: (Int, String) -> Unit = { detailIndex, amount ->
+    private fun onDetailAmountChanged(detailIndex: Int, amount: String) {
         detailsList = ArrayList(detailsList)
             .apply {
                 set(detailIndex, get(detailIndex).copy(amount = amount))
@@ -44,7 +45,7 @@ class SpendingEditViewModel(
         _spendingEditStateFlow.update { spendingEditState }
     }
 
-    private val onSave: () -> Unit = {
+    private fun onSave() {
         if (checkAllFilled()) {
             viewModelScope.launch {
                 val spendingId = spendingsRepository.saveSpending(
@@ -77,13 +78,13 @@ class SpendingEditViewModel(
         return amountText
     }
 
-    private val onAddNewDetail: () -> Unit = {
+    private fun onAddNewDetail() {
         detailsList = ArrayList(detailsList)
             .apply { add(SpendingDetail("", "", "")) }
         _spendingEditStateFlow.update { spendingEditState }
     }
 
-    private val onDetailNameChanged: (Int, String) -> Unit = { detailIndex, name ->
+    private fun onDetailNameChanged(detailIndex: Int, name: String) {
         detailsList = detailsList.mapIndexed { index, spendingDetail ->
             if (detailIndex == index) {
                 spendingDetail.copy(name = name)
@@ -93,51 +94,56 @@ class SpendingEditViewModel(
         }
         _spendingEditStateFlow.update { spendingEditState }
     }
-    private val onDateChanged: (String) -> Unit = {
-        if (it.isNotEmpty()) {
-            dateText = it
+
+    private fun onDateChanged(date: String) {
+        if (date.isNotEmpty()) {
+            dateText = date
             _spendingEditStateFlow.update { spendingEditState }
         }
     }
-    private val onPhotoUriChanged: (photoUri: Uri?) -> Unit = {
-        photoUri = it
+
+    private fun onPhotoUriChanged(photoUri: Uri?) {
+        this.photoUri = photoUri
         _spendingEditStateFlow.update { spendingEditState }
     }
 
-    private var onPageChanged: (Boolean) -> Unit = {
-        isCategoriesOpened = it
+    private fun onPageChanged(isCategoriesOpened: Boolean) {
+        this.isCategoriesOpened = isCategoriesOpened
         _spendingEditStateFlow.update { spendingEditState }
     }
-    private var onNamingTextChanged: (String) -> Unit = {
-        namingText = it
+
+    private fun onNamingTextChanged(name: String) {
+        this.namingText = name
         _spendingEditStateFlow.update { spendingEditState }
     }
-    private var onAmountTextChanged: (String) -> Unit = {
-        amountText = it
-        isManualTotal = it.isNotEmpty()
+
+    private fun onAmountTextChanged(amount: String) {
+        amountText = amount
+        isManualTotal = amount.isNotEmpty()
         _spendingEditStateFlow.update { spendingEditState }
     }
+
     private val spendingEditState: SpendingEditState
         get() = SpendingEditState(
             spendingId = spendingId,
             categoryState = categoriesStateFlow.value,
             isCategoriesOpened = isCategoriesOpened,
-            onPageChanged = onPageChanged,
             namingText = namingText,
             amountText = updateTotal(),
             detailsList = detailsList,
             dateText = dateText,
             isOkActive = checkAllFilled(),
-            onNamingTextChanged = onNamingTextChanged,
-            onAmountTextChanged = onAmountTextChanged,
-            onAddNewDetail = onAddNewDetail,
-            onDetailNameChanged = onDetailNameChanged,
-            onDetailAmountChanged = onDetailAmountChanged,
+            onPageChanged = ::onPageChanged,
+            onNamingTextChanged = ::onNamingTextChanged,
+            onAmountTextChanged = ::onAmountTextChanged,
+            onAddNewDetail = ::onAddNewDetail,
+            onDetailNameChanged = ::onDetailNameChanged,
+            onDetailAmountChanged = ::onDetailAmountChanged,
             photoUri = photoUri,
-            onPhotoUriChanged = onPhotoUriChanged,
-            onSave = onSave,
+            onPhotoUriChanged = ::onPhotoUriChanged,
+            onSave = ::onSave,
+            onDateChanged = ::onDateChanged,
             onNext = onNext,
-            onDateChanged = onDateChanged,
         )
 
     private val _spendingEditStateFlow = MutableStateFlow(spendingEditState)
@@ -151,7 +157,7 @@ class SpendingEditViewModel(
                     namingText = spendingEntity.name
                     amountText = spendingEntity.amount.toReadableMoney()
                     dateText = spendingEntity.date.toReadableDate()
-                    photoUri = spendingEntity.photoUri?.let { Uri.parse(it) }
+                    photoUri = spendingEntity.photoUri?.toUri()
 
                     detailsList = spendingsRepository.getSpendingDetails(spendingId).map {
                         SpendingDetail.fromEntity(it)

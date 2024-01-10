@@ -18,7 +18,7 @@ open class CategoriesViewModel(private val categoriesRepository: CategoriesRepos
     private var categoryPhotoChooserId: String? = null
     protected var isCategorySelected: Boolean = false
 
-    private val onCategoryPhotoUriChanged: (String, Uri) -> Unit = { id, uri ->
+    private fun onCategoryPhotoUriChanged(id: String, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             categoriesRepository.updateCategoryPhoto(id, uri.toString())
             categoriesList = categoriesRepository.getCategories()
@@ -26,17 +26,19 @@ open class CategoriesViewModel(private val categoriesRepository: CategoriesRepos
         }
     }
 
-    private val onSelectionChanged: (Int) -> Unit = {
-        selectedIndex = it
+    private fun onSelectionChanged(selectedIndex: Int) {
+        this.selectedIndex = selectedIndex
         isCategorySelected = true
         _categoriesStateFlow.update { categoriesState }
     }
-    private val onNewCategoryNameChanged: (String) -> Unit = {
-        newCategoryName = it
+
+    private fun onNewCategoryNameChanged(name: String) {
+        this.newCategoryName = name
         isSaveCategoryVisible = newCategoryName.isNotEmpty()
         _categoriesStateFlow.update { categoriesState }
     }
-    private val onNewCategorySaved: () -> Unit = {
+
+    private fun onNewCategorySaved() {
         if (newCategoryName.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
                 val categoryId = categoriesRepository.addCategory(newCategoryName)
@@ -48,17 +50,18 @@ open class CategoriesViewModel(private val categoriesRepository: CategoriesRepos
             }
         }
     }
+
     private val categoriesState: CategoriesState
         get() = CategoriesState(
             categoriesList = categoriesList,
             selectedIndex = selectedIndex,
-            onSelectionChanged = onSelectionChanged,
             newCategoryName = newCategoryName,
-            onNewCategoryNameChanged = onNewCategoryNameChanged,
             isSaveCategoryVisible = isSaveCategoryVisible,
-            onNewCategorySaved = onNewCategorySaved,
-            onCategoryPhotoUriChanged = onCategoryPhotoUriChanged,
             categoryPhotoChooserId = categoryPhotoChooserId,
+            onSelectionChanged = ::onSelectionChanged,
+            onNewCategoryNameChanged = ::onNewCategoryNameChanged,
+            onNewCategorySaved = ::onNewCategorySaved,
+            onCategoryPhotoUriChanged = ::onCategoryPhotoUriChanged,
         )
 
     private val _categoriesStateFlow = MutableStateFlow(categoriesState)
@@ -72,6 +75,7 @@ open class CategoriesViewModel(private val categoriesRepository: CategoriesRepos
     protected fun getSelectedCategory() = categoriesList[selectedIndex]
     protected fun setSelectedCategory(categoryId: String) {
         selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
+        isCategorySelected = true
         _categoriesStateFlow.update { categoriesState }
     }
 }
