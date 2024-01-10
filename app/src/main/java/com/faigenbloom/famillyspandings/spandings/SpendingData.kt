@@ -12,6 +12,7 @@ data class SpendingData(
     val category: CategoryData,
     val amount: Long,
     val date: LocalDate,
+    val isHidden: Boolean = false,
 ) : Countable {
     override fun getSortableValue(): Long {
         return amount

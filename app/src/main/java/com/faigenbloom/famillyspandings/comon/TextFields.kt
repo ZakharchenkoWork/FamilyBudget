@@ -85,9 +85,9 @@ fun BaseTextField(
         trailingIcon = {
             if (textFieldType == TextFieldType.Password) {
                 val image = if (passwordVisible) {
-                    painterResource(id = R.drawable.password_shown)
+                    painterResource(id = R.drawable.icon_shown)
                 } else {
-                    painterResource(id = R.drawable.password_hiden)
+                    painterResource(id = R.drawable.icon_hidden)
                 }
 
                 val description = if (passwordVisible) "Hide password" else "Show password"

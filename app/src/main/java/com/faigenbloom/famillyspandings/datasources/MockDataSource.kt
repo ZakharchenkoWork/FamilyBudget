@@ -52,6 +52,7 @@ class MockDataSource : BaseDataSource {
                 categoryId = it.category.id,
                 photoUri = null,
                 isPlanned = false,
+                isHidden = false,
             )
         }
     }
@@ -65,6 +66,7 @@ class MockDataSource : BaseDataSource {
             categoryId = "",
             photoUri = null,
             isPlanned = false,
+            isHidden = false,
         )
     }
 

@@ -34,10 +34,10 @@ import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 @Composable
 fun TopBar(
     title: String = "",
-    endIcon: Int? = null,
-    onEndIconCLicked: (() -> Unit)? = null,
     preEndIcon: Int? = null,
     onPreEndIconCLicked: (() -> Unit)? = null,
+    endIcon: Int? = null,
+    onEndIconCLicked: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier

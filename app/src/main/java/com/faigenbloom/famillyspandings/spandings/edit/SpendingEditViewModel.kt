@@ -33,8 +33,10 @@ class SpendingEditViewModel(
     private var detailsList: List<SpendingDetail> = emptyList()
     private var isCategoriesOpened: Boolean = true
     private var isManualTotal: Boolean = false
+    private var isHidden: Boolean = false
 
     var onNext: (String) -> Unit = {}
+    var onShowMessage: (MessageTypes) -> Unit = {}
 
     private fun onDetailAmountChanged(detailIndex: Int, amount: String) {
         detailsList = ArrayList(detailsList)
@@ -42,7 +44,7 @@ class SpendingEditViewModel(
                 set(detailIndex, get(detailIndex).copy(amount = amount))
             }
         amountText = updateTotal()
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onSave() {
@@ -56,8 +58,10 @@ class SpendingEditViewModel(
                     category = getSelectedCategory(),
                     photoUri = photoUri,
                     details = detailsList.map { it.mapToEntity() },
+                    isHidden = isHidden,
                 )
-                spendingEditState.onNext(spendingId)
+                state.onNext(spendingId)
+                onShowMessage(MessageTypes.SAVED)
             }
         }
     }
@@ -81,7 +85,7 @@ class SpendingEditViewModel(
     private fun onAddNewDetail() {
         detailsList = ArrayList(detailsList)
             .apply { add(SpendingDetail("", "", "")) }
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onDetailNameChanged(detailIndex: Int, name: String) {
@@ -92,38 +96,50 @@ class SpendingEditViewModel(
                 spendingDetail
             }
         }
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onDateChanged(date: String) {
         if (date.isNotEmpty()) {
             dateText = date
-            _spendingEditStateFlow.update { spendingEditState }
+            updateUI()
         }
     }
 
     private fun onPhotoUriChanged(photoUri: Uri?) {
         this.photoUri = photoUri
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onPageChanged(isCategoriesOpened: Boolean) {
         this.isCategoriesOpened = isCategoriesOpened
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onNamingTextChanged(name: String) {
         this.namingText = name
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
     private fun onAmountTextChanged(amount: String) {
         amountText = amount
         isManualTotal = amount.isNotEmpty()
-        _spendingEditStateFlow.update { spendingEditState }
+        updateUI()
     }
 
-    private val spendingEditState: SpendingEditState
+    private fun onHideChanged() {
+        isHidden = !isHidden
+        onShowMessage(
+            if (isHidden) {
+                MessageTypes.SHOWN
+            } else {
+                MessageTypes.HIDEN
+            },
+        )
+        updateUI()
+    }
+
+    private val state: SpendingEditState
         get() = SpendingEditState(
             spendingId = spendingId,
             categoryState = categoriesStateFlow.value,
@@ -133,6 +149,8 @@ class SpendingEditViewModel(
             detailsList = detailsList,
             dateText = dateText,
             isOkActive = checkAllFilled(),
+            isHidden = isHidden,
+            onHideChanged = ::onHideChanged,
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
             onAmountTextChanged = ::onAmountTextChanged,
@@ -146,7 +164,7 @@ class SpendingEditViewModel(
             onNext = onNext,
         )
 
-    private val _spendingEditStateFlow = MutableStateFlow(spendingEditState)
+    private val _spendingEditStateFlow = MutableStateFlow(state)
     val spendingEditStateFlow = _spendingEditStateFlow.asStateFlow()
         .apply {
 
@@ -158,20 +176,24 @@ class SpendingEditViewModel(
                     amountText = spendingEntity.amount.toReadableMoney()
                     dateText = spendingEntity.date.toReadableDate()
                     photoUri = spendingEntity.photoUri?.toUri()
-
+                    isHidden = spendingEntity.isHidden
                     detailsList = spendingsRepository.getSpendingDetails(spendingId).map {
                         SpendingDetail.fromEntity(it)
                     }
-                    _spendingEditStateFlow.update { spendingEditState }
+                    updateUI()
                 }
                 categoriesStateFlow.collectLatest {
                     spendingEntity?.let {
                         setSelectedCategory(it.categoryId)
                     }
-                    _spendingEditStateFlow.update { spendingEditState }
+                    updateUI()
                 }
             }
         }
+
+    private fun updateUI() {
+        _spendingEditStateFlow.update { state }
+    }
 }
 
 data class SpendingEditState(
@@ -185,6 +207,7 @@ data class SpendingEditState(
     var photoUri: Uri?,
     val detailsList: List<SpendingDetail>,
     val isOkActive: Boolean,
+    val isHidden: Boolean,
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onAddNewDetail: () -> Unit,
@@ -193,6 +216,7 @@ data class SpendingEditState(
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
     val onDateChanged: (String) -> Unit,
     val onSave: () -> Unit,
+    val onHideChanged: () -> Unit,
     val onNext: (String) -> Unit,
 )
 
@@ -214,4 +238,10 @@ data class SpendingDetail(val id: String, val name: String, val amount: String) 
             )
         }
     }
+}
+
+enum class MessageTypes {
+    SAVED,
+    HIDEN,
+    SHOWN,
 }

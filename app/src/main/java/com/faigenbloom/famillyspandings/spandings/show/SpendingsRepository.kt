@@ -35,6 +35,7 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
         photoUri: Uri?,
         isPlanned: Boolean,
         details: List<SpendingDetailEntity>,
+        isHidden: Boolean,
     ): String {
         val id = "".checkOrGenId()
         dataSource.saveSpending(
@@ -47,6 +48,7 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
                 photoUri = photoUri?.toString(),
                 isPlanned = isPlanned,
                 isDuplicate = true,
+                isHidden = isHidden,
             ),
             details = details,
         )

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +32,8 @@ import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.spandings.Mock
 import com.faigenbloom.famillyspandings.spandings.SpendingData
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import com.faigenbloom.famillyspandings.ui.theme.hint
+import com.faigenbloom.famillyspandings.ui.theme.transparent
 
 const val ONE: Float = 1f
 const val ONE_THIRD: Float = 0.33333334f
@@ -1127,7 +1130,6 @@ fun SpendingItem(
             .clickable {
                 onSpendingClicked(item.id)
             },
-        contentAlignment = Alignment.BottomCenter,
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
@@ -1141,20 +1143,47 @@ fun SpendingItem(
             } ?: painterResource(R.drawable.icon),
             contentDescription = null,
         )
-        Box(
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(
-                    color = MaterialTheme.colorScheme.primary
-                        .copy(alpha = 0.9f),
+                    color = if (item.isHidden) {
+                        MaterialTheme.colorScheme.hint()
+                            .copy(alpha = 0.5f)
+                    } else {
+                        MaterialTheme.colorScheme.transparent()
+                    },
                 ),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom,
         ) {
-            Text(
+            if (item.isHidden) {
+                Image(
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 8.dp,
+                            vertical = 8.dp,
+                        )
+                        .size(32.dp),
+                    painter = painterResource(R.drawable.icon_hidden),
+                    contentDescription = null,
+                )
+            }
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                text = item.name,
-            )
+                    .background(
+                        color = MaterialTheme.colorScheme.primary
+                            .copy(alpha = 0.9f),
+                    )
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp),
+                    text = item.name,
+                )
+            }
         }
     }
 }

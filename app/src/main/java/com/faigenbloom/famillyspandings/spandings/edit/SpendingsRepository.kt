@@ -19,6 +19,7 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
         category: CategoryData,
         photoUri: Uri?,
         details: List<SpendingDetailEntity>,
+        isHidden: Boolean,
     ): String {
         val spendingId = id.checkOrGenId()
         val spendingDate = if (date.isBlank()) {
@@ -36,6 +37,7 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
                 photoUri = photoUri?.toString(),
                 isPlanned = spendingDate > getCurrentDate(),
                 isDuplicate = false,
+                isHidden = isHidden,
             ),
             details = details,
         )

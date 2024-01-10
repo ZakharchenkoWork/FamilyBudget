@@ -29,6 +29,7 @@ class SpendingShowViewModel(
     private var photoUri: Uri? = null
     private var details: List<SpendingDetail> = emptyList()
     private var isPlanned: Boolean = false
+    private var isHidden: Boolean = false
 
     private fun markPurchased() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -50,6 +51,7 @@ class SpendingShowViewModel(
                 photoUri = photoUri,
                 isPlanned = isPlanned,
                 details = details.map { it.mapToEntity() },
+                isHidden = isHidden,
             )
             viewModelScope.launch(Dispatchers.Main) {
                 onDuplicateCreated(id)
@@ -83,6 +85,7 @@ class SpendingShowViewModel(
                 details = repository.getSpendingDetails(spendingId)
                     .map { SpendingDetail.fromEntity(it) }
                 isPlanned = spending.isPlanned
+                isHidden = spending.isHidden
                 updateUI()
             }
         }

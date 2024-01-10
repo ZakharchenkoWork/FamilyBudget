@@ -69,6 +69,7 @@ import com.faigenbloom.famillyspandings.settings.SettingsPage
 import com.faigenbloom.famillyspandings.settings.SettingsPageViewModel
 import com.faigenbloom.famillyspandings.spandings.SpendingsPage
 import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
+import com.faigenbloom.famillyspandings.spandings.edit.MessageTypes
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
 import com.faigenbloom.famillyspandings.spandings.show.SpendingShowPage
@@ -127,7 +128,7 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(false)
             }
             mainNavController = rememberNavController()
-            val snackBarBuilder = SnackBarBuilder(
+            val snackBarController = SnackBarController(
                 scope = lifecycleScope,
                 snackbarHostState = remember { SnackbarHostState() },
             )
@@ -148,7 +149,7 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         snackbarHost = {
-                            SnackbarHost(hostState = snackBarBuilder.snackbarHostState)
+                            SnackbarHost(hostState = snackBarController.snackbarHostState)
                         },
                     ) { padding ->
                         NavHost(
@@ -238,7 +239,25 @@ class MainActivity : ComponentActivity() {
                                     mainNavController.navigate(
                                         Destination.SpendingShowPage.withId(spendingId),
                                     )
-                                    snackBarBuilder.show(getString(R.string.message_saved))
+                                }
+                                viewModel.onShowMessage = {
+                                    snackBarController.show(
+                                        getString(
+                                            when (it) {
+                                                MessageTypes.SAVED -> {
+                                                    R.string.message_saved
+                                                }
+
+                                                MessageTypes.HIDEN -> {
+                                                    R.string.message_hidden
+                                                }
+
+                                                MessageTypes.SHOWN -> {
+                                                    R.string.message_shown
+                                                }
+                                            },
+                                        ),
+                                    )
                                 }
 
                                 val state by viewModel
@@ -593,7 +612,7 @@ class MainActivity : ComponentActivity() {
         cameraExecutor.shutdown()
     }
 
-    class SnackBarBuilder(
+    class SnackBarController(
         val scope: LifecycleCoroutineScope,
         val snackbarHostState: SnackbarHostState,
     ) {

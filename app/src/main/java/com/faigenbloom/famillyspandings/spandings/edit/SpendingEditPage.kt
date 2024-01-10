@@ -52,8 +52,10 @@ fun SpendingEditPage(
     Column {
         TopBar(
             title = stringResource(id = R.string.adding_spending_title),
+            preEndIcon = if (state.isHidden) R.drawable.icon_shown else R.drawable.icon_hidden,
             endIcon = if (state.isOkActive) R.drawable.icon_ok else R.drawable.icon_ok_inactive,
-            onEndIconCLicked = { state.onSave() },
+            onEndIconCLicked = state.onSave,
+            onPreEndIconCLicked = state.onHideChanged,
         )
         StripeBar(
             textId = R.string.choose_category,
@@ -328,6 +330,7 @@ fun SpendingEditPageCategoriesPreview() {
                     amountText = "",
                     dateText = "",
                     detailsList = emptyList(),
+                    isHidden = false,
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     onAddNewDetail = {},
@@ -339,6 +342,7 @@ fun SpendingEditPageCategoriesPreview() {
                     onDateChanged = { },
                     onNext = {},
                     isOkActive = false,
+                    onHideChanged = {},
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
@@ -386,6 +390,8 @@ fun SpendingEditPageDetailsPreview() {
                     onDateChanged = { },
                     onNext = {},
                     isOkActive = true,
+                    isHidden = false,
+                    onHideChanged = {},
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },

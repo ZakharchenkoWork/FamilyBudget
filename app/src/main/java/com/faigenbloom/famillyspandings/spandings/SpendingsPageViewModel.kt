@@ -82,5 +82,6 @@ fun SpendingEntity.toSpendingData(category: CategoryEntity): SpendingData {
         category = CategoryData.fromEntity(category),
         amount = amount,
         date = date.toLocalDate(),
+        isHidden = isHidden,
     )
 }

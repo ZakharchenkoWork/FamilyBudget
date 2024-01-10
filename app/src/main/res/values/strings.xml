@@ -66,5 +66,7 @@
     <string name="date">Date</string>
     <string name="spending_mark_purchased">Mark purchased</string>
     <string name="message_saved">Saved</string>
+    <string name="message_hidden">Spending will be shown</string>
+    <string name="message_shown">Spending will be hidden</string>
 
 </resources>
