@@ -65,5 +65,6 @@
     <string name="photo_chooser_camera">Photo</string>
     <string name="date">Date</string>
     <string name="spending_mark_purchased">Mark purchased</string>
+    <string name="message_saved">Saved</string>
 
 </resources>

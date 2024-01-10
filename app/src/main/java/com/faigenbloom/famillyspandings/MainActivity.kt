@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -124,7 +127,7 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(false)
             }
             mainNavController = rememberNavController()
-
+            val snackbarHostState = remember { SnackbarHostState() }
             FamillySpandingsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -140,6 +143,9 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
+                        },
+                        snackbarHost = {
+                            SnackbarHost(hostState = snackbarHostState)
                         },
                     ) { padding ->
                         NavHost(
@@ -224,12 +230,19 @@ class MainActivity : ComponentActivity() {
                                 ),
                             ) { backStack ->
                                 withBottomNavigation = false
-
+                                val messageSaved = stringResource(id = R.string.message_saved)
                                 val viewModel = koinViewModel<SpendingEditViewModel>()
                                 viewModel.onNext = { spendingId ->
                                     mainNavController.navigate(
                                         Destination.SpendingShowPage.withId(spendingId),
                                     )
+
+                                    lifecycleScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = messageSaved,
+                                            withDismissAction = true,
+                                        )
+                                    }
                                 }
 
                                 val state by viewModel
