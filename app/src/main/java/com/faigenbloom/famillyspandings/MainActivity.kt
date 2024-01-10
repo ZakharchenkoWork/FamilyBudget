@@ -195,9 +195,11 @@ class MainActivity : ComponentActivity() {
                                 route = Destination.SpendingsPage.route,
                             ) {
                                 withBottomNavigation = true
-                                val state by koinViewModel<SpendingsPageViewModel>()
+                                val viewModel = koinViewModel<SpendingsPageViewModel>()
+                                val state by viewModel
                                     .spendingsStateFlow
                                     .collectAsState()
+                                viewModel.reloadData()
                                 SpendingsPage(
                                     modifier = Modifier.padding(
                                         bottom = padding.calculateBottomPadding(),

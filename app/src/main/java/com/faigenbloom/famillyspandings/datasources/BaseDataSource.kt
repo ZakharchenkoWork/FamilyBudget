@@ -37,4 +37,5 @@ interface BaseDataSource {
     suspend fun updateCategoryPhoto(id: String, photoUri: String)
     suspend fun getCategory(id: String): CategoryEntity
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>
+    suspend fun updatePlanned(spendingId: String, isPlanned: Boolean)
 }

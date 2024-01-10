@@ -30,4 +30,7 @@ interface SpendingsDao {
 
     @Query("SELECT * FROM ${SpendingDetailEntity.TABLE_NAME} WHERE ${SpendingDetailEntity.COLUMN_ID} IN (:iDs)")
     suspend fun getSpendingDetails(iDs: List<String>): List<SpendingDetailEntity>
+
+    @Query("UPDATE ${SpendingEntity.TABLE_NAME} SET ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned WHERE ${SpendingEntity.COLUMN_ID} = :spendingId")
+    suspend fun updatePlanned(spendingId: String, isPlanned: Boolean)
 }

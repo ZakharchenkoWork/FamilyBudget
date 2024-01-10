@@ -64,5 +64,6 @@
     <string name="photo_chooser_gallery">Gallery</string>
     <string name="photo_chooser_camera">Photo</string>
     <string name="date">Date</string>
+    <string name="spending_mark_purchased">Mark purchased</string>
 
 </resources>

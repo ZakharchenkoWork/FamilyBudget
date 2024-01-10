@@ -17,4 +17,8 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity> {
         return dataSource.getSpendingDetails(spendingId)
     }
+
+    suspend fun markSpendingPurchased(spendingId: String) {
+        dataSource.updatePlanned(spendingId, false)
+    }
 }

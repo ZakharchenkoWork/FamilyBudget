@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.spandings.show
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,8 +34,10 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.comon.toReadable
 import com.faigenbloom.famillyspandings.comon.toReadableMoney
+import com.faigenbloom.famillyspandings.spandings.CategoriesMock
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
@@ -44,7 +47,7 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
         TopBar(
             title = "",
             endIcon = R.drawable.pen,
-            onEndIconCLicked = { onEditClicked(state.spending.id) },
+            onEndIconCLicked = { onEditClicked(state.id) },
         )
         ConstraintLayout {
             val (topStripe, info, bottomStripe) = createRefs()
@@ -57,7 +60,7 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
                     .background(
                         color = MaterialTheme.colorScheme.secondary,
                     ),
-                text = state.spending.name,
+                text = state.name,
                 textColor = MaterialTheme.colorScheme.tertiary,
             )
             Information(
@@ -66,7 +69,7 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
                         top.linkTo(topStripe.top, margin = 8.dp)
                     }
                     .padding(bottom = 32.dp),
-                spending = state.spending,
+                state = state,
             )
             Stripe(
                 modifier = Modifier
@@ -76,24 +79,55 @@ fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) 
                     .constrainAs(bottomStripe) {
                         bottom.linkTo(parent.bottom, margin = 16.dp)
                     },
-                text = state.spending.amount.toReadableMoney(),
+                text = state.amount.toReadableMoney(),
                 textColor = MaterialTheme.colorScheme.onPrimary,
+                isPlanned = state.isPlanned,
+                onMarkPurchasedClicked = state.onMarkPurchasedClicked,
             )
         }
-        DatailsList(state.spending.details)
+        DatailsList(state.details)
     }
 }
 
 @Composable
-fun Stripe(modifier: Modifier = Modifier, text: String, textColor: Color) {
+fun Stripe(
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color,
+    isPlanned: Boolean = false,
+    onMarkPurchasedClicked: (() -> Unit)? = null,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        Spacer(
-            modifier = Modifier
-                .weight(0.5f),
-        )
+        if (isPlanned) {
+            Box(
+                modifier = Modifier
+                    .weight(0.5f)
+                    .clickable {
+                        onMarkPurchasedClicked?.invoke()
+                    }
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                    ),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(all = 8.dp),
+                    text = stringResource(id = R.string.spending_mark_purchased),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            }
+        } else {
+            Spacer(
+                modifier = Modifier
+                    .weight(0.5f),
+            )
+        }
         Text(
             modifier = Modifier
                 .weight(0.5f)
@@ -110,7 +144,7 @@ fun Stripe(modifier: Modifier = Modifier, text: String, textColor: Color) {
 @Composable
 fun Information(
     modifier: Modifier = Modifier,
-    spending: SpendingForUI,
+    state: SpendingShowState,
 ) {
     Box(modifier = modifier) {
         Column {
@@ -125,13 +159,13 @@ fun Information(
                         modifier = Modifier
                             .size(170.dp)
                             .clip(CircleShape),
-                        painter = spending.photoUri?.let {
+                        painter = state.photoUri?.let {
                             rememberImagePainter(it) {
                                 transformations(CircleCropTransformation())
                             }
-                        } ?: spending.category.iconId?.let {
-                            painterResource(spending.category.iconId)
-                        } ?: spending.category.iconUri?.let {
+                        } ?: state.category.iconId?.let {
+                            painterResource(state.category.iconId)
+                        } ?: state.category.iconUri?.let {
                             rememberImagePainter(it) {
                                 transformations(CircleCropTransformation())
                             }
@@ -147,9 +181,9 @@ fun Information(
                         text = stringResource(id = R.string.category),
                         color = MaterialTheme.colorScheme.secondary,
                     )
-                    val categoryName = spending.category.nameId?.let {
+                    val categoryName = state.category.nameId?.let {
                         stringResource(id = it)
-                    } ?: spending.category.name ?: ""
+                    } ?: state.category.name ?: ""
 
                     Text(
                         text = categoryName,
@@ -158,7 +192,7 @@ fun Information(
                     )
 
                     Text(
-                        text = spending.date.toReadable(),
+                        text = state.date.toReadable(),
                         color = MaterialTheme.colorScheme.secondary,
                     )
                 }
@@ -223,7 +257,19 @@ fun SpendingEditPageDetailsPreview() {
         Scaffold { _ ->
             SpendingShowPage(
                 state = SpendingShowState(
-                    spending = Mock.mockSpendingForUI,
+                    id = "asdfasd",
+                    name = "Home",
+                    amount = 1000L,
+                    date = "01.11.2023".toLocalDate(),
+                    category = CategoriesMock.categoriesList[1],
+                    photoUri = null,
+                    isPlanned = true,
+                    details = listOf(
+                        SpendingDetail("asdfasd", "Food", "400"),
+                        SpendingDetail("asdfasdasd", "Shampoo", "35"),
+                        SpendingDetail("asdfasddddd", "Drops", "50"),
+                    ),
+                    onMarkPurchasedClicked = { },
                 ),
                 onEditClicked = {},
             )

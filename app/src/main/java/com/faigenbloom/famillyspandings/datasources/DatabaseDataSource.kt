@@ -109,4 +109,8 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         val spendingsCrossRef = appDatabase.spendingsDao().getSpendingsCrossRef(spendingId)
         return appDatabase.spendingsDao().getSpendingDetails(spendingsCrossRef.map { it.detailId })
     }
+
+    override suspend fun updatePlanned(spendingId: String, isPlanned: Boolean) {
+        appDatabase.spendingsDao().updatePlanned(spendingId, isPlanned)
+    }
 }

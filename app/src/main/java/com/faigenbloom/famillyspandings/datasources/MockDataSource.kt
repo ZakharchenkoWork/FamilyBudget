@@ -12,7 +12,6 @@ import com.faigenbloom.famillyspandings.statistics.CategorySummary
 
 typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
 typealias SpendingsEditMock = Mock
-typealias SpendingsShowMock = com.faigenbloom.famillyspandings.spandings.show.Mock
 typealias SpendingsPageMock = com.faigenbloom.famillyspandings.spandings.Mock
 typealias StatisticsPageMock = com.faigenbloom.famillyspandings.statistics.Mock
 
@@ -94,6 +93,10 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity> {
         return emptyList()
+    }
+
+    override suspend fun updatePlanned(spendingId: String, isPurcheased: Boolean) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

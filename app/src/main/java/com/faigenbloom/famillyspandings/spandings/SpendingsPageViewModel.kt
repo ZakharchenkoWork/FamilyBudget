@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 class SpendingsPageViewModel(
     private val repository: SpendingsPageRepository,
 ) : ViewModel() {
+    private var lastSpendings: List<SpendingData> = emptyList()
     private val sorter = PlatesSorter<SpendingData>()
     private var spendings: List<List<Pattern<SpendingData>>> = emptyList()
     private var isPlanned: Boolean = false
@@ -38,20 +39,24 @@ class SpendingsPageViewModel(
         reloadData()
     }
 
-    private fun reloadData() {
+    fun reloadData() {
         isLoading = true
         updateUI()
         viewModelScope.launch(Dispatchers.IO) {
-            spendings = sorter.prepareByDates(
-                repository.getSpendings(isPlanned).map {
-                    it.toSpendingData(repository.getCategoryById(it.categoryId))
-                },
-            ).sortedByDescending {
-                it[0].getSortableDate()
-            }.map {
-                sorter.findPattern(
-                    sorter.preparePlatesSizes(it),
-                )
+            val spendingsUpdatedList = repository.getSpendings(isPlanned).map {
+                it.toSpendingData(repository.getCategoryById(it.categoryId))
+            }
+            if (lastSpendings != spendingsUpdatedList) {
+                lastSpendings = spendingsUpdatedList
+                spendings = sorter.prepareByDates(
+                    lastSpendings,
+                ).sortedByDescending {
+                    it[0].getSortableDate()
+                }.map {
+                    sorter.findPattern(
+                        sorter.preparePlatesSizes(it),
+                    )
+                }
             }
             isLoading = false
             updateUI()
