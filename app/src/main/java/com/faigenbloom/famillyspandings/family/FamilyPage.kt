@@ -36,14 +36,17 @@ import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 fun FamilyPage(
     state: FamilyState,
     onQRScanRequested: () -> Unit,
+    onBack: () -> Unit,
 ) {
     Box {
         Column {
             TopBar(
                 endIcon = R.drawable.icon_qrcode,
+                startIcon = R.drawable.arrow,
                 onEndIconCLicked = { state.onQRVisibilityChanged(true) },
                 preEndIcon = R.drawable.icon_qrcode_scan,
                 onPreEndIconCLicked = { onQRScanRequested() },
+                onStartIconCLicked = onBack,
             )
             StripeBar(
                 textId = R.string.settings_family,
@@ -144,6 +147,7 @@ fun StatisticsPagePreview() {
                     onQrScanned = {},
                 ),
                 onQRScanRequested = {},
+                onBack = {},
             )
         }
     }

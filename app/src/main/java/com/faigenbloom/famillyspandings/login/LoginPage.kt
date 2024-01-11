@@ -25,9 +25,15 @@ import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun LoginPage(state: LoginPageState) {
+fun LoginPage(
+    state: LoginPageState,
+    onBack: () -> Unit,
+) {
     Column {
-        TopBar()
+        TopBar(
+            startIcon = R.drawable.arrow,
+            onStartIconCLicked = onBack,
+        )
         StripeBar(textId = R.string.authorization)
         BaseTextField(
             modifier = Modifier.padding(top = 100.dp),
@@ -97,6 +103,7 @@ fun LoginPagePreview() {
                     onPasswordChanged = {},
                     onForgotPasswordClicked = {},
                 ),
+                onBack = {},
             )
         }
     }

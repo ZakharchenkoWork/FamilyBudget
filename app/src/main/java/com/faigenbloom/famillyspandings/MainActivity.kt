@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
@@ -127,6 +128,7 @@ class MainActivity : ComponentActivity() {
             var withBottomNavigation by remember {
                 mutableStateOf(false)
             }
+            var selectedBottomNavigationIndex by rememberSaveable { mutableStateOf(0) }
             mainNavController = rememberNavController()
             val snackBarController = SnackBarController(
                 scope = lifecycleScope,
@@ -142,8 +144,10 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             if (withBottomNavigation) {
                                 BottomNavigationBar(
-                                    onDestinationChanged = {
-                                        mainNavController.navigate(it.route)
+                                    selectedIndex = selectedBottomNavigationIndex,
+                                    onDestinationChanged = { index, destination ->
+                                        selectedBottomNavigationIndex = index
+                                        mainNavController.navigate(destination.route)
                                     },
                                 )
                             }
@@ -185,7 +189,12 @@ class MainActivity : ComponentActivity() {
                                 val state by loginPageViewModel
                                     .loginStateFlow
                                     .collectAsState()
-                                LoginPage(state)
+                                LoginPage(
+                                    state = state,
+                                    onBack = {
+                                        mainNavController.popBackStack()
+                                    },
+                                )
                             }
                             composable(
                                 route = Destination.Register.route,
@@ -198,13 +207,19 @@ class MainActivity : ComponentActivity() {
                                 val state by registerPageViewModel
                                     .loginStateFlow
                                     .collectAsState()
-                                RegisterPage(state)
+                                RegisterPage(
+                                    state = state,
+                                    onBack = {
+                                        mainNavController.popBackStack()
+                                    },
+                                )
                             }
 
                             composable(
                                 route = Destination.SpendingsPage.route,
                             ) {
                                 withBottomNavigation = true
+                                selectedBottomNavigationIndex = 0
                                 val viewModel = koinViewModel<SpendingsPageViewModel>()
                                 val state by viewModel
                                     .spendingsStateFlow
@@ -322,6 +337,9 @@ class MainActivity : ComponentActivity() {
                                             Destination.CalendarDialog.withDate(it),
                                         )
                                     },
+                                    onBack = {
+                                        PopSpendings()
+                                    },
                                 )
                             }
 
@@ -348,13 +366,16 @@ class MainActivity : ComponentActivity() {
                                             ),
                                         )
                                     },
+                                    onBack = {
+                                        PopSpendings()
+                                    },
                                 )
                             }
                             composable(
                                 route = Destination.StatisticsPage.route,
                             ) {
                                 withBottomNavigation = true
-
+                                selectedBottomNavigationIndex = 3
                                 val state by koinViewModel<StatisticsPageViewModel>()
                                     .statisicsStateFlow
                                     .collectAsState()
@@ -365,7 +386,7 @@ class MainActivity : ComponentActivity() {
                                 route = Destination.BudgetPage.route,
                             ) {
                                 withBottomNavigation = true
-
+                                selectedBottomNavigationIndex = 1
                                 val state by koinViewModel<BudgetPageViewModel>()
                                     .budgetStateFlow
                                     .collectAsState()
@@ -384,7 +405,7 @@ class MainActivity : ComponentActivity() {
                                 route = Destination.SettingsPage.route,
                             ) {
                                 withBottomNavigation = true
-
+                                selectedBottomNavigationIndex = 4
                                 val state by koinViewModel<SettingsPageViewModel>()
                                     .budgetStateFlow
                                     .collectAsState()
@@ -410,6 +431,9 @@ class MainActivity : ComponentActivity() {
                                     state = state,
                                     onQRScanRequested = {
                                         scanQrCodeLauncher.launch(null)
+                                    },
+                                    onBack = {
+                                        mainNavController.popBackStack()
                                     },
                                 )
                             }
@@ -522,6 +546,16 @@ class MainActivity : ComponentActivity() {
         }
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun PopSpendings() {
+        do {
+            mainNavController.popBackStack()
+        } while (
+            mainNavController.previousBackStackEntry?.destination?.route == Destination.SpendingShowPage.route ||
+            mainNavController.previousBackStackEntry?.destination?.route == Destination.SpendingEditPage.route ||
+            mainNavController.previousBackStackEntry?.destination?.route == Destination.NewSpendingPage.route
+        )
     }
 
     private val requestPermissionLauncher = registerForActivityResult(

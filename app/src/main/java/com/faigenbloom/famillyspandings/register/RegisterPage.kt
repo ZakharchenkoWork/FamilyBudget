@@ -25,9 +25,15 @@ import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun RegisterPage(state: RegisterPageState) {
+fun RegisterPage(
+    state: RegisterPageState,
+    onBack: () -> Unit,
+) {
     Column {
-        TopBar()
+        TopBar(
+            startIcon = R.drawable.arrow,
+            onStartIconCLicked = onBack,
+        )
         StripeBar(textId = R.string.registration)
         BaseTextField(
             modifier = Modifier.padding(top = 100.dp),
@@ -121,6 +127,7 @@ fun RegisterPagePreview() {
                     onNameChanged = {},
                     onFamilyNameChanged = {},
                 ),
+                onBack = {},
             )
         }
     }

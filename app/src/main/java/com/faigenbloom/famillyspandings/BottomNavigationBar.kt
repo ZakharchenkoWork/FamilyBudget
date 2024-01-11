@@ -12,10 +12,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +26,10 @@ data class BarItem(
 )
 
 @Composable
-fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
+fun BottomNavigationBar(
+    selectedIndex: Int,
+    onDestinationChanged: (Int, Destination) -> Unit,
+) {
     val items = listOf(
         BarItem(
             destination = Destination.SpendingsPage,
@@ -58,7 +57,7 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
             imageUnChecked = R.drawable.icon_settings_outlined,
         ),
     )
-    var selectedIndex by rememberSaveable { mutableStateOf(0) }
+
     NavigationBar(
         modifier = Modifier.height(40.dp),
     ) {
@@ -67,8 +66,7 @@ fun BottomNavigationBar(onDestinationChanged: (Destination) -> Unit) {
                 modifier = Modifier.padding(4.dp),
                 selected = selectedIndex == index,
                 onClick = {
-                    selectedIndex = index
-                    onDestinationChanged(barItem.destination)
+                    onDestinationChanged(index, barItem.destination)
                 },
                 icon = {
                     Image(
@@ -95,7 +93,10 @@ fun HomePagePreview() {
     FamillySpandingsTheme {
         Scaffold(
             bottomBar = {
-                BottomNavigationBar(onDestinationChanged = {})
+                BottomNavigationBar(
+                    selectedIndex = 0,
+                    onDestinationChanged = { _, _ -> },
+                )
             },
         ) {
         }

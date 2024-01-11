@@ -48,14 +48,17 @@ fun SpendingEditPage(
     onPhotoRequest: (id: String) -> Unit,
     onCategoryPhotoRequest: (id: String) -> Unit,
     onCalendarOpened: (String) -> Unit,
+    onBack: () -> Unit,
 ) {
     Column {
         TopBar(
             title = stringResource(id = R.string.adding_spending_title),
+            startIcon = R.drawable.arrow,
             preEndIcon = if (state.isHidden) R.drawable.icon_shown else R.drawable.icon_hidden,
             endIcon = if (state.isOkActive) R.drawable.icon_ok else R.drawable.icon_ok_inactive,
             onEndIconCLicked = state.onSave,
             onPreEndIconCLicked = state.onHideChanged,
+            onStartIconCLicked = onBack,
         )
         StripeBar(
             textId = R.string.choose_category,
@@ -347,6 +350,7 @@ fun SpendingEditPageCategoriesPreview() {
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = { },
+                onBack = {},
             )
         }
     }
@@ -396,6 +400,7 @@ fun SpendingEditPageDetailsPreview() {
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = {},
+                onBack = {},
             )
         }
     }

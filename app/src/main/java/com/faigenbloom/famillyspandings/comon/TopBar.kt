@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.faigenbloom.famillyspandings.comon
 
 import androidx.annotation.StringRes
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +31,8 @@ import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 @Composable
 fun TopBar(
     title: String = "",
+    startIcon: Int? = null,
+    onStartIconCLicked: (() -> Unit)? = null,
     preEndIcon: Int? = null,
     onPreEndIconCLicked: (() -> Unit)? = null,
     endIcon: Int? = null,
@@ -49,12 +48,18 @@ fun TopBar(
                 .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(id = R.drawable.arrow),
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.secondary,
-            )
+            startIcon?.let {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            onStartIconCLicked?.invoke()
+                        },
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+            } ?: Spacer(modifier = Modifier.size(24.dp))
             Row(
                 modifier = Modifier.wrapContentWidth(),
             ) {
@@ -64,9 +69,7 @@ fun TopBar(
                             .padding(end = 16.dp)
                             .size(24.dp)
                             .clickable {
-                                onPreEndIconCLicked?.let {
-                                    onPreEndIconCLicked()
-                                }
+                                onPreEndIconCLicked?.invoke()
                             },
                         painter = painterResource(id = icon),
                         contentDescription = "",
@@ -76,9 +79,7 @@ fun TopBar(
                     Image(
                         modifier = Modifier.size(24.dp)
                             .clickable {
-                                onEndIconCLicked?.let {
-                                    onEndIconCLicked()
-                                }
+                                onEndIconCLicked?.invoke()
                             },
                         painter = painterResource(id = icon),
                         contentDescription = "",
@@ -178,8 +179,10 @@ fun TopBarPreview() {
         Column(modifier = Modifier.background(Color.White)) {
             TopBar(
                 title = "Auth",
+                startIcon = R.drawable.arrow,
                 endIcon = R.drawable.pen,
                 preEndIcon = R.drawable.pen,
+                onStartIconCLicked = {},
             )
             StripeBar(R.string.authorization)
         }
@@ -191,7 +194,11 @@ fun TopBarPreview() {
 fun TopBarDoublePreview() {
     FamillySpandingsTheme {
         Column(modifier = Modifier.background(Color.White)) {
-            TopBar(title = "Auth")
+            TopBar(
+                title = "Auth",
+                startIcon = R.drawable.arrow,
+                onStartIconCLicked = {},
+            )
             StripeBar(
                 textId = R.string.authorization,
                 secondTabTextId = R.string.registration,

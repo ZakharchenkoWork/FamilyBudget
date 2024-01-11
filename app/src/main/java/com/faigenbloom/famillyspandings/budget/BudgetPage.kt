@@ -39,7 +39,9 @@ fun BudgetPage(
     onAddPlannedSpendingClicked: () -> Unit,
 ) {
     Column {
-        TopBar(title = stringResource(id = R.string.budget_title))
+        TopBar(
+            title = stringResource(id = R.string.budget_title),
+        )
         StripeBar(
             textId = R.string.budget_personal,
             secondTabTextId = R.string.budget_family,

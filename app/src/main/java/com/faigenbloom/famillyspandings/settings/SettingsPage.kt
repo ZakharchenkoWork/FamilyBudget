@@ -41,7 +41,7 @@ fun SettingsPage(
     onFamilyPageClicked: () -> Unit,
 ) {
     Column {
-        TopBar(title = stringResource(id = R.string.budget_title))
+        TopBar()
         StripeBar(
             textId = R.string.settings_title,
         )

@@ -39,14 +39,20 @@ import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
-fun SpendingShowPage(state: SpendingShowState, onEditClicked: (String) -> Unit) {
+fun SpendingShowPage(
+    state: SpendingShowState,
+    onEditClicked: (String) -> Unit,
+    onBack: () -> Unit,
+) {
     Column {
         TopBar(
             title = "",
+            startIcon = R.drawable.arrow,
             preEndIcon = R.drawable.icon_duplicate,
             onPreEndIconCLicked = { state.onDuplicateClicked(onEditClicked) },
             endIcon = R.drawable.pen,
             onEndIconCLicked = { onEditClicked(state.id) },
+            onStartIconCLicked = onBack,
         )
         ConstraintLayout {
             val (topStripe, info, bottomStripe) = createRefs()
@@ -272,6 +278,7 @@ fun SpendingEditPageDetailsPreview() {
                     onDuplicateClicked = {},
                 ),
                 onEditClicked = {},
+                onBack = {},
             )
         }
     }

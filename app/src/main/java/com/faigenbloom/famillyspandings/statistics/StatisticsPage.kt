@@ -52,7 +52,9 @@ import syncronizer
 @Composable
 fun StatisticsPage(state: StatisicsState) {
     Column {
-        TopBar(title = stringResource(id = R.string.statistics))
+        TopBar(
+            title = stringResource(id = R.string.statistics),
+        )
         StripeBar(
             textId = R.string.statistics_pie,
             secondTabTextId = R.string.statistics_bar,
