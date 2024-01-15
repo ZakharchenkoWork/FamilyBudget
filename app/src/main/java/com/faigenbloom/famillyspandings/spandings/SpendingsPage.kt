@@ -133,7 +133,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    Mock.spendingsList[0],
+                                    mockSpendingsList[0],
                                 )
                             },
                             Pattern<SpendingData>(
@@ -142,7 +142,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    Mock.spendingsList[0],
+                                    mockSpendingsList[0],
                                 )
                             },
                             Pattern<SpendingData>(
@@ -153,9 +153,9 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    Mock.spendingsList[0],
-                                    Mock.spendingsList[1],
-                                    Mock.spendingsList[2],
+                                    mockSpendingsList[0],
+                                    mockSpendingsList[1],
+                                    mockSpendingsList[2],
                                 )
                             },
                             Pattern<SpendingData>(
@@ -165,8 +165,8 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    Mock.spendingsList[0],
-                                    Mock.spendingsList[1],
+                                    mockSpendingsList[0],
+                                    mockSpendingsList[1],
                                 )
                             },
                             Pattern<SpendingData>(
@@ -175,7 +175,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    Mock.spendingsList[0],
+                                    mockSpendingsList[0],
                                 )
                             },
                         ),

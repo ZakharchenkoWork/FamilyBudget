@@ -3,6 +3,7 @@ package com.faigenbloom.famillyspandings.datasources
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.statistics.CategorySummary
 import java.util.Currency
@@ -20,7 +21,7 @@ interface BaseDataSource {
     suspend fun getAllCategories(): List<CategoryEntity>
     suspend fun addCategory(categoryEntity: CategoryEntity)
 
-    suspend fun saveSpending(spending: SpendingEntity, details: List<SpendingDetailEntity>)
+    suspend fun saveSpending(spending: SpendingEntity)
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getCategoriesSumaries(): List<CategorySummary>
@@ -37,5 +38,12 @@ interface BaseDataSource {
     suspend fun updateCategoryPhoto(id: String, photoUri: String)
     suspend fun getCategory(id: String): CategoryEntity
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>
+    suspend fun getSpendingDetailDuplicate(entity: SpendingDetailEntity): SpendingDetailEntity?
+    suspend fun getAllSpendingDetails(): List<SpendingDetailEntity>
     suspend fun updatePlanned(spendingId: String, isPlanned: Boolean)
+    suspend fun addSpendingDetail(spendingDetailEntity: SpendingDetailEntity)
+    suspend fun addCrossRef(crossRef: SpendingDetailsCrossRef)
+    suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef>
+    suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef)
+    suspend fun deleteSpendingDetail(id: String)
 }

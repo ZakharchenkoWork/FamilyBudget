@@ -161,7 +161,7 @@ fun SpendingEditPagePreview() {
         Scaffold { _ ->
             Categories(
                 state = CategoriesState(
-                    categoriesList = Mock.categoriesList,
+                    categoriesList = mockCategoriesList,
                     selectedIndex = 1,
                     onSelectionChanged = {},
                     newCategoryName = "",

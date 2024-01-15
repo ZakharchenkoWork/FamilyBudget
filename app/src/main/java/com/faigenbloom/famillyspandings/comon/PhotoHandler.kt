@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.faigenbloom.famillyspandings.comon
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +45,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.comon.coders.BarcodeAnalyzer
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -84,7 +93,7 @@ fun PhotoChooser(
                     drawableRes = R.drawable.icon_from_gallery,
                     text = stringResource(R.string.photo_chooser_gallery),
 
-                )
+                    )
                 DialogButton(
                     modifier = Modifier
                         .weight(0.5f)
@@ -123,6 +132,73 @@ fun DialogButton(modifier: Modifier, drawableRes: Int, text: String) {
 }
 
 @Composable
+fun BarCodeCamera(
+    modifier: Modifier = Modifier,
+    onBarcodeCaptured: (barCode: String) -> Unit,
+) {
+    val cameraPermissionState = rememberPermissionState(
+        android.Manifest.permission.CAMERA,
+    )
+    if (cameraPermissionState.status.isGranted) {
+        val lensFacing = CameraSelector.LENS_FACING_BACK
+        val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
+
+        val preview = Preview.Builder().build()
+        val previewView = remember { PreviewView(context) }
+        val imageCapture: ImageAnalysis = remember {
+            ImageAnalysis.Builder().build().apply {
+                setAnalyzer(
+                    ContextCompat.getMainExecutor(context),
+                    BarcodeAnalyzer(onBarcodeCaptured),
+                )
+            }
+        }
+
+        val cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(lensFacing)
+            .build()
+
+        LaunchedEffect(lensFacing) {
+            val cameraProvider = context.getCameraProvider()
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                preview,
+                imageCapture,
+            )
+
+            preview.setSurfaceProvider(previewView.surfaceProvider)
+        }
+        AndroidView(
+            modifier = modifier,
+            factory = {
+                previewView
+            },
+        )
+    } else {
+        Column {
+            val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                // If the user has denied the permission but the rationale can be shown,
+                // then gently explain why the app requires this permission
+                "The camera is important for Barcode scanner. Please grant the permission."
+            } else {
+                // If it's the first time the user lands on this feature, or the user
+                // doesn't want to be asked again for this permission, explain that the
+                // permission is required
+                "Camera permission required for Barcode scanner to be available. " +
+                        "Please grant the permission"
+            }
+            Text(textToShow)
+            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                Text("Request permission")
+            }
+        }
+    }
+}
+
+@Composable
 fun CameraScreen(
     outputDirectory: File,
     executor: Executor,
@@ -136,6 +212,7 @@ fun CameraScreen(
     val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
     val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
+
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()
@@ -257,6 +334,6 @@ fun CameraScreenPreview() {
             onImageCaptured = { _ -> },
             onError = { _ -> },
 
-        )
+            )
     }
 }

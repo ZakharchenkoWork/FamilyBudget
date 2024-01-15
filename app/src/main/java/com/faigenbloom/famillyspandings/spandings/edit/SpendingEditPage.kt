@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,15 +34,13 @@ import coil.transform.CircleCropTransformation
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.categories.Categories
 import com.faigenbloom.famillyspandings.categories.CategoriesState
+import com.faigenbloom.famillyspandings.categories.mockCategoriesList
 import com.faigenbloom.famillyspandings.comon.BaseTextField
-import com.faigenbloom.famillyspandings.comon.SimpleTextField
 import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TextFieldType
 import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
-
-typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
 
 @Composable
 fun SpendingEditPage(
@@ -48,6 +48,7 @@ fun SpendingEditPage(
     onPhotoRequest: (id: String) -> Unit,
     onCategoryPhotoRequest: (id: String) -> Unit,
     onCalendarOpened: (String) -> Unit,
+    onSpendingDialogRequest: (List<SpendingDetail>) -> Unit,
     onBack: () -> Unit,
 ) {
     Column {
@@ -76,6 +77,7 @@ fun SpendingEditPage(
                 state = state,
                 onPhotoRequest = onPhotoRequest,
                 onCalendarOpened = onCalendarOpened,
+                onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
             )
         }
     }
@@ -86,6 +88,7 @@ fun Information(
     state: SpendingEditState,
     onPhotoRequest: (id: String) -> Unit,
     onCalendarOpened: (String) -> Unit,
+    onSpendingDialogRequest: (String) -> Unit,
 ) {
     Box {
         Column {
@@ -115,7 +118,7 @@ fun Information(
                 ) {
                     BaseTextField(
                         text = state.namingText,
-                        labelId = R.string.spending_details_naming,
+                        labelId = R.string.spending_details_name,
                         onTextChange = state.onNamingTextChanged,
                     )
                     BaseTextField(
@@ -143,37 +146,47 @@ fun Information(
                 modifier = Modifier.padding(top = 16.dp),
                 textId = R.string.spending_details,
             )
-            DatailsList(state)
+            DatailsList(
+                state = state,
+                onSpendingDialogRequest = {
+                    onSpendingDialogRequest("")
+                },
+            )
         }
     }
 }
 
 @Composable
-fun DatailsList(state: SpendingEditState) {
+fun DatailsList(
+    state: SpendingEditState,
+    onSpendingDialogRequest: () -> Unit,
+) {
     LazyColumn {
-        items(state.detailsList.size + 1) { detailIndex ->
-            if (detailIndex < state.detailsList.size) {
-                DetailsItem(
-                    state = state,
-                    detailIndex = detailIndex,
-                )
-            } else {
-                AddItemLine(state = state)
-            }
+        item {
+            AddItemLine(
+                onSpendingDialogRequest = onSpendingDialogRequest,
+            )
+        }
+        items(state.detailsList.size) { detailIndex ->
+            DetailsItem(
+                state = state,
+                detailIndex = detailIndex,
+            )
         }
     }
 }
 
 @Composable
-fun AddItemLine(state: SpendingEditState) {
+fun AddItemLine(onSpendingDialogRequest: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Row(
             modifier = Modifier
+                .semantics { contentDescription = ADD_DETAIL_BUTTON }
                 .clickable {
-                    state.onAddNewDetail()
+                    onSpendingDialogRequest()
                 },
         ) {
             Icon(
@@ -212,25 +225,24 @@ fun DetailsItem(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            SimpleTextField(
+            Text(
                 modifier = Modifier
                     .weight(0.5f)
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 8.dp)
+                    .semantics { contentDescription = SPENDING_DETAIL_NAME + detailIndex },
                 text = spendingDetail.name,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = stringResource(R.string.spending_name),
-                onValueChange = { state.onDetailNameChanged(detailIndex, it) },
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
             )
-            SimpleTextField(
+            Text(
                 modifier = Modifier
                     .weight(0.5f)
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 8.dp)
+                    .semantics { contentDescription = SPENDING_DETAIL_AMOUNT + detailIndex },
                 textAlign = TextAlign.End,
                 text = spendingDetail.amount,
-                textFieldType = TextFieldType.Money,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                label = stringResource(R.string.spending_details_amount),
-                onValueChange = { state.onDetailAmountChanged(detailIndex, it) },
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Spacer(
@@ -317,7 +329,7 @@ fun SpendingEditPageCategoriesPreview() {
                 state = SpendingEditState(
                     spendingId = "",
                     categoryState = CategoriesState(
-                        categoriesList = CategoriesMock.categoriesList,
+                        categoriesList = mockCategoriesList,
                         selectedIndex = 1,
                         onSelectionChanged = {},
                         newCategoryName = "",
@@ -336,9 +348,6 @@ fun SpendingEditPageCategoriesPreview() {
                     isHidden = false,
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
-                    onAddNewDetail = {},
-                    onDetailNameChanged = { _, _ -> },
-                    onDetailAmountChanged = { _, _ -> },
                     photoUri = null,
                     onPhotoUriChanged = { _ -> },
                     onSave = { },
@@ -350,6 +359,7 @@ fun SpendingEditPageCategoriesPreview() {
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = { },
+                onSpendingDialogRequest = {},
                 onBack = {},
             )
         }
@@ -367,7 +377,7 @@ fun SpendingEditPageDetailsPreview() {
                     spendingId = "",
                     categoryState = CategoriesState(
                         categoriesList =
-                        CategoriesMock.categoriesList,
+                        mockCategoriesList,
                         selectedIndex = 1,
                         onSelectionChanged = {},
                         newCategoryName = "",
@@ -382,12 +392,9 @@ fun SpendingEditPageDetailsPreview() {
                     namingText = "Food",
                     amountText = "19.50",
                     dateText = "19.10.2023",
-                    detailsList = Mock.mockDetailsList,
+                    detailsList = mockDetailsList,
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
-                    onAddNewDetail = {},
-                    onDetailNameChanged = { _, _ -> },
-                    onDetailAmountChanged = { _, _ -> },
                     photoUri = null,
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
@@ -400,6 +407,7 @@ fun SpendingEditPageDetailsPreview() {
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = {},
+                onSpendingDialogRequest = {},
                 onBack = {},
             )
         }

@@ -37,8 +37,9 @@
     <string name="spending_information">Information</string>
     <string name="spendings_no_spendings_message">There is no spendings made yet, start by adding one.</string>
     <string name="spending_details">Details</string>
-    <string name="spending_details_naming">Naming</string>
+    <string name="spending_details_name">Name</string>
     <string name="spending_details_amount">Amount</string>
+    <string name="spending_details_barcode">Barcode</string>
     <string name="spending_name">Name</string>
     <string name="spending_add_detail_hint">Add bill component</string>
     <string name="statistics">Statistics</string>
@@ -68,5 +69,10 @@
     <string name="message_saved">Saved</string>
     <string name="message_hidden">Spending will be shown</string>
     <string name="message_shown">Spending will be hidden</string>
+    <string name="detail_dialog_title">Changing spending components</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="detail_dialog_details_hint">Current bill components</string>
+    <string name="detail_dialog_suggestions_hint">Suggestions</string>
 
 </resources>

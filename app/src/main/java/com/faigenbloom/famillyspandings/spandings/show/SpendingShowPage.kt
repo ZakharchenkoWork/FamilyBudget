@@ -33,9 +33,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.categories.mockCategoriesList
 import com.faigenbloom.famillyspandings.comon.TopBar
-import com.faigenbloom.famillyspandings.spandings.CategoriesMock
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingDetail
+import com.faigenbloom.famillyspandings.spandings.edit.mockDetailsList
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -266,14 +267,10 @@ fun SpendingEditPageDetailsPreview() {
                     name = "Home",
                     amount = "10.00",
                     date = "01.11.2023",
-                    category = CategoriesMock.categoriesList[1],
+                    category = mockCategoriesList[1],
                     photoUri = null,
                     isPlanned = true,
-                    details = listOf(
-                        SpendingDetail("asdfasd", "Food", "400"),
-                        SpendingDetail("asdfasdasd", "Shampoo", "35"),
-                        SpendingDetail("asdfasddddd", "Drops", "50"),
-                    ),
+                    details = mockDetailsList,
                     onMarkPurchasedClicked = { },
                     onDuplicateClicked = {},
                 ),

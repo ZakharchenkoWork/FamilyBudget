@@ -32,18 +32,8 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun saveSpending(
         spending: SpendingEntity,
-        details: List<SpendingDetailEntity>,
     ) {
         appDatabase.spendingsDao().addSpending(spending)
-        appDatabase.spendingsDao().addSpendingDetails(details)
-        appDatabase.spendingsDao().addSpendingsCrossRef(
-            details.map { detail ->
-                SpendingDetailsCrossRef(
-                    spendingId = spending.id,
-                    detailId = detail.id,
-                )
-            },
-        )
     }
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
@@ -110,7 +100,35 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return appDatabase.spendingsDao().getSpendingDetails(spendingsCrossRef.map { it.detailId })
     }
 
+    override suspend fun getSpendingDetailDuplicate(entity: SpendingDetailEntity): SpendingDetailEntity? {
+        return appDatabase.spendingsDao().getSpendingDetailDuplicate(entity.name, entity.amount)
+    }
+
+    override suspend fun getAllSpendingDetails(): List<SpendingDetailEntity> {
+        return appDatabase.spendingsDao().getAllSpendingDetails()
+    }
+
     override suspend fun updatePlanned(spendingId: String, isPlanned: Boolean) {
         appDatabase.spendingsDao().updatePlanned(spendingId, isPlanned)
+    }
+
+    override suspend fun addSpendingDetail(spendingDetailEntity: SpendingDetailEntity) {
+        appDatabase.spendingsDao().addSpendingDetail(spendingDetailEntity)
+    }
+
+    override suspend fun addCrossRef(crossRef: SpendingDetailsCrossRef) {
+        appDatabase.spendingsDao().addSpendingCrossRef(crossRef)
+    }
+
+    override suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef> {
+        return appDatabase.spendingsDao().getDetailCrossRefs(detailId)
+    }
+
+    override suspend fun deleteCrossRef(crossRef: SpendingDetailsCrossRef) {
+        return appDatabase.spendingsDao().deleteCrossRef(crossRef.spendingId, crossRef.detailId)
+    }
+
+    override suspend fun deleteSpendingDetail(id: String) {
+        appDatabase.spendingsDao().deleteSpendingDetail(id)
     }
 }

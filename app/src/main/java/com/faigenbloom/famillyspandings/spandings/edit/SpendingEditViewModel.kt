@@ -8,11 +8,8 @@ import com.faigenbloom.famillyspandings.categories.CategoriesRepository
 import com.faigenbloom.famillyspandings.categories.CategoriesState
 import com.faigenbloom.famillyspandings.categories.CategoriesViewModel
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
-import com.faigenbloom.famillyspandings.comon.checkOrGenId
-import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.comon.toReadableDate
 import com.faigenbloom.famillyspandings.comon.toReadableMoney
-import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +20,7 @@ import kotlinx.coroutines.launch
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
     categoriesRepository: CategoriesRepository,
-    private val spendingsRepository: SpendingsRepository,
+    private val spendingsRepository: SpendingsEditRepository,
 ) : CategoriesViewModel(categoriesRepository) {
     private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
     private var namingText: String = ""
@@ -37,14 +34,16 @@ class SpendingEditViewModel(
 
     var onNext: (String) -> Unit = {}
     var onShowMessage: (MessageTypes) -> Unit = {}
-
-    private fun onDetailAmountChanged(detailIndex: Int, amount: String) {
-        detailsList = ArrayList(detailsList)
-            .apply {
-                set(detailIndex, get(detailIndex).copy(amount = amount))
+    fun updateDetail(detailsUpdate: SpendingDetailListWrapper?) {
+        detailsUpdate?.let {
+            if (detailsUpdate.details.isNotEmpty()) {
+                detailsList = it.details
+            } else {
+                detailsList = emptyList()
             }
-        amountText = updateTotal()
-        updateUI()
+            amountText = updateTotal()
+            updateUI()
+        }
     }
 
     private fun onSave() {
@@ -80,23 +79,6 @@ class SpendingEditViewModel(
             amountText = total.toString()
         }
         return amountText
-    }
-
-    private fun onAddNewDetail() {
-        detailsList = ArrayList(detailsList)
-            .apply { add(SpendingDetail("", "", "")) }
-        updateUI()
-    }
-
-    private fun onDetailNameChanged(detailIndex: Int, name: String) {
-        detailsList = detailsList.mapIndexed { index, spendingDetail ->
-            if (detailIndex == index) {
-                spendingDetail.copy(name = name)
-            } else {
-                spendingDetail
-            }
-        }
-        updateUI()
     }
 
     private fun onDateChanged(date: String) {
@@ -154,9 +136,6 @@ class SpendingEditViewModel(
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
             onAmountTextChanged = ::onAmountTextChanged,
-            onAddNewDetail = ::onAddNewDetail,
-            onDetailNameChanged = ::onDetailNameChanged,
-            onDetailAmountChanged = ::onDetailAmountChanged,
             photoUri = photoUri,
             onPhotoUriChanged = ::onPhotoUriChanged,
             onSave = ::onSave,
@@ -210,9 +189,6 @@ data class SpendingEditState(
     val isHidden: Boolean,
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
-    val onAddNewDetail: () -> Unit,
-    val onDetailNameChanged: (Int, String) -> Unit,
-    val onDetailAmountChanged: (Int, String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
     val onDateChanged: (String) -> Unit,
     val onSave: () -> Unit,
@@ -220,25 +196,6 @@ data class SpendingEditState(
     val onNext: (String) -> Unit,
 )
 
-data class SpendingDetail(val id: String, val name: String, val amount: String) {
-    fun mapToEntity(): SpendingDetailEntity {
-        return SpendingDetailEntity(
-            id = id.checkOrGenId(),
-            name = name,
-            amount = amount.toLongMoney(),
-        )
-    }
-
-    companion object {
-        fun fromEntity(entity: SpendingDetailEntity): SpendingDetail {
-            return SpendingDetail(
-                id = entity.id,
-                name = entity.name,
-                amount = entity.amount.toReadableMoney(),
-            )
-        }
-    }
-}
 
 enum class MessageTypes {
     SAVED,

@@ -2,15 +2,18 @@ package com.faigenbloom.famillyspandings.spandings.show
 
 import android.net.Uri
 import com.faigenbloom.famillyspandings.categories.CategoryData
-import com.faigenbloom.famillyspandings.comon.checkOrGenId
 import com.faigenbloom.famillyspandings.comon.toLongDate
 import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.datasources.BaseDataSource
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.id.IdGenerator
 
-class SpendingsRepository(private val dataSource: BaseDataSource) {
+class SpendingsRepository(
+    private val dataSource: BaseDataSource,
+    private val idGenerator: IdGenerator,
+) {
     suspend fun getSpending(id: String): SpendingEntity {
         return dataSource.getSpending(id)
     }
@@ -37,20 +40,19 @@ class SpendingsRepository(private val dataSource: BaseDataSource) {
         details: List<SpendingDetailEntity>,
         isHidden: Boolean,
     ): String {
-        val id = "".checkOrGenId()
+        val id = idGenerator.checkOrGenId()
         dataSource.saveSpending(
             SpendingEntity(
                 id = id,
                 name = name,
                 amount = amount.toLongMoney(),
                 date = date.toLongDate(),
-                categoryId = category.id.checkOrGenId(),
+                categoryId = idGenerator.checkOrGenId(category.id),
                 photoUri = photoUri?.toString(),
                 isPlanned = isPlanned,
                 isDuplicate = true,
                 isHidden = isHidden,
             ),
-            details = details,
         )
         return id
     }

@@ -19,6 +19,8 @@ fun String.toLongMoney(): Long = if (this.contains(".")) {
         parts[1]
     }
     result.toLong()
+} else if (isNotBlank()) {
+    toLong() * 100L
 } else {
-    this.toLong() * 100
+    0L
 }

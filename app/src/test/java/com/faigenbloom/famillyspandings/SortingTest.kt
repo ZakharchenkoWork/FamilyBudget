@@ -4,6 +4,7 @@ import com.faigenbloom.famillyspandings.comon.Countable
 import com.faigenbloom.famillyspandings.comon.PlateSizeType
 import com.faigenbloom.famillyspandings.comon.PlatesSorter
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.spandings.mockSpendingsList
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.maps.shouldContain
@@ -12,8 +13,6 @@ import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-
-typealias SpendingsMock = com.faigenbloom.famillyspandings.spandings.Mock
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -229,11 +228,11 @@ class SortingTest {
             val patterns = sorter.findPattern(
                 sorter.preparePlatesSizes(
                     listOf(
-                        SpendingsMock.spendingsList[9],
-                        SpendingsMock.spendingsList[10],
-                        SpendingsMock.spendingsList[11],
-                        SpendingsMock.spendingsList[12],
-                        SpendingsMock.spendingsList[13],
+                        mockSpendingsList[9],
+                        mockSpendingsList[10],
+                        mockSpendingsList[11],
+                        mockSpendingsList[12],
+                        mockSpendingsList[13],
                     ),
                 ),
             )
@@ -242,11 +241,11 @@ class SortingTest {
             patterns[0].plates[2] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
             patterns[0].plates[3] shouldBe PlateSizeType.SIZE_ONE_BY_ONE
             patterns[1].plates[0] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
-            patterns[0].items shouldContain SpendingsMock.spendingsList[9]
-            patterns[0].items shouldContain SpendingsMock.spendingsList[10]
-            patterns[0].items shouldContain SpendingsMock.spendingsList[11]
-            patterns[0].items shouldContain SpendingsMock.spendingsList[12]
-            patterns[1].items shouldContain SpendingsMock.spendingsList[13]
+            patterns[0].items shouldContain mockSpendingsList[9]
+            patterns[0].items shouldContain mockSpendingsList[10]
+            patterns[0].items shouldContain mockSpendingsList[11]
+            patterns[0].items shouldContain mockSpendingsList[12]
+            patterns[1].items shouldContain mockSpendingsList[13]
         }
 
     @Test
@@ -350,7 +349,7 @@ class SortingTest {
     fun `sorter can sort by dates`() =
         runTest {
             val listByDate = sorter.prepareByDates(
-                SpendingsMock.spendingsList,
+                mockSpendingsList,
             )
             listByDate.size shouldBe 12
             listByDate[0].size shouldBe 6

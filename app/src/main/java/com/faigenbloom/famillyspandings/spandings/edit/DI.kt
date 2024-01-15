@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val spendingEditModule = module {
     viewModelOf(::SpendingEditViewModel)
-    single { SpendingsRepository(get<DatabaseDataSource>()) }
+    single { SpendingsEditRepository(get<DatabaseDataSource>(), get()) }
 }

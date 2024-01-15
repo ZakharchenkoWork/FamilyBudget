@@ -22,11 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+
+const val LEFT_TOP_BAR_BUTTON = "LEFT_TOP_BAR_BUTTON"
+const val RIGHT_TOP_BAR_BUTTON = "RIGHT_TOP_BAR_BUTTON"
 
 @Composable
 fun TopBar(
@@ -77,7 +82,8 @@ fun TopBar(
                 }
                 endIcon?.let { icon ->
                     Image(
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                             .clickable {
                                 onEndIconCLicked?.invoke()
                             },
@@ -122,6 +128,7 @@ fun StripeBar(
             modifier = Modifier
                 .weight(0.5f)
                 .clickable { onSelectionChanged?.invoke(true) }
+                .semantics { contentDescription = LEFT_TOP_BAR_BUTTON }
                 .background(
                     color = if (isLeftSelected) {
                         MaterialTheme.colorScheme.secondary
@@ -147,6 +154,9 @@ fun StripeBar(
                 modifier = Modifier
                     .weight(0.5f)
                     .clickable { onSelectionChanged?.invoke(false) }
+                    .semantics {
+                        contentDescription = RIGHT_TOP_BAR_BUTTON
+                    }
                     .background(
                         color = if (isLeftSelected) {
                             MaterialTheme.colorScheme.secondaryContainer
@@ -155,7 +165,7 @@ fun StripeBar(
                         },
                     ),
 
-            ) {
+                ) {
                 Text(
                     modifier = Modifier
                         .padding(16.dp),

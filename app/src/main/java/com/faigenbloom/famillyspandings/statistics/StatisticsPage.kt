@@ -344,7 +344,7 @@ fun StatisticsPagePreview() {
         Surface {
             StatisticsPage(
                 state = StatisicsState(
-                    categorySummary = Mock.categoriesList,
+                    categorySummary = mockCategoriesSummaryList,
                     sum = 7500,
                     max = 1000,
                     isPieChartOpened = false,

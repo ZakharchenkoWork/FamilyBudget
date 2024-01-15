@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
 package com.faigenbloom.famillyspandings.comon
 
@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.spandings.Mock
 import com.faigenbloom.famillyspandings.spandings.SpendingData
+import com.faigenbloom.famillyspandings.spandings.mockSpendingsList
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
@@ -1149,7 +1149,8 @@ fun SpendingItem(
                 .fillMaxSize()
                 .background(
                     color = if (item.isHidden) {
-                        MaterialTheme.colorScheme.hint()
+                        MaterialTheme.colorScheme
+                            .hint()
                             .copy(alpha = 0.5f)
                     } else {
                         MaterialTheme.colorScheme.transparent()
@@ -1202,7 +1203,7 @@ fun Plate_3x3_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                     ),
@@ -1227,7 +1228,7 @@ fun Plate_3x2_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                     ),
@@ -1253,8 +1254,8 @@ fun Plate_3x2_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
                             )
                         },
                     ),
@@ -1281,9 +1282,9 @@ fun Plate_3x2_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1310,9 +1311,9 @@ fun Plate_2x2_3x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1340,10 +1341,10 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[3],
-                                Mock.spendingsList[4],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[3],
+                                mockSpendingsList[4],
                             )
                         },
                     ),
@@ -1369,8 +1370,8 @@ fun Plate_2x2_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
                             )
                         },
                     ),
@@ -1397,9 +1398,9 @@ fun Plate_2x2_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1425,8 +1426,8 @@ fun Plate_2x2_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
                             )
                         },
                     ),
@@ -1453,9 +1454,9 @@ fun Plate_3x1_3x1_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1483,10 +1484,10 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
                             )
                         },
                     ),
@@ -1514,10 +1515,10 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
                             )
                         },
                     ),
@@ -1546,11 +1547,11 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
-                                Mock.spendingsList[4],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
+                                mockSpendingsList[4],
                             )
                         },
                     ),
@@ -1578,10 +1579,10 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
                             )
                         },
                     ),
@@ -1608,9 +1609,9 @@ fun Plate_2x1_2x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1638,10 +1639,10 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
                             )
                         },
                     ),
@@ -1668,9 +1669,9 @@ fun Plate_2x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                     ),
@@ -1695,7 +1696,7 @@ fun Plate_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                     ),
@@ -1721,8 +1722,8 @@ fun Plate_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
                             )
                         },
                     ),
@@ -1747,7 +1748,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                         Pattern<SpendingData>(
@@ -1756,7 +1757,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                         Pattern<SpendingData>(
@@ -1767,9 +1768,9 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
                             )
                         },
                         Pattern<SpendingData>(
@@ -1779,8 +1780,8 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
                             )
                         },
                         Pattern<SpendingData>(
@@ -1789,7 +1790,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                Mock.spendingsList[0],
+                                mockSpendingsList[0],
                             )
                         },
                     ),
@@ -1811,19 +1812,19 @@ fun PlateWithDuplicatesAndDatesPreview() {
                     sorter.findPattern(
                         sorter.preparePlatesSizes(
                             listOf(
-                                Mock.spendingsList[0],
-                                Mock.spendingsList[1],
-                                Mock.spendingsList[2],
-                                Mock.spendingsList[3],
-                                Mock.spendingsList[4],
-                                Mock.spendingsList[5],
+                                mockSpendingsList[0],
+                                mockSpendingsList[1],
+                                mockSpendingsList[2],
+                                mockSpendingsList[3],
+                                mockSpendingsList[4],
+                                mockSpendingsList[5],
                             ),
                         ),
                     ),
                     sorter.findPattern(
                         sorter.preparePlatesSizes(
                             listOf(
-                                Mock.spendingsList[6],
+                                mockSpendingsList[6],
                             ),
                         ),
                     ),

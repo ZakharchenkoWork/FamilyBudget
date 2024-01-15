@@ -48,6 +48,7 @@ import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
 import com.faigenbloom.famillyspandings.comon.Calendar
 import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.DATE
+import com.faigenbloom.famillyspandings.comon.DETAILS_LIST_ARG
 import com.faigenbloom.famillyspandings.comon.Destination
 import com.faigenbloom.famillyspandings.comon.GalleryPhotoContract
 import com.faigenbloom.famillyspandings.comon.GalleryRequest
@@ -59,6 +60,8 @@ import com.faigenbloom.famillyspandings.comon.PhotoChooser
 import com.faigenbloom.famillyspandings.comon.QR_KEY
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.SPENDING_PHOTO
+import com.faigenbloom.famillyspandings.comon.fromJson
+import com.faigenbloom.famillyspandings.comon.toJson
 import com.faigenbloom.famillyspandings.family.FamilyPage
 import com.faigenbloom.famillyspandings.family.FamilyPageViewModel
 import com.faigenbloom.famillyspandings.login.LoginPage
@@ -73,6 +76,8 @@ import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
 import com.faigenbloom.famillyspandings.spandings.edit.MessageTypes
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
 import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
+import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailDialog
+import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailViewModel
 import com.faigenbloom.famillyspandings.spandings.show.SpendingShowPage
 import com.faigenbloom.famillyspandings.spandings.show.SpendingShowViewModel
 import com.faigenbloom.famillyspandings.statistics.StatisticsPage
@@ -281,6 +286,12 @@ class MainActivity : ComponentActivity() {
                                 backStack.getPoppedArgument(DATE, "")?.let { calendarDate ->
                                     state.onDateChanged(calendarDate)
                                 }
+                                backStack.getPoppedArgument<String>(DETAILS_LIST_ARG, null)
+                                    ?.let { wrappedDetails ->
+                                        viewModel.updateDetail(
+                                            wrappedDetails.fromJson(),
+                                        )
+                                    }
                                 backStack.getPoppedArgument<String>(PHOTO_REASON_ARG)
                                     ?.let { reason ->
 
@@ -335,6 +346,11 @@ class MainActivity : ComponentActivity() {
                                     onCalendarOpened = {
                                         mainNavController.navigate(
                                             Destination.CalendarDialog.withDate(it),
+                                        )
+                                    },
+                                    onSpendingDialogRequest = {
+                                        mainNavController.navigate(
+                                            Destination.DetailDialog.withDetailsList(it),
                                         )
                                     },
                                     onBack = {
@@ -510,7 +526,6 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
-
                             dialog(
                                 route = Destination.CalendarDialog.route,
                                 dialogProperties = DialogProperties(
@@ -536,6 +551,37 @@ class MainActivity : ComponentActivity() {
                                                 DATE to date,
                                             ),
                                         )
+                                    },
+                                )
+                            }
+                            dialog(
+                                route = Destination.DetailDialog.route,
+                                dialogProperties = DialogProperties(
+                                    usePlatformDefaultWidth = false,
+                                    dismissOnBackPress = true,
+                                    dismissOnClickOutside = true,
+                                ),
+                                arguments = listOf(
+                                    navArgument(DETAILS_LIST_ARG) {
+                                        type = NavType.StringType
+                                    },
+                                ),
+                            ) {
+                                val viewModel = koinViewModel<DetailViewModel>()
+                                viewModel.onSave = { updateDetails ->
+                                    mainNavController.popBack(
+                                        hashMapOf(
+                                            DETAILS_LIST_ARG to updateDetails.toJson(),
+                                        ),
+                                    )
+                                }
+                                val state by viewModel
+                                    .stateFlow
+                                    .collectAsState()
+                                DetailDialog(
+                                    state = state,
+                                    onDismiss = {
+                                        mainNavController.popBackStack()
                                     },
                                 )
                             }
@@ -574,7 +620,7 @@ class MainActivity : ComponentActivity() {
                 this,
                 android.Manifest.permission.CAMERA,
             )
-                == PackageManager.PERMISSION_GRANTED -> {
+                    == PackageManager.PERMISSION_GRANTED -> {
                 return true
             }
 
@@ -628,10 +674,13 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun <T> NavBackStackEntry.getPoppedArgument(argumentKey: String, initial: T? = null) =
-        this.savedStateHandle
+    fun <T : Any> NavBackStackEntry.getPoppedArgument(argumentKey: String, initial: T? = null): T? {
+        val value = this.savedStateHandle
             .getStateFlow(argumentKey, initial)
             .collectAsState().value
+        this.savedStateHandle[argumentKey] = null
+        return value
+    }
 
     private fun getOutputDirectory(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {

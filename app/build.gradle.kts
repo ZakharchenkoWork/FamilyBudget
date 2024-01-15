@@ -16,12 +16,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.faigenbloom.famillyspandings.MockTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -35,6 +34,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -77,17 +77,28 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.1")
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("io.github.g0dkar:qrcode-kotlin:4.0.6")
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
     implementation("io.insert-koin:koin-androidx-compose-navigation:3.4.5")
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.github.g00fy2.quickie:quickie-bundled:1.8.0")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
+    testImplementation("org.robolectric:robolectric:4.4")
+    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    androidTestImplementation("io.insert-koin:koin-test:2.1.6")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("com.android.support.test:rules:1.0.2")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")

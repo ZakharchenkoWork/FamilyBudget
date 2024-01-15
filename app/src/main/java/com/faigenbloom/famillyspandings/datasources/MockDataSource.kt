@@ -1,19 +1,18 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import android.util.Log
 import com.faigenbloom.famillyspandings.comon.toLongDate
+import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.spandings.edit.Mock
-import com.faigenbloom.famillyspandings.statistics.CategorySummary
+import com.faigenbloom.famillyspandings.spandings.edit.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.spandings.mockSpendingsList
 
-typealias CategoriesMock = com.faigenbloom.famillyspandings.categories.Mock
-typealias SpendingsEditMock = Mock
-typealias SpendingsPageMock = com.faigenbloom.famillyspandings.spandings.Mock
-typealias StatisticsPageMock = com.faigenbloom.famillyspandings.statistics.Mock
+import com.faigenbloom.famillyspandings.statistics.CategorySummary
+import com.faigenbloom.famillyspandings.statistics.mockCategoriesSummaryList
 
 class MockDataSource : BaseDataSource {
     override suspend fun login(email: String, password: String): Boolean {
@@ -37,13 +36,12 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun saveSpending(
         spending: SpendingEntity,
-        details: List<SpendingDetailEntity>,
     ) {
-        Log.i(MockDataSource::class.simpleName, "saveSpending")
+
     }
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
-        return SpendingsPageMock.spendingsList.map {
+        return mockSpendingsList.map {
             SpendingEntity(
                 id = it.id,
                 name = it.name,
@@ -71,7 +69,7 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun getCategoriesSumaries(): List<CategorySummary> {
-        return StatisticsPageMock.categoriesList
+        return mockCategoriesSummaryList
     }
 
     override suspend fun getBudgetData(): BudgetEntity {
@@ -97,8 +95,46 @@ class MockDataSource : BaseDataSource {
         return emptyList()
     }
 
-    override suspend fun updatePlanned(spendingId: String, isPurcheased: Boolean) {
-        TODO("Not yet implemented")
+    override suspend fun getSpendingDetailDuplicate(entity: SpendingDetailEntity): SpendingDetailEntity {
+        return SpendingDetailEntity(
+            id = "2",
+            name = "3",
+            amount = 4L,
+        )
+    }
+
+    override suspend fun getAllSpendingDetails(): List<SpendingDetailEntity> {
+        return mockSuggestions.map {
+            SpendingDetailEntity(
+                id = it.id,
+                name = it.name,
+                amount = it.amount.toLongMoney(),
+            )
+        }
+    }
+
+    override suspend fun updatePlanned(spendingId: String, isPlanned: Boolean) {
+
+    }
+
+    override suspend fun addSpendingDetail(spendingDetailEntity: SpendingDetailEntity) {
+
+    }
+
+    override suspend fun addCrossRef(crossRef: SpendingDetailsCrossRef) {
+
+    }
+
+    override suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef> {
+        return emptyList()
+    }
+
+    override suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef) {
+
+    }
+
+    override suspend fun deleteSpendingDetail(id: String) {
+
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

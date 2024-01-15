@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val categoriesModule = module {
     viewModelOf(::CategoriesViewModel)
-    single { CategoriesRepository(get<DatabaseDataSource>()) }
+    single { CategoriesRepository(get<DatabaseDataSource>(), get()) }
 }
