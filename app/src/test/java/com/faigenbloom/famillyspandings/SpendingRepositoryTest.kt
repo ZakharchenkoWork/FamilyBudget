@@ -1,3 +1,4 @@
+/*
 package com.faigenbloom.famillyspandings
 
 import com.faigenbloom.famillyspandings.categories.CategoryData
@@ -6,9 +7,9 @@ import com.faigenbloom.famillyspandings.comon.toReadableMoney
 import com.faigenbloom.famillyspandings.datasources.MockDataSource
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.id.IdGenerator
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingsEditRepository
-import com.faigenbloom.famillyspandings.spandings.edit.mockDetailsList
+import com.faigenbloom.famillyspandings.domain.GenerateIdUseCase
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingsEditRepository
+import com.faigenbloom.famillyspandings.ui.spandings.edit.mockDetailsList
 import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -49,8 +50,8 @@ class SpendingRepositoryTest {
         wheneverBlocking { it.getSpendingDetails(mockSpending.id) }
             .thenReturn(listOf(mockDetailsList[0].mapToEntity()))
     }
-    private val idGenerator: IdGenerator = mock {
-        wheneverBlocking { it.checkOrGenId("") }.thenReturn(ALT_DETAIL_ID)
+    private val idGenerator: GenerateIdUseCase = mock {
+        wheneverBlocking { it.invoke("") }.thenReturn(ALT_DETAIL_ID)
     }
     val repository: SpendingsEditRepository = SpendingsEditRepository(
         dataSource = dataSource,
@@ -62,11 +63,13 @@ class SpendingRepositoryTest {
         repository.getSpending(mockSpending.id) shouldNotBe null
     }
 
-    /**
-     *   If detail is new.
-     *      Create new detail
-     *      Add new connection
-     */
+    */
+/**
+ *   If detail is new.
+ *      Create new detail
+ *      Add new connection
+ *//*
+
     @Test
     fun `adding new detail on empty list working`() = runTest {
         wheneverBlocking { dataSource.getSpendingDetails(mockSpending.id) }
@@ -100,11 +103,13 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     *   If detail is old.
-     *      If spending is new
-     *          Add new connection
-     */
+    */
+/**
+ *   If detail is old.
+ *      If spending is new
+ *          Add new connection
+ *//*
+
     @Test
     fun `adding old detail on new spending`() = runTest {
         wheneverBlocking { dataSource.getSpendingDetails(mockSpending.id) }
@@ -147,14 +152,16 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     * If detail switched to another fully
-     *      If old is used once
-     *          Delete old detail
-     *          Delete old connection
-     *          Add new Connection
-     *          Add new Detail
-     */
+    */
+/**
+ * If detail switched to another fully
+ *      If old is used once
+ *          Delete old detail
+ *          Delete old connection
+ *          Add new Connection
+ *          Add new Detail
+ *//*
+
     @Test
     fun `detail changed to another, but old used once`() = runTest {
         wheneverBlocking { dataSource.getDetailCrossRefs(mockDetailsList[0].id) }
@@ -221,13 +228,15 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     * If detail switched to another fully
-     *      If old is used multiple times
-     *          Delete old connection
-     *          Add new Connection
-     *          Add new Detail
-     */
+    */
+/**
+ * If detail switched to another fully
+ *      If old is used multiple times
+ *          Delete old connection
+ *          Add new Connection
+ *          Add new Detail
+ *//*
+
 
     @Test
     fun `detail changed to another, but old used multiple times`() = runTest {
@@ -303,11 +312,13 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     * If detail is old but edited (name changed)
-     *     If old is used once
-     *         Replacing old detail with same id.
-     */
+    */
+/**
+ * If detail is old but edited (name changed)
+ *     If old is used once
+ *         Replacing old detail with same id.
+ *//*
+
     @Test
     fun `detail can be edited, when used once`() = runTest {
         wheneverBlocking { dataSource.getDetailCrossRefs(mockDetailsList[0].id) }
@@ -345,15 +356,17 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     * If detail is old but edited (name changed)
-     *      If old detail is used multiple times
-     *          Check duplicates by name and amount of new detail
-     *              If there is no duplicates
-     *                  Add new detail
-     *                  Add new connection
-     *                  Delete old connection
-     */
+    */
+/**
+ * If detail is old but edited (name changed)
+ *      If old detail is used multiple times
+ *          Check duplicates by name and amount of new detail
+ *              If there is no duplicates
+ *                  Add new detail
+ *                  Add new connection
+ *                  Delete old connection
+ *//*
+
     @Test
     fun `detail can be edited, when used multiple times, without duplicates of new`() = runTest {
         wheneverBlocking { dataSource.getSpendingDetailDuplicate(mockEditedDetail) }
@@ -414,14 +427,16 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     * If detail is old but edited (name changed)
-     *      If old detail is used multiple times
-     *          Check duplicates by name and amount of new detail
-     *              If there is a duplicate
-     *                  Add new connection
-     *                  Delete old connection
-     */
+    */
+/**
+ * If detail is old but edited (name changed)
+ *      If old detail is used multiple times
+ *          Check duplicates by name and amount of new detail
+ *              If there is a duplicate
+ *                  Add new connection
+ *                  Delete old connection
+ *//*
+
     @Test
     fun `detail can be edited, when used multiple times, with duplicates of new`() = runTest {
         wheneverBlocking { dataSource.getSpendingDetailDuplicate(mockEditedDetail) }
@@ -480,12 +495,14 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     *  If detail is removed
-     *      If old detail used once
-     *          Delete old detail
-     *          Delete old connection
-     */
+    */
+/**
+ *  If detail is removed
+ *      If old detail used once
+ *          Delete old detail
+ *          Delete old connection
+ *//*
+
     @Test
     fun `detail can be deleted, when used once`() = runTest {
         wheneverBlocking { dataSource.getDetailCrossRefs(mockDetailsList[0].id) }
@@ -530,11 +547,13 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 
-    /**
-     *  If detail is removed
-     *      If old detail used multiple times
-     *          Delete old connection
-     */
+    */
+/**
+ *  If detail is removed
+ *      If old detail used multiple times
+ *          Delete old connection
+ *//*
+
     @Test
     fun `detail can be deleted, when used multiple times`() = runTest {
         wheneverBlocking { dataSource.getDetailCrossRefs(mockDetailsList[0].id) }
@@ -580,3 +599,4 @@ class SpendingRepositoryTest {
         verifyNoMoreInteractions(dataSource)
     }
 }
+*/

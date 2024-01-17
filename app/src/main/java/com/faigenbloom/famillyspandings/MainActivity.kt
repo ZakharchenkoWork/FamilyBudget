@@ -12,81 +12,69 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.faigenbloom.famillyspandings.budget.BudgetPage
-import com.faigenbloom.famillyspandings.budget.BudgetPageViewModel
-import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
 import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
-import com.faigenbloom.famillyspandings.comon.Calendar
-import com.faigenbloom.famillyspandings.comon.CameraScreen
 import com.faigenbloom.famillyspandings.comon.DATE
 import com.faigenbloom.famillyspandings.comon.DETAILS_LIST_ARG
-import com.faigenbloom.famillyspandings.comon.Destination
+import com.faigenbloom.famillyspandings.comon.FloatingActionMenu
+import com.faigenbloom.famillyspandings.comon.FloatingMenuState
 import com.faigenbloom.famillyspandings.comon.GalleryPhotoContract
 import com.faigenbloom.famillyspandings.comon.GalleryRequest
 import com.faigenbloom.famillyspandings.comon.ID_ARG
-import com.faigenbloom.famillyspandings.comon.OPTIONAL_ID_ARG
 import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
 import com.faigenbloom.famillyspandings.comon.PHOTO_REASON_ARG
-import com.faigenbloom.famillyspandings.comon.PhotoChooser
 import com.faigenbloom.famillyspandings.comon.QR_KEY
-import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.SPENDING_PHOTO
-import com.faigenbloom.famillyspandings.comon.fromJson
 import com.faigenbloom.famillyspandings.comon.toJson
-import com.faigenbloom.famillyspandings.family.FamilyPage
-import com.faigenbloom.famillyspandings.family.FamilyPageViewModel
-import com.faigenbloom.famillyspandings.login.LoginPage
-import com.faigenbloom.famillyspandings.login.LoginPageViewModel
-import com.faigenbloom.famillyspandings.onboarding.OnboardingPage
-import com.faigenbloom.famillyspandings.register.RegisterPage
-import com.faigenbloom.famillyspandings.register.RegisterPageViewModel
-import com.faigenbloom.famillyspandings.settings.SettingsPage
-import com.faigenbloom.famillyspandings.settings.SettingsPageViewModel
-import com.faigenbloom.famillyspandings.spandings.SpendingsPage
-import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
-import com.faigenbloom.famillyspandings.spandings.edit.MessageTypes
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditPage
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailDialog
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailViewModel
-import com.faigenbloom.famillyspandings.spandings.show.SpendingShowPage
-import com.faigenbloom.famillyspandings.spandings.show.SpendingShowViewModel
-import com.faigenbloom.famillyspandings.statistics.StatisticsPage
-import com.faigenbloom.famillyspandings.statistics.StatisticsPageViewModel
+import com.faigenbloom.famillyspandings.ui.budget.budgetPage
+import com.faigenbloom.famillyspandings.ui.calendar.CalendarRoute
+import com.faigenbloom.famillyspandings.ui.calendar.calendarDialog
+import com.faigenbloom.famillyspandings.ui.camera.CameraRoute
+import com.faigenbloom.famillyspandings.ui.camera.cameraPage
+import com.faigenbloom.famillyspandings.ui.chooser.ImageSourceChooserRoute
+import com.faigenbloom.famillyspandings.ui.chooser.imageSourceChooserDialog
+import com.faigenbloom.famillyspandings.ui.family.FamilyRoute
+import com.faigenbloom.famillyspandings.ui.family.familyPage
+import com.faigenbloom.famillyspandings.ui.login.LoginRoute
+import com.faigenbloom.famillyspandings.ui.login.loginPage
+import com.faigenbloom.famillyspandings.ui.onboarding.OnboardingRoute
+import com.faigenbloom.famillyspandings.ui.onboarding.onboardingPage
+import com.faigenbloom.famillyspandings.ui.register.RegisterRoute
+import com.faigenbloom.famillyspandings.ui.register.registerPage
+import com.faigenbloom.famillyspandings.ui.settings.settingsPage
+import com.faigenbloom.famillyspandings.ui.spandings.detail.DetailDialogRoute
+import com.faigenbloom.famillyspandings.ui.spandings.detail.detailDialog
+import com.faigenbloom.famillyspandings.ui.spandings.edit.MessageTypes
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
+import com.faigenbloom.famillyspandings.ui.spandings.edit.spendingEditPage
+import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingsListPage
+import com.faigenbloom.famillyspandings.ui.spandings.list.spendingsListPage
+import com.faigenbloom.famillyspandings.ui.spandings.show.SpendingShowRoute
+import com.faigenbloom.famillyspandings.ui.spandings.show.spendingShowPage
+import com.faigenbloom.famillyspandings.ui.statistics.statisticsPage
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanQRCode
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -112,17 +100,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        galleryLauncher =
-            registerForActivityResult(GalleryPhotoContract(this)) { galleryResponse ->
-                galleryResponse?.uri?.let {
-                    handleImageCapture(
-                        uri = it,
-                        photoReason = galleryResponse.reason,
-                        id = galleryResponse.id,
-                        mainNavController = mainNavController,
-                    )
-                }
+        galleryLauncher = registerForActivityResult(GalleryPhotoContract(this)) { galleryResponse ->
+            galleryResponse?.uri?.let {
+                handleImageCapture(
+                    uri = it,
+                    photoReason = galleryResponse.reason,
+                    id = galleryResponse.id,
+                    mainNavController = mainNavController,
+                )
             }
+        }
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -132,6 +119,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             var withBottomNavigation by remember {
                 mutableStateOf(false)
+            }
+
+            var floatingMenuState by remember {
+                mutableStateOf<FloatingMenuState?>(null)
             }
             var selectedBottomNavigationIndex by rememberSaveable { mutableStateOf(0) }
             mainNavController = rememberNavController()
@@ -152,7 +143,7 @@ class MainActivity : ComponentActivity() {
                                     selectedIndex = selectedBottomNavigationIndex,
                                     onDestinationChanged = { index, destination ->
                                         selectedBottomNavigationIndex = index
-                                        mainNavController.navigate(destination.route)
+                                        mainNavController.navigate(destination)
                                     },
                                 )
                             }
@@ -160,431 +151,240 @@ class MainActivity : ComponentActivity() {
                         snackbarHost = {
                             SnackbarHost(hostState = snackBarController.snackbarHostState)
                         },
+                        floatingActionButton = {
+                            FloatingActionMenu(
+                                state = floatingMenuState,
+                            )
+                        },
                     ) { padding ->
                         NavHost(
                             navController = mainNavController,
                             startDestination = if (!isLoggedIn) {
-                                Destination.Onboarding.route
+                                OnboardingRoute()
                             } else {
-                                Destination.SpendingsPage.route
+                                SpendingsListPage()
                             },
                         ) {
-                            composable(
-                                route = Destination.Onboarding.route,
-                            ) {
-                                withBottomNavigation = false
-                                OnboardingPage(
-                                    onLogin = {
-                                        mainNavController.navigate(Destination.Login.route)
-                                    },
-                                    onRegister = {
-                                        mainNavController.navigate(Destination.Register.route)
-                                    },
-                                )
-                            }
-
-                            composable(
-                                route = Destination.Login.route,
-                            ) {
-                                withBottomNavigation = false
-                                val loginPageViewModel = koinViewModel<LoginPageViewModel>()
-                                loginPageViewModel.onLoggedIn = {
-                                    mainNavController.navigate(Destination.SpendingsPage.route)
-                                }
-                                val state by loginPageViewModel
-                                    .loginStateFlow
-                                    .collectAsState()
-                                LoginPage(
-                                    state = state,
-                                    onBack = {
-                                        mainNavController.popBackStack()
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.Register.route,
-                            ) {
-                                withBottomNavigation = false
-                                val registerPageViewModel = koinViewModel<RegisterPageViewModel>()
-                                registerPageViewModel.onLoggedIn = {
-                                    mainNavController.navigate(Destination.SpendingsPage.route)
-                                }
-                                val state by registerPageViewModel
-                                    .loginStateFlow
-                                    .collectAsState()
-                                RegisterPage(
-                                    state = state,
-                                    onBack = {
-                                        mainNavController.popBackStack()
-                                    },
-                                )
-                            }
-
-                            composable(
-                                route = Destination.SpendingsPage.route,
-                            ) {
-                                withBottomNavigation = true
-                                selectedBottomNavigationIndex = 0
-                                val viewModel = koinViewModel<SpendingsPageViewModel>()
-                                val state by viewModel
-                                    .spendingsStateFlow
-                                    .collectAsState()
-                                viewModel.reloadData()
-                                SpendingsPage(
-                                    modifier = Modifier.padding(
-                                        bottom = padding.calculateBottomPadding(),
-                                    ),
-                                    state = state,
-                                    onOpenSpending = {
-                                        mainNavController.navigate(
-                                            Destination.SpendingShowPage.withId(
-                                                it,
-                                            ),
-                                        )
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.SpendingEditPage.route,
-                                arguments = listOf(
-                                    navArgument(SPENDING_ID_ARG) {
-                                        type = NavType.StringType
-                                        defaultValue = ""
-                                    },
-                                ),
-                            ) { backStack ->
-                                withBottomNavigation = false
-                                val viewModel = koinViewModel<SpendingEditViewModel>()
-                                viewModel.onNext = { spendingId ->
+                            onboardingPage(
+                                onLogin = {
+                                    mainNavController.navigate(LoginRoute())
+                                },
+                                onRegister = {
+                                    mainNavController.navigate(RegisterRoute())
+                                },
+                            )
+                            loginPage(
+                                onLoggedIn = {
+                                    mainNavController.navigate(SpendingsListPage())
+                                },
+                                onBack = {
+                                    mainNavController.popBackStack()
+                                },
+                            )
+                            registerPage(
+                                onLoggedIn = {
+                                    mainNavController.navigate(SpendingsListPage())
+                                },
+                                onBack = {
+                                    mainNavController.popBackStack()
+                                },
+                            )
+                            spendingsListPage(
+                                padding = padding,
+                                options = {
+                                        showNavigation: Boolean,
+                                        index: Int,
+                                        menuState: FloatingMenuState,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    selectedBottomNavigationIndex = index
+                                    floatingMenuState = menuState
+                                },
+                                onOpenSpending = {
                                     mainNavController.navigate(
-                                        Destination.SpendingShowPage.withId(spendingId),
+                                        SpendingShowRoute(it),
                                     )
-                                }
-                                viewModel.onShowMessage = {
+                                },
+                            )
+                            spendingEditPage(
+                                options = { bottomNavigation, menuState ->
+                                    withBottomNavigation = bottomNavigation
+                                    floatingMenuState = menuState
+                                },
+                                onNext = { spendingId ->
+                                    mainNavController.navigate(
+                                        SpendingShowRoute(spendingId),
+                                    )
+                                },
+                                onBack = ::PopSpendings,
+                                onShowMessage = {
                                     snackBarController.show(
                                         getString(
                                             when (it) {
-                                                MessageTypes.SAVED -> {
-                                                    R.string.message_saved
-                                                }
-
-                                                MessageTypes.HIDEN -> {
-                                                    R.string.message_hidden
-                                                }
-
-                                                MessageTypes.SHOWN -> {
-                                                    R.string.message_shown
-                                                }
+                                                MessageTypes.SAVED -> R.string.message_saved
+                                                MessageTypes.HIDEN -> R.string.message_hidden
+                                                MessageTypes.SHOWN -> R.string.message_shown
                                             },
                                         ),
                                     )
-                                }
-
-                                val state by viewModel
-                                    .spendingEditStateFlow
-                                    .collectAsState()
-                                backStack.getPoppedArgument(DATE, "")?.let { calendarDate ->
-                                    state.onDateChanged(calendarDate)
-                                }
-                                backStack.getPoppedArgument<String>(DETAILS_LIST_ARG, null)
-                                    ?.let { wrappedDetails ->
-                                        viewModel.updateDetail(
-                                            wrappedDetails.fromJson(),
-                                        )
-                                    }
-                                backStack.getPoppedArgument<String>(PHOTO_REASON_ARG)
-                                    ?.let { reason ->
-
-                                        val id: String? = backStack.getPoppedArgument(ID_ARG)
-                                        when (reason) {
-                                            SPENDING_PHOTO -> {
-                                                if (id == state.spendingId) {
-                                                    state.onPhotoUriChanged(
-                                                        backStack.getPoppedArgument(PHOTO_KEY),
-                                                    )
-                                                } else {
-                                                }
-                                            }
-
-                                            CATEGORY_PHOTO -> {
-                                                val uri: Uri? =
-                                                    backStack.getPoppedArgument(PHOTO_KEY)
-                                                uri?.let {
-                                                    state.categoryState.onCategoryPhotoUriChanged(
-                                                        id ?: "",
-                                                        it,
-                                                    )
-                                                }
-                                            }
-
-                                            else -> {}
-                                        }
-                                    }
-
-                                SpendingEditPage(
-                                    state = state,
-                                    onPhotoRequest = { spendingId ->
-                                        if (requestCameraPermission()) {
-                                            mainNavController.navigate(
-                                                Destination.PhotoChooserDialog.withReason(
-                                                    SPENDING_PHOTO,
-                                                    spendingId,
-                                                ),
-                                            )
-                                        }
-                                    },
-                                    onCategoryPhotoRequest = { categoryId ->
-                                        if (requestCameraPermission()) {
-                                            mainNavController.navigate(
-                                                Destination.PhotoChooserDialog.withReason(
-                                                    CATEGORY_PHOTO,
-                                                    categoryId,
-                                                ),
-                                            )
-                                        }
-                                    },
-                                    onCalendarOpened = {
+                                },
+                                onPhotoRequest = { spendingId ->
+                                    if (requestCameraPermission()) {
                                         mainNavController.navigate(
-                                            Destination.CalendarDialog.withDate(it),
-                                        )
-                                    },
-                                    onSpendingDialogRequest = {
-                                        mainNavController.navigate(
-                                            Destination.DetailDialog.withDetailsList(it),
-                                        )
-                                    },
-                                    onBack = {
-                                        PopSpendings()
-                                    },
-                                )
-                            }
-
-                            composable(
-                                route = Destination.SpendingShowPage.route,
-                                arguments = listOf(
-                                    navArgument(ID_ARG) {
-                                        type = NavType.StringType
-                                    },
-                                ),
-                            ) {
-                                withBottomNavigation = false
-
-                                val state by koinViewModel<SpendingShowViewModel>()
-                                    .spendingsStateFlow
-                                    .collectAsState()
-
-                                SpendingShowPage(
-                                    state = state,
-                                    onEditClicked = {
-                                        mainNavController.navigate(
-                                            Destination.SpendingEditPage.withId(
-                                                it,
+                                            ImageSourceChooserRoute(
+                                                SPENDING_PHOTO,
+                                                spendingId,
                                             ),
                                         )
-                                    },
-                                    onBack = {
-                                        PopSpendings()
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.StatisticsPage.route,
-                            ) {
-                                withBottomNavigation = true
-                                selectedBottomNavigationIndex = 3
-                                val state by koinViewModel<StatisticsPageViewModel>()
-                                    .statisicsStateFlow
-                                    .collectAsState()
-
-                                StatisticsPage(state)
-                            }
-                            composable(
-                                route = Destination.BudgetPage.route,
-                            ) {
-                                withBottomNavigation = true
-                                selectedBottomNavigationIndex = 1
-                                val state by koinViewModel<BudgetPageViewModel>()
-                                    .budgetStateFlow
-                                    .collectAsState()
-
-                                BudgetPage(
-                                    state = state,
-                                    onAddSpendingClicked = {
-                                        mainNavController.navigate(Destination.SpendingEditPage.withoutId())
-                                    },
-                                    onAddPlannedSpendingClicked = {
-                                        mainNavController.navigate(Destination.SpendingEditPage.withoutId())
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.SettingsPage.route,
-                            ) {
-                                withBottomNavigation = true
-                                selectedBottomNavigationIndex = 4
-                                val state by koinViewModel<SettingsPageViewModel>()
-                                    .budgetStateFlow
-                                    .collectAsState()
-
-                                SettingsPage(
-                                    state = state,
-                                    onFamilyPageClicked = {
-                                        mainNavController.navigate(Destination.FamilyPage.route)
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.FamilyPage.route,
-                            ) {
-                                withBottomNavigation = false
-
-                                val state by koinViewModel<FamilyPageViewModel>()
-                                    .familyStateFlow
-                                    .collectAsState()
-                                val qrCodeScanned = it.savedStateHandle.get<String>(QR_KEY)
-                                state.onQrScanned(qrCodeScanned)
-                                FamilyPage(
-                                    state = state,
-                                    onQRScanRequested = {
-                                        scanQrCodeLauncher.launch(null)
-                                    },
-                                    onBack = {
-                                        mainNavController.popBackStack()
-                                    },
-                                )
-                            }
-                            composable(
-                                route = Destination.Camera.route,
-                                arguments = listOf(
-                                    navArgument(PHOTO_REASON_ARG) {
-                                        type = NavType.StringType
-                                    },
-                                    navArgument(OPTIONAL_ID_ARG) {
-                                        type = NavType.StringType
-                                        defaultValue = ""
-                                    },
-                                ),
-                            ) { backStackEntry ->
-                                val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
-                                val id = backStackEntry.arguments?.getString(OPTIONAL_ID_ARG)
-                                withBottomNavigation = false
-                                CameraScreen(
-                                    outputDirectory = outputDirectory,
-                                    executor = cameraExecutor,
-                                    onImageCaptured = {
-                                        handleImageCapture(
-                                            uri = it,
-                                            photoReason = reason,
+                                    }
+                                },
+                                onCategoryPhotoRequest = { categoryId ->
+                                    if (requestCameraPermission()) {
+                                        mainNavController.navigate(
+                                            ImageSourceChooserRoute(
+                                                CATEGORY_PHOTO,
+                                                categoryId,
+                                            ),
+                                        )
+                                    }
+                                },
+                                onCalendarOpened = {
+                                    mainNavController.navigate(
+                                        CalendarRoute(it),
+                                    )
+                                },
+                                onSpendingDialogRequest = {
+                                    mainNavController.navigate(
+                                        DetailDialogRoute(it),
+                                    )
+                                },
+                            )
+                            spendingShowPage(
+                                bottomNavigationOptions = {
+                                        showNavigation: Boolean,
+                                        index: Int,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    selectedBottomNavigationIndex = index
+                                    floatingMenuState = null
+                                },
+                                onEditClicked = {
+                                    mainNavController.navigate(
+                                        SpendingEditRoute(it),
+                                    )
+                                },
+                                onBack = {
+                                    PopSpendings()
+                                },
+                            )
+                            statisticsPage(
+                                bottomNavigationOptions = {
+                                        showNavigation: Boolean,
+                                        index: Int,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    selectedBottomNavigationIndex = index
+                                    floatingMenuState = null
+                                },
+                            )
+                            budgetPage(
+                                bottomNavigationOptions = {
+                                        showNavigation: Boolean,
+                                        index: Int,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    selectedBottomNavigationIndex = index
+                                    floatingMenuState = null
+                                },
+                                onAddSpendingClicked = {
+                                    mainNavController.navigate(SpendingEditRoute())
+                                },
+                                onAddPlannedSpendingClicked = {
+                                    mainNavController.navigate(SpendingEditRoute())
+                                },
+                            )
+                            settingsPage(
+                                bottomNavigationOptions = {
+                                        showNavigation: Boolean,
+                                        index: Int,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    selectedBottomNavigationIndex = index
+                                    floatingMenuState = null
+                                },
+                                onFamilyPageClicked = {
+                                    mainNavController.navigate(FamilyRoute())
+                                },
+                            )
+                            familyPage(
+                                bottomNavigationOptions = {
+                                        showNavigation: Boolean,
+                                    ->
+                                    withBottomNavigation = showNavigation
+                                    floatingMenuState = null
+                                },
+                                onQRScanRequested = {
+                                    scanQrCodeLauncher.launch(null)
+                                },
+                                onBack = {
+                                    mainNavController.popBackStack()
+                                },
+                            )
+                            cameraPage(
+                                bottomNavigationOptions = {
+                                    withBottomNavigation = it
+                                    floatingMenuState = null
+                                },
+                                outputDirectory = getOutputDirectory(),
+                                onImageCaptured = { uri, photoReason, id ->
+                                    handleImageCapture(
+                                        uri = uri,
+                                        photoReason = photoReason,
+                                        id = id,
+                                        mainNavController,
+                                    )
+                                },
+                            )
+                            imageSourceChooserDialog(
+                                onDismissRequest = {
+                                    mainNavController.popBackStack()
+                                },
+                                onGalleryChosen = { reason, id ->
+                                    galleryLauncher.launch(
+                                        GalleryRequest(
                                             id = id,
-                                            mainNavController,
-                                        )
-                                    },
-                                    onError = { Log.e("Camera", "View error:", it) },
-                                )
-                            }
-                            dialog(
-                                route = Destination.PhotoChooserDialog.route,
-                                dialogProperties = DialogProperties(
-                                    dismissOnBackPress = true,
-                                    dismissOnClickOutside = true,
-                                ),
-                                arguments = listOf(
-                                    navArgument(PHOTO_REASON_ARG) {
-                                        type = NavType.StringType
-                                    },
-                                    navArgument(OPTIONAL_ID_ARG) {
-                                        type = NavType.StringType
-                                        defaultValue = ""
-                                    },
-                                ),
-                            ) { backStackEntry ->
-                                val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
-                                val id = backStackEntry.arguments?.getString(OPTIONAL_ID_ARG)
-
-                                PhotoChooser(
-                                    onDismissRequest = {
-                                        mainNavController.popBackStack()
-                                    },
-                                    onGalleryChoosen = {
-                                        galleryLauncher.launch(
-                                            GalleryRequest(
-                                                id = id,
+                                            reason = reason,
+                                        ),
+                                    )
+                                },
+                                onCameraChosen = { reason, id ->
+                                    if (requestCameraPermission()) {
+                                        mainNavController.navigate(
+                                            CameraRoute(
                                                 reason = reason,
+                                                id = id,
                                             ),
                                         )
-                                    },
-                                    onCameraChoosen = {
-                                        if (requestCameraPermission()) {
-                                            mainNavController.navigate(
-                                                Destination.Camera
-                                                    .withReason(
-                                                        reason = reason,
-                                                        id = id,
-                                                    ),
-                                            )
-                                        }
-                                    },
-                                )
-                            }
-                            dialog(
-                                route = Destination.CalendarDialog.route,
-                                dialogProperties = DialogProperties(
-                                    usePlatformDefaultWidth = false,
-                                    dismissOnBackPress = true,
-                                    dismissOnClickOutside = true,
-                                ),
-                                arguments = listOf(
-                                    navArgument(CALENDAR_START_DATE_ARG) {
-                                        type = NavType.StringType
-                                    },
-                                ),
-                            ) { backStackEntry ->
-                                val startDate =
-                                    backStackEntry.arguments?.getString(CALENDAR_START_DATE_ARG)
-                                        ?: ""
-
-                                Calendar(
-                                    startDate = startDate,
-                                    onDatePicked = { date ->
-                                        mainNavController.popBack(
-                                            hashMapOf(
-                                                DATE to date,
-                                            ),
-                                        )
-                                    },
-                                )
-                            }
-                            dialog(
-                                route = Destination.DetailDialog.route,
-                                dialogProperties = DialogProperties(
-                                    usePlatformDefaultWidth = false,
-                                    dismissOnBackPress = true,
-                                    dismissOnClickOutside = true,
-                                ),
-                                arguments = listOf(
-                                    navArgument(DETAILS_LIST_ARG) {
-                                        type = NavType.StringType
-                                    },
-                                ),
-                            ) {
-                                val viewModel = koinViewModel<DetailViewModel>()
-                                viewModel.onSave = { updateDetails ->
+                                    }
+                                },
+                            )
+                            calendarDialog(
+                                onDatePicked = { date ->
+                                    mainNavController.popBack(
+                                        hashMapOf(DATE to date),
+                                    )
+                                },
+                            )
+                            detailDialog(
+                                onSave = { updateDetails ->
                                     mainNavController.popBack(
                                         hashMapOf(
                                             DETAILS_LIST_ARG to updateDetails.toJson(),
                                         ),
                                     )
-                                }
-                                val state by viewModel
-                                    .stateFlow
-                                    .collectAsState()
-                                DetailDialog(
-                                    state = state,
-                                    onDismiss = {
-                                        mainNavController.popBackStack()
-                                    },
-                                )
-                            }
+                                },
+                                onBack = { mainNavController.popBackStack() },
+                            )
                         }
                     }
                 }
@@ -595,13 +395,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun PopSpendings() {
-        do {
-            mainNavController.popBackStack()
-        } while (
-            mainNavController.previousBackStackEntry?.destination?.route == Destination.SpendingShowPage.route ||
-            mainNavController.previousBackStackEntry?.destination?.route == Destination.SpendingEditPage.route ||
-            mainNavController.previousBackStackEntry?.destination?.route == Destination.NewSpendingPage.route
-        )
+        mainNavController.popBackStack()
+
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -619,8 +414,7 @@ class MainActivity : ComponentActivity() {
             ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.CAMERA,
-            )
-                    == PackageManager.PERMISSION_GRANTED -> {
+            ) == PackageManager.PERMISSION_GRANTED -> {
                 return true
             }
 
@@ -664,22 +458,12 @@ class MainActivity : ComponentActivity() {
     }
 
     fun NavController.popBack(data: HashMap<String, Any?>) {
-        previousBackStackEntry
-            ?.savedStateHandle?.apply {
-                data.forEach {
-                    set(it.key, it.value)
-                }
+        previousBackStackEntry?.savedStateHandle?.apply {
+            data.forEach {
+                set(it.key, it.value)
             }
+        }
         mainNavController.popBackStack()
-    }
-
-    @Composable
-    fun <T : Any> NavBackStackEntry.getPoppedArgument(argumentKey: String, initial: T? = null): T? {
-        val value = this.savedStateHandle
-            .getStateFlow(argumentKey, initial)
-            .collectAsState().value
-        this.savedStateHandle[argumentKey] = null
-        return value
     }
 
     private fun getOutputDirectory(): File {

@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.spandings.SpendingData
-import com.faigenbloom.famillyspandings.spandings.mockSpendingsList
+import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingCategoryUiData
+import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsList
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
@@ -46,7 +46,7 @@ const val THREE: Float = 3f
 
 @Composable
 fun DynamicPlatesHolder(
-    datedPatterns: List<List<Pattern<SpendingData>>>,
+    datedPatterns: List<List<Pattern<SpendingCategoryUiData>>>,
     onSpendingClicked: (String) -> Unit,
 ) {
     LazyColumn(
@@ -91,7 +91,7 @@ fun DynamicPlatesHolder(
 
 @Composable
 private fun GetPlates(
-    pattern: Pattern<SpendingData>,
+    pattern: Pattern<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     val plates = pattern.plates
@@ -347,7 +347,7 @@ private fun GetPlates(
 
 @Composable
 fun Plate_3x3(
-    spendingData: SpendingData,
+    spendingData: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     SpendingItem(
@@ -361,7 +361,7 @@ fun Plate_3x3(
 
 @Composable
 fun Plate_3x2_3x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -384,7 +384,7 @@ fun Plate_3x2_3x1(
 
 @Composable
 fun Plate_3x2_2x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -420,7 +420,7 @@ fun Plate_3x2_2x1_1x1(
 
 @Composable
 fun Plate_2x2_3x1_2x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(
@@ -462,7 +462,7 @@ fun Plate_2x2_3x1_2x1(
 
 @Composable
 fun Plate_2x2_3x1_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(
@@ -516,7 +516,7 @@ fun Plate_2x2_3x1_1x1_1x1(
 
 @Composable
 fun Plate_2x2_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -554,7 +554,7 @@ fun Plate_2x2_1x1_1x1(
 
 @Composable
 fun Plate_2x2_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -577,7 +577,7 @@ fun Plate_2x2_1x1(
 
 @Composable
 fun Plate_2x2_2x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -601,7 +601,7 @@ fun Plate_2x2_2x1(
 
 @Composable
 fun Plate_3x1_3x1_3x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -632,7 +632,7 @@ fun Plate_3x1_3x1_3x1(
 
 @Composable
 fun Plate_3x1_3x1_2x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -675,7 +675,7 @@ fun Plate_3x1_3x1_2x1_1x1(
 
 @Composable
 fun Plate_3x1_2x1_2x1_2x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -724,7 +724,7 @@ fun Plate_3x1_2x1_2x1_2x1(
 
 @Composable
 fun Plate_3x1_2x1_2x1_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -786,7 +786,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
 
 @Composable
 fun Plate_3x1_2x1_2x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row {
@@ -846,7 +846,7 @@ fun Plate_3x1_2x1_2x1_1x1(
 
 @Composable
 fun Plate_2x1_2x1_2x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(ONE_AND_ONE_THIRDS)) {
@@ -877,7 +877,7 @@ fun Plate_2x1_2x1_2x1(
 
 @Composable
 fun Plate_2x1_2x1_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(ONE_AND_ONE_THIRDS)) {
@@ -920,7 +920,7 @@ fun Plate_2x1_2x1_1x1_1x1(
 
 @Composable
 fun Plate_2x1_2x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(ONE_AND_ONE_THIRDS)) {
@@ -961,7 +961,7 @@ fun Plate_2x1_2x1_1x1(
 
 @Composable
 fun Plate_2x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(THREE)) {
@@ -984,7 +984,7 @@ fun Plate_2x1_1x1(
 
 @Composable
 fun Plate_1x1_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(THREE)) {
@@ -1014,7 +1014,7 @@ fun Plate_1x1_1x1_1x1(
 
 @Composable
 fun Plate_1x1_1x1(
-    spendingData: List<SpendingData>,
+    spendingData: List<SpendingCategoryUiData>,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(THREE)) {
@@ -1042,7 +1042,7 @@ fun Plate_1x1_1x1(
 
 @Composable
 fun Plate_1x1(
-    spendingData: SpendingData,
+    spendingData: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(modifier = Modifier.aspectRatio(THREE)) {
@@ -1068,7 +1068,7 @@ fun Plate_1x1(
 
 @Composable
 fun Plate_3x1(
-    spendingData: SpendingData,
+    spendingData: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     SpendingItem(
@@ -1082,7 +1082,7 @@ fun Plate_3x1(
 
 @Composable
 fun Plate_2x1(
-    spendingData: SpendingData,
+    spendingData: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     Row(
@@ -1106,7 +1106,7 @@ fun Plate_2x1(
 
 @Composable
 fun Plate_3x2(
-    spendingData: SpendingData,
+    spendingData: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     SpendingItem(
@@ -1121,7 +1121,7 @@ fun Plate_3x2(
 @Composable
 fun SpendingItem(
     modifier: Modifier = Modifier,
-    item: SpendingData,
+    item: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     Box(
@@ -1197,7 +1197,7 @@ fun Plate_3x3_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_THREE,
                             ),
@@ -1222,7 +1222,7 @@ fun Plate_3x2_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_TWO,
                             ),
@@ -1247,7 +1247,7 @@ fun Plate_3x2_3x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_TWO,
                                 PlateSizeType.SIZE_THREE_BY_ONE,
@@ -1274,7 +1274,7 @@ fun Plate_3x2_2x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_TWO,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1303,7 +1303,7 @@ fun Plate_2x2_3x1_2x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_TWO,
                                 PlateSizeType.SIZE_THREE_BY_ONE,
@@ -1332,7 +1332,7 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_TWO,
                                 PlateSizeType.SIZE_THREE_BY_ONE,
@@ -1363,7 +1363,7 @@ fun Plate_2x2_2x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_TWO,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1390,7 +1390,7 @@ fun Plate_2x2_1x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_TWO,
                                 PlateSizeType.SIZE_ONE_BY_ONE,
@@ -1419,7 +1419,7 @@ fun Plate_2x2_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_TWO,
                                 PlateSizeType.SIZE_ONE_BY_ONE,
@@ -1446,7 +1446,7 @@ fun Plate_3x1_3x1_3x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                                 PlateSizeType.SIZE_THREE_BY_ONE,
@@ -1475,7 +1475,7 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                                 PlateSizeType.SIZE_THREE_BY_ONE,
@@ -1506,7 +1506,7 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1537,7 +1537,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1570,7 +1570,7 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1601,7 +1601,7 @@ fun Plate_2x1_2x1_2x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1630,7 +1630,7 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1661,7 +1661,7 @@ fun Plate_2x1_2x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_ONE,
                                 PlateSizeType.SIZE_TWO_BY_ONE,
@@ -1690,7 +1690,7 @@ fun Plate_3x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                             ),
@@ -1715,7 +1715,7 @@ fun Plate_2x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_ONE,
                                 PlateSizeType.SIZE_ONE_BY_ONE,
@@ -1742,7 +1742,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
             DynamicPlatesHolder(
                 listOf(
                     listOf(
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_THREE_BY_ONE,
                             ),
@@ -1751,7 +1751,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                                 mockSpendingsList[0],
                             )
                         },
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_TWO_BY_ONE,
                             ),
@@ -1760,7 +1760,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                                 mockSpendingsList[0],
                             )
                         },
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_ONE_BY_ONE,
                                 PlateSizeType.SIZE_ONE_BY_ONE,
@@ -1773,7 +1773,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                                 mockSpendingsList[2],
                             )
                         },
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_ONE_BY_ONE,
                                 PlateSizeType.SIZE_ONE_BY_ONE,
@@ -1784,7 +1784,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                                 mockSpendingsList[1],
                             )
                         },
-                        Pattern<SpendingData>(
+                        Pattern<SpendingCategoryUiData>(
                             listOf(
                                 PlateSizeType.SIZE_ONE_BY_ONE,
                             ),
@@ -1804,7 +1804,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
 @Preview(showBackground = true)
 @Composable
 fun PlateWithDuplicatesAndDatesPreview() {
-    val sorter = PlatesSorter<SpendingData>()
+    val sorter = PlatesSorter<SpendingCategoryUiData>()
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(

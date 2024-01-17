@@ -190,8 +190,8 @@ fun TopBarPreview() {
             TopBar(
                 title = "Auth",
                 startIcon = R.drawable.arrow,
-                endIcon = R.drawable.pen,
-                preEndIcon = R.drawable.pen,
+                endIcon = R.drawable.icon_edit,
+                preEndIcon = R.drawable.icon_edit,
                 onStartIconCLicked = {},
             )
             StripeBar(R.string.authorization)

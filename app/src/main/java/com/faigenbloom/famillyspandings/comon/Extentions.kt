@@ -1,11 +1,9 @@
 package com.faigenbloom.famillyspandings.comon
 
-import android.util.Log
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.UUID
 
 fun LocalDate.toReadableDate(): String {
@@ -41,12 +39,7 @@ fun getCurrentDate(): Long {
 }
 
 fun String.toLocalDate(): LocalDate {
-    try {
-        return LocalDate.parse(this, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    } catch (e: DateTimeParseException) {
-        Log.e("Dates", e.localizedMessage ?: "String.toLocalDate failed on $this")
-    }
-    return LocalDate.now()
+    return LocalDate.parse(this, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 }
 
 fun Long.toLocalDate(): LocalDate {

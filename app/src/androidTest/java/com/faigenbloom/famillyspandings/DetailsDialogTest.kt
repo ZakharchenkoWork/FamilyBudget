@@ -8,13 +8,13 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.faigenbloom.famillyspandings.spandings.edit.SPENDING_DETAIL_AMOUNT
-import com.faigenbloom.famillyspandings.spandings.edit.SPENDING_DETAIL_NAME
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DETAIL_DIALOG_ADD_TO_LIST
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DETAIL_DIALOG_NAME_INPUT
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DETAIL_NAME_TITLE
-import com.faigenbloom.famillyspandings.spandings.edit.detail.SUGGESTION_TITLE
-import com.faigenbloom.famillyspandings.spandings.edit.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_ADD_TO_LIST
+import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_NAME_INPUT
+import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_NAME_TITLE
+import com.faigenbloom.famillyspandings.ui.spandings.detail.SUGGESTION_TITLE
+import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_DETAIL_AMOUNT
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_DETAIL_NAME
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,7 +29,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun suggestions_works_correctly() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
 
@@ -46,7 +46,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun suggestions_added_to_list_correctly() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
         getTestRule().onNodeWithContentDescription(DETAIL_DIALOG_NAME_INPUT).performTextInput("ut")
@@ -59,7 +59,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun details_saved_correctly_in_spending() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
         fillDetailDialog(mockSuggestions[0])
@@ -73,7 +73,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun details_opened_correctly_from_spending() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
         fillDetailDialog(mockSuggestions[0])
@@ -86,7 +86,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun suggestions_saved_correctly_with_manual() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
         fillDetailDialogManual(mockSuggestions[0])
@@ -101,7 +101,7 @@ class DetailsDialogTest : BaseTest() {
     @Test
     fun suggestions_saved_correctly_with_two_details() {
         waitForIdle()
-        createNewSpending()
+        openNewSpending()
         moveToSpendingInfo()
         startAddingDetail()
         fillDetailDialogManual(mockSuggestions[0])

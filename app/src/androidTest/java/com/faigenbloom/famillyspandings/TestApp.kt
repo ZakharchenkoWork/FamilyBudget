@@ -1,30 +1,41 @@
 package com.faigenbloom.famillyspandings
 
-import com.faigenbloom.famillyspandings.categories.CategoriesRepository
+import com.faigenbloom.famillyspandings.datasources.BaseDataSource
 import com.faigenbloom.famillyspandings.datasources.MockDataSource
-import com.faigenbloom.famillyspandings.spandings.SpendingsPageRepository
-import com.faigenbloom.famillyspandings.spandings.SpendingsPageViewModel
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingEditViewModel
-import com.faigenbloom.famillyspandings.spandings.edit.SpendingsEditRepository
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailViewModel
-import com.faigenbloom.famillyspandings.spandings.edit.detail.DetailsRepository
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import com.faigenbloom.famillyspandings.domain.domainModule
+import com.faigenbloom.famillyspandings.repositories.repositoryModule
+import com.faigenbloom.famillyspandings.ui.budget.budgetPageModule
+import com.faigenbloom.famillyspandings.ui.categories.categoriesModule
+import com.faigenbloom.famillyspandings.ui.family.familyPageModule
+import com.faigenbloom.famillyspandings.ui.settings.settingsPageModule
+import com.faigenbloom.famillyspandings.ui.spandings.detail.detailsModule
+import com.faigenbloom.famillyspandings.ui.spandings.edit.spendingEditModule
+import com.faigenbloom.famillyspandings.ui.spandings.list.spendingsPageModule
+import com.faigenbloom.famillyspandings.ui.spandings.show.spendingShowModule
+import com.faigenbloom.famillyspandings.ui.statistics.statisticsPageModule
 import org.koin.dsl.module
 
 class TestApp : App() {
     override fun onCreate() {
         super.onCreate()
-        koinApplication.modules(mockedModule)
+        koinApplication.modules(
+            mockedDataSource,
+            domainModule,
+            repositoryModule,
+            categoriesModule,
+            spendingsPageModule,
+            spendingEditModule,
+            spendingShowModule,
+            detailsModule,
+            statisticsPageModule,
+            budgetPageModule,
+            settingsPageModule,
+            familyPageModule,
+        )
     }
 
-    val mockedModule = module {
-        viewModelOf(::SpendingsPageViewModel)
-        single { SpendingsPageRepository(get<MockDataSource>()) }
-        viewModelOf(::SpendingEditViewModel)
-        single { SpendingsEditRepository(get<MockDataSource>(), get()) }
-        single { CategoriesRepository(get<MockDataSource>(), get()) }
-        viewModelOf(::DetailViewModel)
-        single { DetailsRepository(get<MockDataSource>()) }
+    val mockedDataSource = module {
+        single<BaseDataSource> { MockDataSource() }
     }
 }
 

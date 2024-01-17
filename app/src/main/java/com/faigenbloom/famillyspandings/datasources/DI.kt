@@ -17,4 +17,6 @@ val databaseModule = module {
 
         database
     }
+
+    single<BaseDataSource> { DatabaseDataSource(get()) }
 }

@@ -18,11 +18,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.faigenbloom.famillyspandings.comon.Destination
+import com.faigenbloom.famillyspandings.ui.budget.BudgetRoute
+import com.faigenbloom.famillyspandings.ui.settings.SettingsRoute
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
+import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingsListPage
+import com.faigenbloom.famillyspandings.ui.statistics.StatisticsRoute
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 data class BarItem(
-    val destination: Destination,
+    val destination: String,
     val imageChecked: Int,
     val imageUnChecked: Int,
 )
@@ -30,31 +34,31 @@ data class BarItem(
 @Composable
 fun BottomNavigationBar(
     selectedIndex: Int,
-    onDestinationChanged: (Int, Destination) -> Unit,
+    onDestinationChanged: (Int, String) -> Unit,
 ) {
     val items = listOf(
         BarItem(
-            destination = Destination.SpendingsPage,
+            destination = SpendingsListPage(),
             imageChecked = R.drawable.icon_list_filled,
             imageUnChecked = R.drawable.icon_list_outlined,
         ),
         BarItem(
-            destination = Destination.BudgetPage,
+            destination = BudgetRoute(),
             imageChecked = R.drawable.icon_budget_filled,
             imageUnChecked = R.drawable.icon_budget_outlined,
         ),
         BarItem(
-            destination = Destination.NewSpendingPage,
+            destination = SpendingEditRoute(),
             imageChecked = R.drawable.icon_plus_filled,
             imageUnChecked = R.drawable.icon_plus_outlined,
         ),
         BarItem(
-            destination = Destination.StatisticsPage,
+            destination = StatisticsRoute(),
             imageChecked = R.drawable.icon_statistics_filled,
             imageUnChecked = R.drawable.icon_statistics_outlined,
         ),
         BarItem(
-            destination = Destination.SettingsPage,
+            destination = SettingsRoute(),
             imageChecked = R.drawable.icon_settings_filled,
             imageUnChecked = R.drawable.icon_settings_outlined,
         ),
@@ -67,7 +71,7 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 modifier = Modifier
                     .padding(4.dp)
-                    .semantics { contentDescription = barItem.destination.route },
+                    .semantics { contentDescription = barItem.destination },
                 selected = selectedIndex == index,
                 onClick = {
                     onDestinationChanged(index, barItem.destination)

@@ -6,15 +6,19 @@ import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
+
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.spandings.edit.detail.mockSuggestions
-import com.faigenbloom.famillyspandings.spandings.mockSpendingsList
-
-import com.faigenbloom.famillyspandings.statistics.CategorySummary
-import com.faigenbloom.famillyspandings.statistics.mockCategoriesSummaryList
+import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsList
 
 class MockDataSource : BaseDataSource {
+    val categories: ArrayList<CategoryEntity> = ArrayList(
+        DefaultCategories.values().map { defaultCategory ->
+            CategoryEntity(id = defaultCategory.name, isDefault = true)
+        },
+    )
+
     override suspend fun login(email: String, password: String): Boolean {
         return email == "a" && password == "a"
     }
@@ -29,9 +33,7 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun getAllCategories(): List<CategoryEntity> {
-        return DefaultCategories.values().map { defaultCategory ->
-            CategoryEntity(id = defaultCategory.name, isDefault = true)
-        }
+        return categories
     }
 
     override suspend fun saveSpending(
@@ -67,11 +69,6 @@ class MockDataSource : BaseDataSource {
             isHidden = false,
         )
     }
-
-    override suspend fun getCategoriesSumaries(): List<CategorySummary> {
-        return mockCategoriesSummaryList
-    }
-
     override suspend fun getBudgetData(): BudgetEntity {
         return BudgetEntity(
             familyTotal = 475500L,
@@ -138,5 +135,6 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
+        categories.add(categoryEntity)
     }
 }

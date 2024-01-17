@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -49,6 +50,7 @@ fun BaseTextField(
     isError: Boolean = false,
     textFieldType: TextFieldType = TextFieldType.Normal,
     onTextChange: (String) -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val containerColor = MaterialTheme.colorScheme.transparent()
@@ -71,6 +73,7 @@ fun BaseTextField(
         value = text,
         onValueChange = onTextChange,
         singleLine = true,
+        keyboardActions = keyboardActions,
         visualTransformation = if (passwordVisible || textFieldType != TextFieldType.Password) {
             VisualTransformation.None
         } else {

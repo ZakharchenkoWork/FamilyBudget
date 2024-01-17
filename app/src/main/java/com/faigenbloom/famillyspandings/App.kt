@@ -1,19 +1,20 @@
 package com.faigenbloom.famillyspandings
 
 import android.app.Application
-import com.faigenbloom.famillyspandings.budget.budgetPageModule
-import com.faigenbloom.famillyspandings.categories.categoriesModule
 import com.faigenbloom.famillyspandings.datasources.databaseModule
-import com.faigenbloom.famillyspandings.family.familyPageModule
-import com.faigenbloom.famillyspandings.id.idGeneratorModule
-import com.faigenbloom.famillyspandings.login.loginPageModule
-import com.faigenbloom.famillyspandings.register.registerPageModule
-import com.faigenbloom.famillyspandings.settings.settingsPageModule
-import com.faigenbloom.famillyspandings.spandings.edit.detail.detailsModule
-import com.faigenbloom.famillyspandings.spandings.edit.spendingEditModule
-import com.faigenbloom.famillyspandings.spandings.show.spendingShowModule
-import com.faigenbloom.famillyspandings.spandings.spendingsPageModule
-import com.faigenbloom.famillyspandings.statistics.statisticsPageModule
+import com.faigenbloom.famillyspandings.domain.domainModule
+import com.faigenbloom.famillyspandings.repositories.repositoryModule
+import com.faigenbloom.famillyspandings.ui.budget.budgetPageModule
+import com.faigenbloom.famillyspandings.ui.categories.categoriesModule
+import com.faigenbloom.famillyspandings.ui.family.familyPageModule
+import com.faigenbloom.famillyspandings.ui.login.loginPageModule
+import com.faigenbloom.famillyspandings.ui.register.registerPageModule
+import com.faigenbloom.famillyspandings.ui.settings.settingsPageModule
+import com.faigenbloom.famillyspandings.ui.spandings.detail.detailsModule
+import com.faigenbloom.famillyspandings.ui.spandings.edit.spendingEditModule
+import com.faigenbloom.famillyspandings.ui.spandings.list.spendingsPageModule
+import com.faigenbloom.famillyspandings.ui.spandings.show.spendingShowModule
+import com.faigenbloom.famillyspandings.ui.statistics.statisticsPageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -26,7 +27,8 @@ open class App : Application() {
             androidContext(this@App)
             modules(
                 databaseModule,
-                idGeneratorModule,
+                domainModule,
+                repositoryModule,
                 loginPageModule,
                 registerPageModule,
                 categoriesModule,

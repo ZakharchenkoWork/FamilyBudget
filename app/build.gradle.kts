@@ -30,6 +30,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -44,14 +45,15 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
+
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}"
         }
     }
     ksp {
         kotlinOptions {
-            jvmTarget = "17" // Используйте версию Java, соответствующую вашей установке Java 17
+            jvmTarget = "17"
         }
     }
 }
@@ -59,11 +61,12 @@ android {
 dependencies {
     implementation("com.google.android.material:material:1.11.0")
     val koinVersion = "3.4.2"
-    val room_version = "2.6.1"
+    val roomVersion = "2.6.1"
+    val mockkVersion = "1.13.9"
 
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -87,14 +90,17 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
     testImplementation("org.robolectric:robolectric:4.4")
+    testImplementation("io.mockk:mockk-android:${mockkVersion}")
+    testImplementation("io.mockk:mockk-agent:${mockkVersion}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("androidx.test.ext:junit-ktx:1.1.5")
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.test:core-ktx:1.5.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     androidTestImplementation("io.insert-koin:koin-test:2.1.6")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
