@@ -97,4 +97,16 @@ interface SpendingsDao {
                 "AND ${SpendingDetailEntity.COLUMN_AMOUNT} = :amount",
     )
     fun getSpendingDetailDuplicate(name: String, amount: Long): SpendingDetailEntity?
+
+    @Query(
+        "DELETE FROM ${SpendingEntity.TABLE_NAME} WHERE " +
+                "${SpendingEntity.COLUMN_ID} = :id",
+    )
+    fun deleteSpending(id: String)
+
+    @Query(
+        "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE ${SpendingEntity.COLUMN_CATEGORY} = :id ",
+    )
+    fun getSpendingsByCategory(id: String): List<SpendingEntity>
 }

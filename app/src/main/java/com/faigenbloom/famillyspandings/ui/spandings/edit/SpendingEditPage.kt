@@ -1,6 +1,5 @@
 package com.faigenbloom.famillyspandings.ui.spandings.edit
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +36,7 @@ import com.faigenbloom.famillyspandings.comon.BaseTextField
 import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TextFieldType
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.comon.ui.AnimateEnter
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesPage
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesState
 import com.faigenbloom.famillyspandings.ui.categories.mockCategoriesList
@@ -48,19 +49,27 @@ fun SpendingEditPage(
     state: SpendingEditState,
     categoryState: CategoriesState,
     onPhotoRequest: (id: String) -> Unit,
-    onCategoryPhotoRequest: (id: String) -> Unit,
+    onCategoryPhotoRequest: (id: String?) -> Unit,
     onCalendarOpened: (String) -> Unit,
     onSpendingDialogRequest: (List<DetailUiData>) -> Unit,
     onBack: () -> Unit,
 ) {
     Column {
         TopBar(
-            title = stringResource(id = R.string.adding_spending_title),
+            title = stringResource(
+                id = if (state.spendingId.isBlank()) {
+                    R.string.adding_spending_title
+                } else if (state.isDuplicate) {
+                    R.string.editing_spending_duplicate
+                } else if (state.isPlanned) {
+                    R.string.editing_planned_spending_title
+                } else if (state.isHidden) {
+                    R.string.editing_hidden_spending_title
+                } else {
+                    R.string.editing_spending_title
+                },
+            ),
             startIcon = R.drawable.arrow,
-            preEndIcon = if (state.isHidden) R.drawable.icon_shown else R.drawable.icon_hidden,
-            endIcon = if (state.isOkActive) R.drawable.icon_ok else R.drawable.icon_ok_inactive,
-            onEndIconCLicked = state.onSave,
-            onPreEndIconCLicked = state.onHideChanged,
             onStartIconCLicked = onBack,
         )
         StripeBar(
@@ -69,12 +78,20 @@ fun SpendingEditPage(
             isLeftSelected = state.isCategoriesOpened,
             onSelectionChanged = state.onPageChanged,
         )
-        if (state.isCategoriesOpened) {
+
+        AnimateEnter(
+            visible = state.isCategoriesOpened,
+            openFromLeft = true,
+        ) {
             CategoriesPage(
                 state = categoryState,
                 onCategoryPhotoRequest = onCategoryPhotoRequest,
             )
-        } else {
+        }
+        AnimateEnter(
+            visible = state.isCategoriesOpened.not(),
+            openFromLeft = false,
+        ) {
             Information(
                 state = state,
                 onPhotoRequest = onPhotoRequest,
@@ -92,67 +109,80 @@ fun Information(
     onCalendarOpened: (String) -> Unit,
     onSpendingDialogRequest: (String) -> Unit,
 ) {
-    Box {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .wrapContentSize()
-                        .clickable {
-                            onPhotoRequest(state.spendingId)
-                        },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        modifier = Modifier.size(170.dp),
-                        painter = state.photoUri?.let {
-                            rememberImagePainter(it) {
-                                transformations(CircleCropTransformation())
-                            }
-                        } ?: painterResource(id = R.drawable.photo),
-                        contentDescription = "",
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(0.5f),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    BaseTextField(
-                        text = state.namingText,
-                        labelId = R.string.spending_details_name,
-                        onTextChange = state.onNamingTextChanged,
-                    )
-                    BaseTextField(
-                        text = state.amountText,
-                        labelId = R.string.spending_details_amount,
-                        textFieldType = TextFieldType.Money,
-                        onTextChange = state.onAmountTextChanged,
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 32.dp, vertical = 4.dp)
-                            .clickable {
-                                onCalendarOpened(state.dateText)
-                            },
-                        text = state.dateText.ifEmpty {
-                            stringResource(
-                                id = R.string.date,
-                            )
-                        },
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
-            }
-            SpacerStripe(
-                modifier = Modifier.padding(top = 16.dp),
-                textId = R.string.spending_details,
-            )
-            DatailsList(
-                state = state,
-                onSpendingDialogRequest = {
-                    onSpendingDialogRequest("")
+    Column {
+        TopInfo(onPhotoRequest, state, onCalendarOpened)
+        SpacerStripe(
+            modifier = Modifier.padding(top = 16.dp),
+            state = state,
+        )
+        DatailsList(
+            state = state,
+            onSpendingDialogRequest = {
+                onSpendingDialogRequest("")
+            },
+        )
+    }
+}
+
+@Composable
+private fun TopInfo(
+    onPhotoRequest: (id: String) -> Unit,
+    state: SpendingEditState,
+    onCalendarOpened: (String) -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .weight(0.5f)
+                .wrapContentSize()
+                .clickable {
+                    onPhotoRequest(state.spendingId)
                 },
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                modifier = Modifier.size(170.dp),
+                painter = state.photoUri?.let {
+                    rememberImagePainter(it) {
+                        transformations(CircleCropTransformation())
+                    }
+                } ?: painterResource(id = R.drawable.icon_photo),
+                contentDescription = "",
+            )
+        }
+        Column(
+            modifier = Modifier.weight(0.5f),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            BaseTextField(
+                modifier = Modifier.semantics {
+                    contentDescription = SPENDING_NAME_INPUT
+                },
+                text = state.namingText,
+                labelId = R.string.spending_details_name,
+                onTextChange = state.onNamingTextChanged,
+            )
+            BaseTextField(
+                modifier = Modifier.semantics {
+                    contentDescription = SPENDING_AMOUNT_INPUT
+                },
+                text = state.amountText,
+                labelId = R.string.spending_details_amount,
+                textFieldType = TextFieldType.Money,
+                onTextChange = state.onAmountTextChanged,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp, vertical = 4.dp)
+                    .clickable {
+                        onCalendarOpened(state.dateText)
+                    },
+                text = state.dateText.ifEmpty {
+                    stringResource(
+                        id = R.string.date,
+                    )
+                },
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         }
     }
@@ -259,74 +289,64 @@ fun DetailsItem(
 @Composable
 fun SpacerStripe(
     modifier: Modifier = Modifier,
-    @StringRes textId: Int,
-    secondTabTextId: Int? = null,
-    isLeftSelected: Boolean = true,
-    onSelectionChanged: ((Boolean) -> Unit)? = null,
+    state: SpendingEditState,
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+            ),
     ) {
-        Box(
-            modifier = Modifier
-                .weight(0.5f)
-                .clickable { onSelectionChanged?.invoke(true) }
-                .background(
-                    color = if (isLeftSelected) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.primaryContainer
-                    },
-                ),
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 modifier = Modifier
-                    .padding(16.dp),
-                text = stringResource(id = textId),
-                style = MaterialTheme.typography.titleMedium,
-                color = if (isLeftSelected) {
-                    MaterialTheme.colorScheme.onPrimary
-                } else {
-                    MaterialTheme.colorScheme.onPrimary
-                },
-            )
-        }
-        secondTabTextId?.let {
-            Box(
-                modifier = Modifier
                     .weight(0.5f)
-                    .clickable { onSelectionChanged?.invoke(false) }
-                    .background(
-                        color = if (isLeftSelected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.primary
-                        },
-                    ),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    text = stringResource(id = it),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (isLeftSelected) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.tertiary
-                    },
-                )
+                    .padding(16.dp),
+                text = stringResource(id = R.string.spending_details),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            Row(
+                modifier = Modifier
+                    .weight(0.5f),
+                horizontalArrangement = Arrangement.End,
+
+                ) {
+                if (state.isHidden) {
+                    Image(
+                        modifier = Modifier
+                            .height(32.dp)
+                            .aspectRatio(1f)
+                            .padding(end = 16.dp),
+                        painter = painterResource(id = R.drawable.icon_hidden),
+                        contentDescription = "",
+                    )
+                }
+                if (state.isPlanned) {
+                    Image(
+                        modifier = Modifier
+                            .height(32.dp)
+                            .aspectRatio(1f)
+                            .padding(end = 16.dp),
+                        painter = painterResource(id = R.drawable.icon_list_planned_outlined),
+                        contentDescription = "",
+                    )
+                }
             }
         }
     }
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun SpendingEditPageCategoriesPreview() {
     FamillySpandingsTheme {
-        Scaffold { _ ->
+        Surface {
             SpendingEditPage(
                 state = SpendingEditState(
                     spendingId = "",
@@ -337,6 +357,8 @@ fun SpendingEditPageCategoriesPreview() {
                     dateText = "",
                     detailsList = emptyList(),
                     isHidden = false,
+                    isDuplicate = false,
+                    isPlanned = false,
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     photoUri = null,
@@ -346,6 +368,10 @@ fun SpendingEditPageCategoriesPreview() {
                     onNext = {},
                     isOkActive = false,
                     onHideChanged = {},
+                    deleteSpending = { },
+                    canDuplicate = false,
+                    onDuplicate = {},
+                    onPlannedChanged = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList = mockCategoriesList,
@@ -355,8 +381,13 @@ fun SpendingEditPageCategoriesPreview() {
                     onNewCategoryNameChanged = { },
                     isSaveCategoryVisible = false,
                     onNewCategorySaved = { },
-                    onCategoryPhotoUriChanged = { _, _ -> },
+                    onCategoryPhotoUriChanged = { },
                     categoryPhotoChooserId = null,
+                    newCategoryPhoto = null,
+                    isEditCategoryShown = false,
+                    onCategoryDialogVisibilityChanged = { },
+                    categoryId = null,
+                    onDeleteCategory = { },
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
@@ -368,12 +399,11 @@ fun SpendingEditPageCategoriesPreview() {
     }
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun SpendingEditPageDetailsPreview() {
     FamillySpandingsTheme {
-        Scaffold { _ ->
+        Surface {
             SpendingEditPage(
                 state = SpendingEditState(
                     spendingId = "",
@@ -386,13 +416,19 @@ fun SpendingEditPageDetailsPreview() {
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     photoUri = null,
+                    isDuplicate = true,
+                    isPlanned = true,
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
                     onDateChanged = { },
                     onNext = {},
                     isOkActive = true,
-                    isHidden = false,
+                    isHidden = true,
                     onHideChanged = {},
+                    deleteSpending = { },
+                    canDuplicate = false,
+                    onDuplicate = {},
+                    onPlannedChanged = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList =
@@ -403,8 +439,13 @@ fun SpendingEditPageDetailsPreview() {
                     onNewCategoryNameChanged = { },
                     isSaveCategoryVisible = false,
                     onNewCategorySaved = { },
-                    onCategoryPhotoUriChanged = { _, _ -> },
+                    onCategoryPhotoUriChanged = { },
                     categoryPhotoChooserId = null,
+                    newCategoryPhoto = null,
+                    isEditCategoryShown = false,
+                    onCategoryDialogVisibilityChanged = { },
+                    categoryId = null,
+                    onDeleteCategory = { },
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },

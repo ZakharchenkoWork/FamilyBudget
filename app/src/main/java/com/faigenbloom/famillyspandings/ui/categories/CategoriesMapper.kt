@@ -12,12 +12,14 @@ class CategoriesMapper : Mapper<CategoryUiData, CategoryEntity>() {
                 id = defaultCategory.name,
                 nameId = defaultCategory.nameId,
                 iconId = defaultCategory.iconId,
+                isDefault = true,
             )
         } else {
             CategoryUiData(
                 id = entity.id,
                 name = entity.name,
                 iconUri = entity.photoUri,
+                isDefault = false,
             )
         }
     }

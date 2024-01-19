@@ -2,12 +2,12 @@ package com.faigenbloom.famillyspandings.ui.spandings.show
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,32 +41,23 @@ import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 @Composable
 fun SpendingShowPage(
     state: SpendingShowState,
-    onEditClicked: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     Column {
         TopBar(
-            title = "",
+            title = stringResource(R.string.spending_show_title),
             startIcon = R.drawable.arrow,
-            preEndIcon = R.drawable.icon_duplicate,
-            onPreEndIconCLicked = { state.onDuplicateClicked(onEditClicked) },
-            endIcon = R.drawable.icon_edit,
-            onEndIconCLicked = { onEditClicked(state.id) },
             onStartIconCLicked = onBack,
         )
         ConstraintLayout {
             val (topStripe, info, bottomStripe) = createRefs()
 
-            Stripe(
+            TopStripe(
                 modifier = Modifier
                     .constrainAs(topStripe) {
                         top.linkTo(parent.top, margin = 32.dp)
-                    }
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                    ),
+                    },
                 text = state.name,
-                textColor = MaterialTheme.colorScheme.tertiary,
             )
             Information(
                 modifier = Modifier
@@ -79,61 +69,33 @@ fun SpendingShowPage(
             )
             Stripe(
                 modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                    )
                     .constrainAs(bottomStripe) {
                         bottom.linkTo(parent.bottom, margin = 16.dp)
                     },
-                text = state.amount,
-                textColor = MaterialTheme.colorScheme.onPrimary,
-                isPlanned = state.isPlanned,
-                onMarkPurchasedClicked = state.onMarkPurchasedClicked,
+                state = state,
             )
         }
         DatailsList(state.details)
     }
 }
 
+
 @Composable
-fun Stripe(
+fun TopStripe(
     modifier: Modifier = Modifier,
     text: String,
-    textColor: Color,
-    isPlanned: Boolean = false,
-    onMarkPurchasedClicked: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.secondary,
+            )
             .fillMaxWidth(),
     ) {
-        if (isPlanned) {
-            Box(
-                modifier = Modifier
-                    .weight(0.5f)
-                    .clickable {
-                        onMarkPurchasedClicked?.invoke()
-                    }
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                    ),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(all = 8.dp),
-                    text = stringResource(id = R.string.spending_mark_purchased),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
-            }
-        } else {
-            Spacer(
-                modifier = Modifier
-                    .weight(0.5f),
-            )
-        }
+        Spacer(
+            modifier = Modifier
+                .weight(0.5f),
+        )
         Text(
             modifier = Modifier
                 .weight(0.5f)
@@ -142,7 +104,59 @@ fun Stripe(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge,
-            color = textColor,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+    }
+}
+
+@Composable
+fun Stripe(
+    modifier: Modifier = Modifier,
+    state: SpendingShowState,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            ),
+    ) {
+
+        Row(
+            modifier = Modifier
+                .weight(0.5f),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (state.isHidden) {
+                Image(
+                    modifier = Modifier
+                        .height(32.dp)
+                        .aspectRatio(1f)
+                        .padding(start = 16.dp),
+                    painter = painterResource(id = R.drawable.icon_hidden),
+                    contentDescription = "",
+                )
+            }
+            if (state.isPlanned) {
+                Image(
+                    modifier = Modifier
+                        .height(32.dp)
+                        .aspectRatio(1f)
+                        .padding(start = 16.dp),
+                    painter = painterResource(id = R.drawable.icon_list_planned_outlined),
+                    contentDescription = "",
+                )
+            }
+        }
+        Text(
+            modifier = Modifier
+                .weight(0.5f)
+                .padding(vertical = 8.dp),
+            text = state.amount,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }
@@ -175,7 +189,7 @@ fun Information(
                             rememberImagePainter(it) {
                                 transformations(CircleCropTransformation())
                             }
-                        } ?: painterResource(id = R.drawable.photo),
+                        } ?: painterResource(id = R.drawable.icon_photo),
                         contentDescription = "",
                     )
                 }
@@ -270,11 +284,12 @@ fun SpendingEditPageDetailsPreview() {
                     category = mockCategoriesList[1],
                     photoUri = null,
                     isPlanned = true,
+                    isHidden = true,
                     details = mockDetailsList,
                     onMarkPurchasedClicked = { },
                     onDuplicateClicked = {},
+                    onEditClicked = {},
                 ),
-                onEditClicked = {},
                 onBack = {},
             )
         }

@@ -48,7 +48,7 @@ fun SettingsPage(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 modifier = Modifier.size(100.dp),
-                painter = painterResource(id = R.drawable.photo),
+                painter = painterResource(id = R.drawable.icon_photo),
                 contentDescription = "",
             )
             Column(

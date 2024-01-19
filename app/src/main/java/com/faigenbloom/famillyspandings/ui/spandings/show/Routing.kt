@@ -6,17 +6,18 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseDestination
+import com.faigenbloom.famillyspandings.comon.FloatingMenuState
 import com.faigenbloom.famillyspandings.comon.ID_ARG
 import com.faigenbloom.famillyspandings.comon.ID_KEY
+import com.faigenbloom.famillyspandings.comon.MenuItemState
 import org.koin.androidx.compose.koinViewModel
 
 
 fun NavGraphBuilder.spendingShowPage(
-    bottomNavigationOptions: (
-        showNavigation: Boolean,
-        index: Int,
-    ) -> Unit,
+    bottomNavigationOptions: (Boolean) -> Unit,
+    options: (menuState: FloatingMenuState) -> Unit,
     onEditClicked: (String) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -28,22 +29,51 @@ fun NavGraphBuilder.spendingShowPage(
             },
         ),
     ) {
-        bottomNavigationOptions(false, 0)
+        bottomNavigationOptions(false)
 
-        val state by koinViewModel<SpendingShowViewModel>()
+        val viewModel = koinViewModel<SpendingShowViewModel>()
+
+        viewModel.onEditSpending = onEditClicked
+
+        val state by viewModel
             .spendingsStateFlow
             .collectAsState()
 
         SpendingShowPage(
             state = state,
-            onEditClicked = onEditClicked,
             onBack = onBack,
         )
+
+        options(getShowSpendingMenuState(state))
     }
 }
 
+fun getShowSpendingMenuState(state: SpendingShowState): FloatingMenuState {
+    return FloatingMenuState(
+        icon = R.drawable.icon_edit,
+        items = listOf(
+            MenuItemState(
+                isShown = state.isPlanned,
+                label = R.string.spending_mark_purchased,
+                icon = R.drawable.icon_buy,
+                onClick = state.onMarkPurchasedClicked,
+            ),
+            MenuItemState(
+                label = R.string.button_duplicate,
+                icon = R.drawable.icon_duplicate,
+                onClick = state.onDuplicateClicked,
+            ),
+            MenuItemState(
+                label = R.string.button_edit,
+                icon = R.drawable.icon_edit,
+                onClick = state.onEditClicked,
+            ),
+        ),
+    )
+}
+
 data object SpendingShowRoute : BaseDestination(
-    route = "SpendingShowPage/$ID_KEY",
+    route = "SpendingShowRoute/$ID_KEY",
 ) {
     operator fun invoke(id: String) =
         route.replace(ID_KEY, id)

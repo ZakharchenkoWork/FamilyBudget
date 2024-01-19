@@ -2,7 +2,6 @@ package com.faigenbloom.famillyspandings.ui.spandings
 
 import androidx.core.net.toUri
 import com.faigenbloom.famillyspandings.comon.Mapper
-import com.faigenbloom.famillyspandings.comon.getCurrentDate
 import com.faigenbloom.famillyspandings.comon.toLongDate
 import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.comon.toReadableDate
@@ -18,6 +17,7 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
             date = entity.date.toReadableDate(),
             categoryId = entity.categoryId,
             photoUri = entity.photoUri?.toUri(),
+            isManualTotal = entity.isManualTotal,
             isPlanned = entity.isPlanned,
             isHidden = entity.isHidden,
             isDuplicate = entity.isDuplicate,
@@ -32,8 +32,9 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
             amount = model.amount.toLongMoney(),
             date = date,
             categoryId = model.categoryId,
-            photoUri = model.photoUri.toString(),
-            isPlanned = date > getCurrentDate(),
+            photoUri = model.photoUri?.toString(),
+            isManualTotal = model.isManualTotal,
+            isPlanned = model.isPlanned,
             isHidden = model.isHidden,
             isDuplicate = model.isDuplicate,
         )

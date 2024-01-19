@@ -4,42 +4,42 @@ import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.ui.categories.mockCategoriesList
 
 
-val mockSpendingsList = listOf(
+val mockSpendingsWithCategoryList = listOf(
     SpendingCategoryUiData(
         name = "Home",
         category = mockCategoriesList[6],
         amount = 1000L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "Car",
         category = mockCategoriesList[10],
         amount = 1200L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "Pets",
         category = mockCategoriesList[7],
         amount = 1300L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "Beauty",
         category = mockCategoriesList[1],
         amount = 1100L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "Education",
         category = mockCategoriesList[2],
         amount = 1250L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "PS GAMES",
         category = mockCategoriesList[3],
         amount = 1030L,
-        date = "31.10.2023".toLocalDate(),
+        date = "31.11.2023".toLocalDate(),
     ),
     SpendingCategoryUiData(
         name = "Meds",

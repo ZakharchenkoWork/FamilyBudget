@@ -15,7 +15,7 @@ class GetCategorySummariesUseCase(
 ) {
     suspend operator fun invoke(): ArrayList<CategorySummary> {
         return withContext(Dispatchers.IO) {
-            val allCategories = getCategoriesUseCase()
+            val allCategories = getCategoriesUseCase(true)
             val spendings = getAllSpendingsUseCase(false)
             val summaries = ArrayList<CategorySummary>()
             spendings.forEach { spending ->

@@ -126,7 +126,7 @@ fun SimpleTextField(
             onValueChange = onValueChange,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
             decorationBox = { innerTextField ->
-                if (text.isEmpty()) {
+                if (text.isBlank()) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = label,

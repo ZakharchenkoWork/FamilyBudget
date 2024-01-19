@@ -4,6 +4,8 @@ import com.faigenbloom.famillyspandings.comon.Identifiable
 import com.faigenbloom.famillyspandings.comon.Mapper
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.repositories.SpendingsRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class GetSpendingUseCase<T : Identifiable>(
     private val spendingsRepository: SpendingsRepository,
@@ -11,6 +13,8 @@ class GetSpendingUseCase<T : Identifiable>(
 ) {
 
     suspend operator fun invoke(id: String): T {
-        return mapper.forUI(spendingsRepository.getSpending(id))
+        return withContext(Dispatchers.IO) {
+            mapper.forUI(spendingsRepository.getSpending(id))
+        }
     }
 }

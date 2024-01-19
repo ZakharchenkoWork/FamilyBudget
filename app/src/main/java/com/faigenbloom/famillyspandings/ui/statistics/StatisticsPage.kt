@@ -334,7 +334,7 @@ fun CategorySummary.getImage(): Painter {
         rememberImagePainter(it)
     } ?: this.iconId?.let {
         painterResource(id = it)
-    } ?: painterResource(id = R.drawable.photo)
+    } ?: painterResource(id = R.drawable.icon_photo)
 }
 
 @Preview

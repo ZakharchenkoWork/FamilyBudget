@@ -1,10 +1,10 @@
 package com.faigenbloom.famillyspandings
 
-import com.faigenbloom.famillyspandings.comon.Countable
-import com.faigenbloom.famillyspandings.comon.PlateSizeType
-import com.faigenbloom.famillyspandings.comon.PlatesSorter
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsList
+import com.faigenbloom.famillyspandings.domain.spendings.Countable
+import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
+import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
+import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.maps.shouldContain
@@ -20,7 +20,7 @@ import org.junit.Test
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class SortingTest {
-    val sorter = PlatesSorter<Countable>()
+    val sorter = SortPlatesUseCase<Countable>()
     val arrayOfSpendings: List<SpendingEntity> = emptyList()
 
     @get:Rule
@@ -228,11 +228,11 @@ class SortingTest {
             val patterns = sorter.findPattern(
                 sorter.preparePlatesSizes(
                     listOf(
-                        mockSpendingsList[9],
-                        mockSpendingsList[10],
-                        mockSpendingsList[11],
-                        mockSpendingsList[12],
-                        mockSpendingsList[13],
+                        mockSpendingsWithCategoryList[9],
+                        mockSpendingsWithCategoryList[10],
+                        mockSpendingsWithCategoryList[11],
+                        mockSpendingsWithCategoryList[12],
+                        mockSpendingsWithCategoryList[13],
                     ),
                 ),
             )
@@ -241,11 +241,11 @@ class SortingTest {
             patterns[0].plates[2] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
             patterns[0].plates[3] shouldBe PlateSizeType.SIZE_ONE_BY_ONE
             patterns[1].plates[0] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
-            patterns[0].items shouldContain mockSpendingsList[9]
-            patterns[0].items shouldContain mockSpendingsList[10]
-            patterns[0].items shouldContain mockSpendingsList[11]
-            patterns[0].items shouldContain mockSpendingsList[12]
-            patterns[1].items shouldContain mockSpendingsList[13]
+            patterns[0].items shouldContain mockSpendingsWithCategoryList[9]
+            patterns[0].items shouldContain mockSpendingsWithCategoryList[10]
+            patterns[0].items shouldContain mockSpendingsWithCategoryList[11]
+            patterns[0].items shouldContain mockSpendingsWithCategoryList[12]
+            patterns[1].items shouldContain mockSpendingsWithCategoryList[13]
         }
 
     @Test
@@ -343,16 +343,6 @@ class SortingTest {
             patterns[0].items shouldContain TestCountable(120)
             patterns[1].plates[0] shouldBe PlateSizeType.SIZE_ONE_BY_ONE
             patterns[1].items shouldContain TestCountable(100)
-        }
-
-    @Test
-    fun `sorter can sort by dates`() =
-        runTest {
-            val listByDate = sorter.prepareByDates(
-                mockSpendingsList,
-            )
-            listByDate.size shouldBe 12
-            listByDate[0].size shouldBe 6
         }
 }
 

@@ -40,11 +40,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
+const val MENU_FLOATING_BUTTON = "MENU_FLOATING_BUTTON"
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun FloatingActionMenu(
@@ -64,6 +68,7 @@ fun FloatingActionMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
         ) {
             floatingState.items?.let { items ->
+
                 FilterFabMenu(
                     items = items,
                     visible = filterFabState == FilterFabState.EXPANDED,
@@ -94,7 +99,10 @@ fun FilterFab(
 ) {
 
     FloatingActionButton(
-        modifier = modifier,
+        modifier = modifier
+            .semantics {
+                contentDescription = MENU_FLOATING_BUTTON
+            },
         elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
         onClick = {
             onClick(
@@ -157,9 +165,11 @@ fun FilterFabMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items.forEach { menuItem ->
-                MenuItem(
-                    state = menuItem,
-                )
+                if (menuItem.isShown) {
+                    MenuItem(
+                        state = menuItem,
+                    )
+                }
             }
         }
     }
@@ -179,14 +189,8 @@ fun MenuItem(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
-        //label
         MenuLabel(label = state.label)
-
-        //fab
-        MenuButton(
-            item = state,
-        )
+        MenuButton(item = state)
     }
 }
 
@@ -195,20 +199,26 @@ fun MenuButton(
     modifier: Modifier = Modifier,
     item: MenuItemState,
 ) {
-    FloatingActionButton(
-        modifier = modifier.size(32.dp),
-        shape = CircleShape,
-        containerColor = colorScheme.secondary,
-        onClick = item.onClick,
-    ) {
-        Icon(
-            modifier = Modifier
-                .size(16.dp)
-                .aspectRatio(1f),
-            painter = painterResource(item.icon),
-            contentDescription = null,
-            tint = colorScheme.tertiary,
-        )
+    item.icon?.let { icon ->
+        FloatingActionButton(
+            modifier = modifier
+                .size(32.dp)
+                .clearAndSetSemantics {
+                    contentDescription = item.semantics
+                },
+            shape = CircleShape,
+            containerColor = colorScheme.secondary,
+            onClick = item.onClick,
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(16.dp)
+                    .aspectRatio(1f),
+                painter = painterResource(icon),
+                contentDescription = null,
+                tint = colorScheme.tertiary,
+            )
+        }
     }
 }
 
@@ -242,9 +252,11 @@ data class FloatingMenuState(
 )
 
 data class MenuItemState(
+    val isShown: Boolean = true,
     @StringRes val label: Int,
-    val icon: Int,
+    val icon: Int? = null,
     val onClick: () -> Unit,
+    val semantics: String = "",
 )
 
 @Preview
@@ -257,13 +269,13 @@ fun MenuPreview() {
                     icon = R.drawable.icon_edit,
                     items = listOf(
                         MenuItemState(
-                            R.string.button_ok,
-                            R.drawable.icon_plus_outlined,
+                            label = R.string.button_ok,
+                            icon = R.drawable.icon_plus_outlined,
                             onClick = {},
                         ),
                         MenuItemState(
-                            R.string.button_cancel,
-                            R.drawable.icon_delete,
+                            label = R.string.button_cancel,
+                            icon = R.drawable.icon_delete,
                             onClick = {},
                         ),
                     ),

@@ -19,9 +19,9 @@ class RegisterPageViewModel(private val repository: RegisterRepository) : ViewMo
     private var passwordError: Boolean = false
     private var emailError: Boolean = false
     private val isRegistrationEnabled: Boolean
-        get() = familyNameText.isNotEmpty() && nameText.isNotEmpty() &&
-            emailText.isNotEmpty() && passwordText.isNotEmpty() &&
-            !familyNameError && !nameError && !emailError && !passwordError
+        get() = familyNameText.isNotBlank() && nameText.isNotBlank() &&
+                emailText.isNotBlank() && passwordText.isNotBlank() &&
+                !familyNameError && !nameError && !emailError && !passwordError
 
     private var onLoginClicked: () -> Unit = {
         if (isRegistrationEnabled) {
@@ -50,12 +50,12 @@ class RegisterPageViewModel(private val repository: RegisterRepository) : ViewMo
     }
     private val onFamilyNameChanged: (String) -> Unit = {
         familyNameText = it
-        familyNameError = familyNameText.isEmpty()
+        familyNameError = familyNameText.isBlank()
         _loginStateFlow.update { registerState }
     }
     private val onNameChanged: (String) -> Unit = {
         nameText = it
-        nameError = nameText.isEmpty()
+        nameError = nameText.isBlank()
         _loginStateFlow.update { registerState }
     }
 

@@ -1,8 +1,8 @@
-package com.faigenbloom.famillyspandings.comon
+package com.faigenbloom.famillyspandings.domain.spendings
 
 import java.util.SortedMap
 
-class PlatesSorter<T : Countable>(
+class SortPlatesUseCase<T : Countable>(
     private val patterns: List<Pattern<T>> =
         listOf(
             Pattern(
@@ -160,9 +160,11 @@ class PlatesSorter<T : Countable>(
             ),
         ),
 ) {
-    fun prepareByDates(data: List<T>): List<List<T>> {
-        return data.groupBy { it.getSortableDate() }.map {
-            it.value
+    operator fun invoke(divider: Divider<T>, data: List<T>): List<List<Pattern<T>>> {
+        return divider.prepareGroups(data).map {
+            findPattern(
+                preparePlatesSizes(it),
+            )
         }
     }
 
@@ -266,6 +268,10 @@ enum class PlateSizeType {
     SIZE_TWO_BY_TWO,
     SIZE_THREE_BY_TWO,
     SIZE_THREE_BY_THREE,
+}
+
+interface Divider<T : Countable> {
+    fun prepareGroups(data: List<T>): List<List<T>>
 }
 
 data class Pattern<T>(val plates: List<PlateSizeType>) {

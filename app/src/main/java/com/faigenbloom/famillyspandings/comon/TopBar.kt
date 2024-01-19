@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
+const val BACK_BUTTON = "BACK_BUTTON"
 const val LEFT_TOP_BAR_BUTTON = "LEFT_TOP_BAR_BUTTON"
 const val RIGHT_TOP_BAR_BUTTON = "RIGHT_TOP_BAR_BUTTON"
 
@@ -59,6 +60,9 @@ fun TopBar(
                         .size(24.dp)
                         .clickable {
                             onStartIconCLicked?.invoke()
+                        }
+                        .semantics {
+                            contentDescription = BACK_BUTTON
                         },
                     painter = painterResource(id = it),
                     contentDescription = "",
@@ -93,7 +97,7 @@ fun TopBar(
                 }
             }
         }
-        if (title.isEmpty()) {
+        if (title.isBlank()) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()

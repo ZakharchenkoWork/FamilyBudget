@@ -12,5 +12,6 @@ data class SpendingUiData(
     val photoUri: Uri?,
     val isPlanned: Boolean,
     val isHidden: Boolean,
+    val isManualTotal: Boolean,
     val isDuplicate: Boolean = false,
 ) : Identifiable

@@ -194,12 +194,12 @@ class MainActivity : ComponentActivity() {
                                 options = {
                                         showNavigation: Boolean,
                                         index: Int,
-                                        menuState: FloatingMenuState,
                                     ->
                                     withBottomNavigation = showNavigation
                                     selectedBottomNavigationIndex = index
-                                    floatingMenuState = menuState
+
                                 },
+                                menuCallback = { floatingMenuState = it },
                                 onOpenSpending = {
                                     mainNavController.navigate(
                                         SpendingShowRoute(it),
@@ -260,14 +260,8 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                             spendingShowPage(
-                                bottomNavigationOptions = {
-                                        showNavigation: Boolean,
-                                        index: Int,
-                                    ->
-                                    withBottomNavigation = showNavigation
-                                    selectedBottomNavigationIndex = index
-                                    floatingMenuState = null
-                                },
+                                bottomNavigationOptions = { withBottomNavigation = it },
+                                options = { floatingMenuState = it },
                                 onEditClicked = {
                                     mainNavController.navigate(
                                         SpendingEditRoute(it),
@@ -463,7 +457,7 @@ class MainActivity : ComponentActivity() {
                 set(it.key, it.value)
             }
         }
-        mainNavController.popBackStack()
+        popBackStack()
     }
 
     private fun getOutputDirectory(): File {

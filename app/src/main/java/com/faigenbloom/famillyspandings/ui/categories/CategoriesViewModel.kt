@@ -1,38 +1,64 @@
 package com.faigenbloom.famillyspandings.ui.categories
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faigenbloom.famillyspandings.domain.categories.AddCategoryUseCase
+import com.faigenbloom.famillyspandings.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.famillyspandings.domain.categories.GetCategoriesUseCase
-import com.faigenbloom.famillyspandings.domain.categories.UpdateCategoryPhotoUseCase
+import com.faigenbloom.famillyspandings.domain.categories.SetCategoryUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-open class CategoriesViewModel(
+const val NO_INDEX = -1
+
+class CategoriesViewModel(
     private val getCategoriesUseCase: GetCategoriesUseCase<CategoryUiData>,
-    private val updateCategoryPhotoUseCase: UpdateCategoryPhotoUseCase,
-    private val addCategoryUseCase: AddCategoryUseCase,
+    private val setCategoryUseCase: SetCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {
 
     private var categoriesList: List<CategoryUiData> = emptyList()
-    private var selectedIndex = -1
+    private var selectedIndex = NO_INDEX
     private var categoryId: String? = null
     private var newCategoryName: String = ""
-    private var isSaveCategoryVisible: Boolean = false
+    private var newCategoryPhoto: Uri? = null
     private var categoryPhotoChooserId: String? = null
+    private var isSaveCategoryVisible: Boolean = false
+    private var isEditCategoryShown: Boolean = false
 
     var onCategorySelected: (CategoryUiData) -> Unit = {}
 
-    private fun onCategoryPhotoUriChanged(id: String, uri: Uri) {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateCategoryPhotoUseCase(id, uri.toString())
-            categoriesList = getCategoriesUseCase()
-            updateUI()
+    private fun onCategoryPhotoUriChanged(uri: Uri) {
+        newCategoryPhoto = uri
+        isSaveCategoryVisible = true
+        updateUI()
+    }
+
+    private fun onCategoryDialogVisibilityChanged(categoryIndex: Int) {
+        isEditCategoryShown = !isEditCategoryShown
+        if (isEditCategoryShown) {
+            if (categoryIndex >= 0) {
+                val categoryUiData = categoriesList[categoryIndex]
+                categoryId = categoryUiData.id
+                newCategoryName = categoryUiData.name ?: ""
+                newCategoryPhoto = categoryUiData.iconUri?.toUri()
+            } else {
+                categoryId = null
+                newCategoryName = ""
+                newCategoryPhoto = null
+            }
+        } else {
+            categoryId = null
+            newCategoryName = ""
+            newCategoryPhoto = null
+            isSaveCategoryVisible = false
+            isEditCategoryShown = false
         }
+        updateUI()
     }
 
     private fun onSelectionChanged(selectedIndex: Int) {
@@ -43,18 +69,34 @@ open class CategoriesViewModel(
 
     private fun onNewCategoryNameChanged(name: String) {
         this.newCategoryName = name
-        isSaveCategoryVisible = newCategoryName.isNotEmpty()
+        isSaveCategoryVisible = newCategoryName.isNotBlank()
         updateUI()
     }
 
+    private fun onDeleteCategory() {
+        categoryId?.let { id ->
+            viewModelScope.launch {
+                deleteCategoryUseCase(id)
+                onCategoryDialogVisibilityChanged(NO_INDEX)
+                selectedIndex = NO_INDEX
+                categoriesList = getCategoriesUseCase(false)
+                updateUI()
+            }
+        }
+    }
+
     private fun onNewCategorySaved() {
-        if (newCategoryName.isNotEmpty()) {
+        if (newCategoryName.isNotBlank()) {
             viewModelScope.launch(Dispatchers.IO) {
-                val categoryId = addCategoryUseCase(newCategoryName)
-                newCategoryName = ""
-                categoriesList = getCategoriesUseCase()
+                val categoryId = setCategoryUseCase(
+                    id = categoryId ?: "",
+                    name = newCategoryName,
+                    uri = newCategoryPhoto,
+                )
+
+                onCategoryDialogVisibilityChanged(NO_INDEX)
+                categoriesList = getCategoriesUseCase(false)
                 selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
-                isSaveCategoryVisible = false
                 updateUI()
             }
         }
@@ -63,20 +105,25 @@ open class CategoriesViewModel(
     private val state: CategoriesState
         get() = CategoriesState(
             categoriesList = categoriesList,
+            categoryId = categoryId,
             selectedIndex = selectedIndex,
             newCategoryName = newCategoryName,
+            newCategoryPhoto = newCategoryPhoto,
             isSaveCategoryVisible = isSaveCategoryVisible,
             categoryPhotoChooserId = categoryPhotoChooserId,
+            isEditCategoryShown = isEditCategoryShown,
             onSelectionChanged = ::onSelectionChanged,
             onNewCategoryNameChanged = ::onNewCategoryNameChanged,
             onNewCategorySaved = ::onNewCategorySaved,
             onCategoryPhotoUriChanged = ::onCategoryPhotoUriChanged,
+            onCategoryDialogVisibilityChanged = ::onCategoryDialogVisibilityChanged,
+            onDeleteCategory = ::onDeleteCategory,
         )
 
     private val _stateFlow = MutableStateFlow(state)
     val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesList = getCategoriesUseCase()
+            categoriesList = getCategoriesUseCase(false)
             categoryId?.let {
                 selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
                 onCategorySelected(categoriesList[selectedIndex])
@@ -103,10 +150,15 @@ data class CategoriesState(
     val categoriesList: List<CategoryUiData>,
     val selectedIndex: Int,
     val onSelectionChanged: (Int) -> Unit,
+    val categoryId: String?,
     val newCategoryName: String,
+    val newCategoryPhoto: Uri?,
     val onNewCategoryNameChanged: (String) -> Unit,
     val isSaveCategoryVisible: Boolean,
+    val isEditCategoryShown: Boolean,
     val onNewCategorySaved: () -> Unit,
-    val onCategoryPhotoUriChanged: (id: String, photoUri: Uri) -> Unit,
+    val onDeleteCategory: () -> Unit,
+    val onCategoryDialogVisibilityChanged: (Int) -> Unit,
+    val onCategoryPhotoUriChanged: (photoUri: Uri) -> Unit,
     val categoryPhotoChooserId: String?,
 )

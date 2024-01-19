@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.DynamicPlatesHolder
-import com.faigenbloom.famillyspandings.comon.Pattern
-import com.faigenbloom.famillyspandings.comon.PlateSizeType
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.domain.spendings.Pattern
+import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.ninepatch.painterResourceNinePath
 
@@ -127,7 +127,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    mockSpendingsList[0],
+                                    mockSpendingsWithCategoryList[0],
                                 )
                             },
                             Pattern<SpendingCategoryUiData>(
@@ -136,7 +136,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    mockSpendingsList[0],
+                                    mockSpendingsWithCategoryList[0],
                                 )
                             },
                             Pattern<SpendingCategoryUiData>(
@@ -147,9 +147,9 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    mockSpendingsList[0],
-                                    mockSpendingsList[1],
-                                    mockSpendingsList[2],
+                                    mockSpendingsWithCategoryList[0],
+                                    mockSpendingsWithCategoryList[1],
+                                    mockSpendingsWithCategoryList[2],
                                 )
                             },
                             Pattern<SpendingCategoryUiData>(
@@ -159,8 +159,8 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    mockSpendingsList[0],
-                                    mockSpendingsList[1],
+                                    mockSpendingsWithCategoryList[0],
+                                    mockSpendingsWithCategoryList[1],
                                 )
                             },
                             Pattern<SpendingCategoryUiData>(
@@ -169,7 +169,7 @@ fun SpandingsPagePreview() {
                                 ),
                             ).apply {
                                 items = listOf(
-                                    mockSpendingsList[0],
+                                    mockSpendingsWithCategoryList[0],
                                 )
                             },
                         ),

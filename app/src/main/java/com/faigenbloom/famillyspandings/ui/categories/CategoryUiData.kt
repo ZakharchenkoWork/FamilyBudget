@@ -8,4 +8,5 @@ data class CategoryUiData(
     val name: String? = null,
     val iconId: Int? = null,
     val iconUri: String? = null,
+    val isDefault: Boolean = false,
 ) : Identifiable

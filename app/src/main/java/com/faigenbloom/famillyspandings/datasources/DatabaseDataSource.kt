@@ -24,6 +24,10 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return appDatabase.categoriesDao().getCategories()
     }
 
+    override suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity> {
+        return appDatabase.categoriesDao().getCategoriesByVisibility(isHidden)
+    }
+
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
         appDatabase.categoriesDao().insert(categoryEntity)
     }
@@ -98,5 +102,21 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun deleteSpendingDetail(id: String) {
         appDatabase.spendingsDao().deleteSpendingDetail(id)
+    }
+
+    override suspend fun deleteSpending(id: String) {
+        appDatabase.spendingsDao().deleteSpending(id)
+    }
+
+    override suspend fun getSpendingsByCategory(id: String): List<SpendingEntity> {
+        return appDatabase.spendingsDao().getSpendingsByCategory(id)
+    }
+
+    override suspend fun deleteCategory(id: String) {
+        appDatabase.categoriesDao().deleteCategory(id)
+    }
+
+    override suspend fun changeCategoryHidden(id: String, isHidden: Boolean) {
+        appDatabase.categoriesDao().hideCategory(id, isHidden)
     }
 }

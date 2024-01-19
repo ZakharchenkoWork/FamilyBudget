@@ -9,7 +9,6 @@ import com.faigenbloom.famillyspandings.ui.spandings.SpendingsMapper
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkStatic
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +23,7 @@ class SaveSpendingUseCaseTest {
 
     private val spendingsMapper: SpendingsMapper = SpendingsMapper()
     private val altSpendingId = "2"
+
     private val mockSpending = SpendingUiData(
         id = "1",
         name = "",
@@ -32,6 +32,7 @@ class SaveSpendingUseCaseTest {
         categoryId = "asdf",
         photoUri = null,
         isPlanned = false,
+        isManualTotal = false,
         isHidden = false,
     )
     private val idGeneratorUseCase: GenerateIdUseCase = mock {
@@ -52,7 +53,6 @@ class SaveSpendingUseCaseTest {
         SaveSpendingUseCase(
             idGeneratorUseCase = idGeneratorUseCase,
             spendingsRepository = spendingsRepository,
-            ioDispatcher = Dispatchers.IO,
             spendingsMapper = spendingsMapper,
         )
 

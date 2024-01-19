@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import com.faigenbloom.famillyspandings.comon.BACK_BUTTON
+import com.faigenbloom.famillyspandings.comon.MENU_FLOATING_BUTTON
 import com.faigenbloom.famillyspandings.comon.RIGHT_TOP_BAR_BUTTON
 import com.faigenbloom.famillyspandings.ui.categories.FIRST_CATEGORY
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
@@ -19,6 +21,9 @@ import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_NAME_I
 import com.faigenbloom.famillyspandings.ui.spandings.detail.OK_BUTTON
 import com.faigenbloom.famillyspandings.ui.spandings.detail.SUGGESTION_TITLE
 import com.faigenbloom.famillyspandings.ui.spandings.edit.ADD_DETAIL_BUTTON
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_AMOUNT_INPUT
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_NAME_INPUT
+import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_SAVE_BUTTON
 import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
 
 
@@ -56,20 +61,37 @@ abstract class BaseTest {
         getTestRule().onNodeWithContentDescription(DETAIL_DIALOG_ADD_TO_LIST).performClick()
     }
 
+    protected fun fillSpendingNameAndAmount(
+        name: String, amount: String,
+    ) {
+        getTestRule().onNodeWithContentDescription(SPENDING_NAME_INPUT)
+            .performTextInput(name)
+        getTestRule().onNodeWithContentDescription(SPENDING_AMOUNT_INPUT)
+            .performTextInput(amount)
+    }
+
+    protected fun clickSaveSpending() {
+        clickMenuButton()
+        getTestRule().onNodeWithContentDescription(SPENDING_SAVE_BUTTON).performClick()
+    }
+
+    protected fun clickMenuButton() =
+        getTestRule().onNodeWithContentDescription(MENU_FLOATING_BUTTON).performClick()
+
     protected fun clickOk() {
         getTestRule().onNodeWithContentDescription(OK_BUTTON).performClick()
     }
 
+    protected fun clickBack() {
+        getTestRule().onNodeWithContentDescription(BACK_BUTTON).performClick()
+    }
+
     protected abstract fun getTestRule(): AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
+
     protected fun getString(@StringRes id: Int): String {
         return getTestRule().activity.getString(id)
     }
 
-    /* private fun hasBackground(node: SemanticsNode, color: Color, shape: Shape): Boolean {
-         return node.layoutInfo.getModifierInfo().filter { modifierInfo ->
-             modifierInfo.modifier == Modifier.background(color, shape)
-         }.size == 1
-     }*/
     fun backgroundColor(
         color: Color,
     ): SemanticsMatcher {

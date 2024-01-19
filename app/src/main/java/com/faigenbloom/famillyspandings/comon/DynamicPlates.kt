@@ -29,8 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.domain.spendings.Pattern
+import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
+import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
 import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingCategoryUiData
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsList
+import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
@@ -1203,7 +1206,7 @@ fun Plate_3x3_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                     ),
@@ -1228,7 +1231,7 @@ fun Plate_3x2_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                     ),
@@ -1254,8 +1257,8 @@ fun Plate_3x2_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
                             )
                         },
                     ),
@@ -1282,9 +1285,9 @@ fun Plate_3x2_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1311,9 +1314,9 @@ fun Plate_2x2_3x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1341,10 +1344,10 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[3],
-                                mockSpendingsList[4],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[3],
+                                mockSpendingsWithCategoryList[4],
                             )
                         },
                     ),
@@ -1370,8 +1373,8 @@ fun Plate_2x2_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
                             )
                         },
                     ),
@@ -1398,9 +1401,9 @@ fun Plate_2x2_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1426,8 +1429,8 @@ fun Plate_2x2_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
                             )
                         },
                     ),
@@ -1454,9 +1457,9 @@ fun Plate_3x1_3x1_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1484,10 +1487,10 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
                             )
                         },
                     ),
@@ -1515,10 +1518,10 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
                             )
                         },
                     ),
@@ -1547,11 +1550,11 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
-                                mockSpendingsList[4],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
+                                mockSpendingsWithCategoryList[4],
                             )
                         },
                     ),
@@ -1579,10 +1582,10 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
                             )
                         },
                     ),
@@ -1609,9 +1612,9 @@ fun Plate_2x1_2x1_2x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1639,10 +1642,10 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
                             )
                         },
                     ),
@@ -1669,9 +1672,9 @@ fun Plate_2x1_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                     ),
@@ -1696,7 +1699,7 @@ fun Plate_3x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                     ),
@@ -1722,8 +1725,8 @@ fun Plate_2x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
                             )
                         },
                     ),
@@ -1748,7 +1751,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                         Pattern<SpendingCategoryUiData>(
@@ -1757,7 +1760,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                         Pattern<SpendingCategoryUiData>(
@@ -1768,9 +1771,9 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
                             )
                         },
                         Pattern<SpendingCategoryUiData>(
@@ -1780,8 +1783,8 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
                             )
                         },
                         Pattern<SpendingCategoryUiData>(
@@ -1790,7 +1793,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             ),
                         ).apply {
                             items = listOf(
-                                mockSpendingsList[0],
+                                mockSpendingsWithCategoryList[0],
                             )
                         },
                     ),
@@ -1804,7 +1807,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
 @Preview(showBackground = true)
 @Composable
 fun PlateWithDuplicatesAndDatesPreview() {
-    val sorter = PlatesSorter<SpendingCategoryUiData>()
+    val sorter = SortPlatesUseCase<SpendingCategoryUiData>()
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
@@ -1812,19 +1815,19 @@ fun PlateWithDuplicatesAndDatesPreview() {
                     sorter.findPattern(
                         sorter.preparePlatesSizes(
                             listOf(
-                                mockSpendingsList[0],
-                                mockSpendingsList[1],
-                                mockSpendingsList[2],
-                                mockSpendingsList[3],
-                                mockSpendingsList[4],
-                                mockSpendingsList[5],
+                                mockSpendingsWithCategoryList[0],
+                                mockSpendingsWithCategoryList[1],
+                                mockSpendingsWithCategoryList[2],
+                                mockSpendingsWithCategoryList[3],
+                                mockSpendingsWithCategoryList[4],
+                                mockSpendingsWithCategoryList[5],
                             ),
                         ),
                     ),
                     sorter.findPattern(
                         sorter.preparePlatesSizes(
                             listOf(
-                                mockSpendingsList[6],
+                                mockSpendingsWithCategoryList[6],
                             ),
                         ),
                     ),

@@ -3,9 +3,9 @@ package com.faigenbloom.famillyspandings.datasources.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.faigenbloom.famillyspandings.comon.Countable
 import com.faigenbloom.famillyspandings.comon.toSortableDate
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity.Companion.TABLE_NAME
+import com.faigenbloom.famillyspandings.domain.spendings.Countable
 
 @Entity(tableName = TABLE_NAME)
 data class SpendingEntity(
@@ -22,6 +22,8 @@ data class SpendingEntity(
     val categoryId: String,
     @ColumnInfo(name = COLUMN_PHOTO)
     val photoUri: String?,
+    @ColumnInfo(name = COLUMN_IS_TOTAL_MANUAL)
+    val isManualTotal: Boolean,
     @ColumnInfo(name = COLUMN_IS_PLANNED)
     val isPlanned: Boolean,
     @ColumnInfo(name = COLUMN_IS_HIDDEN)
@@ -46,6 +48,7 @@ data class SpendingEntity(
         const val COLUMN_AMOUNT = "amount"
         const val COLUMN_DATE = "date"
         const val COLUMN_CATEGORY = "category"
+        const val COLUMN_IS_TOTAL_MANUAL = "is_total_manual"
         const val COLUMN_IS_PLANNED = "is_planned"
         const val COLUMN_IS_HIDDEN = "is_hidden"
         const val COLUMN_IS_DUPLICATE = "is_duplicate"

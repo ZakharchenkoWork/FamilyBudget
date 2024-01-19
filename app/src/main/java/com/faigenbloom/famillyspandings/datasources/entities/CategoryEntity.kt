@@ -12,6 +12,7 @@ data class CategoryEntity(
     @ColumnInfo(name = COLUMN_ID)
     val id: String,
     @ColumnInfo(name = COLUMN_IS_DEFAULT) val isDefault: Boolean,
+    @ColumnInfo(name = COLUMN_HIDDEN) val isHidden: Boolean = false,
     @ColumnInfo(name = COLUMN_NAME) val name: String? = null,
     @ColumnInfo(name = COLUMN_PHOTO) val photoUri: String? = null,
 ) {
@@ -21,6 +22,7 @@ data class CategoryEntity(
         const val COLUMN_ID = "id"
         const val COLUMN_NAME = "name"
         const val COLUMN_PHOTO = "photo"
+        const val COLUMN_HIDDEN = "is_hidden"
     }
 }
 

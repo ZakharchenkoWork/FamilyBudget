@@ -2,12 +2,16 @@ package com.faigenbloom.famillyspandings.ui.spandings.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faigenbloom.famillyspandings.comon.Pattern
-import com.faigenbloom.famillyspandings.comon.PlatesSorter
 import com.faigenbloom.famillyspandings.comon.toLocalDate
 import com.faigenbloom.famillyspandings.comon.toLongMoney
 import com.faigenbloom.famillyspandings.domain.categories.GetCategoryByIdUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.Divider
 import com.faigenbloom.famillyspandings.domain.spendings.GetAllSpendingsUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.Pattern
+import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.dividers.DayGroupDivider
+import com.faigenbloom.famillyspandings.domain.spendings.dividers.MonthGroupDivider
+import com.faigenbloom.famillyspandings.domain.spendings.dividers.YearGroupDivider
 import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingUiData
 import kotlinx.coroutines.Dispatchers
@@ -16,18 +20,31 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SpendingsPageViewModel(
+class SpendingsListPageViewModel(
     private val getAllSpendingsUseCase: GetAllSpendingsUseCase<SpendingUiData>,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
+    private val sortPlatesUseCase: SortPlatesUseCase<SpendingCategoryUiData>,
 ) : ViewModel() {
     private var lastSpendings: List<SpendingCategoryUiData> = emptyList()
-    private val sorter = PlatesSorter<SpendingCategoryUiData>()
     private var spendings: List<List<Pattern<SpendingCategoryUiData>>> = emptyList()
     private var isPlanned: Boolean = false
     private var isLoading: Boolean = true
+    private var filterType: FilterType = FilterType.DAILY
     private fun onPlannedSwitched() {
         isPlanned = isPlanned.not()
         reloadData()
+    }
+
+    fun onDailyFiltered() {
+        filterType = FilterType.DAILY
+    }
+
+    fun onMonthlyFiltered() {
+        filterType = FilterType.MONTHLY
+    }
+
+    fun onYearlyFiltered() {
+        filterType = FilterType.YEAR
     }
 
     private val spendingsState: SpendingsState
@@ -37,10 +54,18 @@ class SpendingsPageViewModel(
             isLoading = isLoading,
             onPlannedSwitched = ::onPlannedSwitched,
         )
-
     private val _spendingsStateFlow = MutableStateFlow(spendingsState)
+
     val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
         reloadData()
+    }
+
+    private fun getDividerForFilter(): Divider<SpendingCategoryUiData> {
+        return when (filterType) {
+            FilterType.DAILY -> DayGroupDivider()
+            FilterType.MONTHLY -> MonthGroupDivider()
+            FilterType.YEAR -> YearGroupDivider()
+        }
     }
 
     fun reloadData() {
@@ -52,15 +77,7 @@ class SpendingsPageViewModel(
             }
             if (lastSpendings != spendingsUpdatedList) {
                 lastSpendings = spendingsUpdatedList
-                spendings = sorter.prepareByDates(
-                    lastSpendings,
-                ).sortedByDescending {
-                    it[0].getSortableDate()
-                }.map {
-                    sorter.findPattern(
-                        sorter.preparePlatesSizes(it),
-                    )
-                }
+                spendings = sortPlatesUseCase(getDividerForFilter(), lastSpendings)
             }
             isLoading = false
             updateUI()
@@ -70,6 +87,13 @@ class SpendingsPageViewModel(
     private fun updateUI() {
         _spendingsStateFlow.update { spendingsState }
     }
+
+}
+
+enum class FilterType {
+    DAILY,
+    MONTHLY,
+    YEAR,
 }
 
 data class SpendingsState(

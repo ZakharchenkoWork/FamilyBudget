@@ -5,12 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
+import com.faigenbloom.famillyspandings.comon.getCurrentDate
+import com.faigenbloom.famillyspandings.comon.toLongDate
 import com.faigenbloom.famillyspandings.domain.CalculateTotalUseCase
-import com.faigenbloom.famillyspandings.domain.GenerateIdUseCase
 import com.faigenbloom.famillyspandings.domain.NormalizeDateUseCase
 import com.faigenbloom.famillyspandings.domain.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
@@ -23,12 +25,12 @@ import kotlinx.coroutines.launch
 
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
-    private val idGeneratorUseCase: GenerateIdUseCase,
     private val normalizeDateUseCase: NormalizeDateUseCase,
     private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData>,
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
     private val getSpendingUseCase: GetSpendingUseCase<SpendingUiData>,
+    private val deleteSpendingUseCase: DeleteSpendingUseCase,
     private val calculateTotalUseCase: CalculateTotalUseCase,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
@@ -40,6 +42,9 @@ class SpendingEditViewModel(
     private var isCategoriesOpened: Boolean = true
     private var isManualTotal: Boolean = false
     private var isHidden: Boolean = false
+    private var isPlanned: Boolean = false
+    private var isDuplicate: Boolean = false
+    private var canDuplicate: Boolean = false
     private var selectedCategory: CategoryUiData? = null
 
     var onNext: (String) -> Unit = {}
@@ -52,12 +57,8 @@ class SpendingEditViewModel(
 
     fun updateDetail(detailsUpdate: SpendingDetailListWrapper?) {
         detailsUpdate?.let {
-            if (detailsUpdate.details.isNotEmpty()) {
-                detailsList = it.details
-            } else {
-                detailsList = emptyList()
-            }
-            amountText = updateTotal()
+            detailsList = it.details
+            updateTotal()
             updateUI()
         }
     }
@@ -66,16 +67,18 @@ class SpendingEditViewModel(
         if (checkAllFilled()) {
             viewModelScope.launch {
                 selectedCategory?.id?.let { categoryId ->
-                    val spendingId = saveSpendingUseCase(
+                    spendingId = saveSpendingUseCase(
                         SpendingUiData(
-                            id = idGeneratorUseCase(spendingId),
+                            id = spendingId,
                             name = namingText,
                             amount = amountText,
                             date = normalizeDateUseCase(dateText),
                             categoryId = categoryId,
                             photoUri = photoUri,
+                            isManualTotal = isManualTotal,
                             isHidden = isHidden,
-                            isPlanned = isHidden,
+                            isPlanned = isPlanned,
+                            isDuplicate = false,
                         ),
                     )
                     saveDetailsUseCase(
@@ -91,20 +94,50 @@ class SpendingEditViewModel(
     }
 
     private fun checkAllFilled(): Boolean {
-        if (namingText.isEmpty() || amountText.isEmpty() || selectedCategory == null) {
+        if (namingText.isBlank() || amountText.isBlank() || selectedCategory == null) {
             return false
         }
         return true
     }
 
-    private fun updateTotal(): String {
+    private fun updateTotal() {
         amountText = calculateTotalUseCase(isManualTotal, detailsList, amountText)
-        return amountText
+    }
+
+    private fun onDuplicate() {
+        if (canDuplicate) {
+            if (checkAllFilled()) {
+                viewModelScope.launch {
+                    selectedCategory?.id?.let { categoryId ->
+                        spendingId = saveSpendingUseCase(
+                            SpendingUiData(
+                                id = "",
+                                name = namingText,
+                                amount = amountText,
+                                date = normalizeDateUseCase(dateText),
+                                categoryId = categoryId,
+                                photoUri = photoUri,
+                                isHidden = isHidden,
+                                isPlanned = isPlanned,
+                                isManualTotal = isManualTotal,
+                                isDuplicate = true,
+                            ),
+                        )
+                        saveDetailsUseCase(
+                            spendingId = spendingId,
+                            details = detailsList,
+                        )
+                        reload()
+                    }
+                }
+            }
+        }
     }
 
     private fun onDateChanged(date: String) {
-        if (date.isNotEmpty()) {
+        if (date.isNotBlank()) {
             dateText = date
+            isPlanned = isPlanned || date.toLongDate() > getCurrentDate()
             updateUI()
         }
     }
@@ -114,9 +147,21 @@ class SpendingEditViewModel(
         updateUI()
     }
 
+    private fun deleteSpending() {
+        viewModelScope.launch {
+            deleteSpendingUseCase(spendingId)
+            onNext("")
+        }
+    }
+
     private fun onPageChanged(isCategoriesOpened: Boolean) {
         this.isCategoriesOpened = isCategoriesOpened
         onScreenTransition(isCategoriesOpened)
+        updateUI()
+    }
+
+    private fun onPlannedChanged() {
+        isPlanned = !isPlanned
         updateUI()
     }
 
@@ -127,7 +172,7 @@ class SpendingEditViewModel(
 
     private fun onAmountTextChanged(amount: String) {
         amountText = amount
-        isManualTotal = amount.isNotEmpty()
+        isManualTotal = amount.isNotBlank()
         updateUI()
     }
 
@@ -148,41 +193,55 @@ class SpendingEditViewModel(
             spendingId = spendingId,
             isCategoriesOpened = isCategoriesOpened,
             namingText = namingText,
-            amountText = updateTotal(),
+            amountText = amountText,
+            canDuplicate = canDuplicate,
             detailsList = detailsList,
             dateText = dateText,
             isOkActive = checkAllFilled(),
             isHidden = isHidden,
+            isDuplicate = isDuplicate,
+            isPlanned = isPlanned,
             onHideChanged = ::onHideChanged,
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
             onAmountTextChanged = ::onAmountTextChanged,
             photoUri = photoUri,
+            deleteSpending = ::deleteSpending,
             onPhotoUriChanged = ::onPhotoUriChanged,
             onSave = ::onSave,
+            onPlannedChanged = ::onPlannedChanged,
             onDateChanged = ::onDateChanged,
+            onDuplicate = ::onDuplicate,
             onNext = onNext,
         )
 
     private val _stateFlow = MutableStateFlow(state)
     val stateFlow = _stateFlow.asStateFlow()
         .apply {
+            reload()
+        }
 
-            viewModelScope.launch {
-                if (spendingId.isNotEmpty()) {
-                    val spendingUiData = getSpendingUseCase(spendingId)
-                    namingText = spendingUiData.name
-                    amountText = spendingUiData.amount
-                    dateText = spendingUiData.date
-                    photoUri = spendingUiData.photoUri
-                    isHidden = spendingUiData.isHidden
-                    detailsList = getSpendingDetailsUseCase(spendingId)
-                    onCategoryIdLoaded(spendingUiData.categoryId)
+    private fun reload() {
+        viewModelScope.launch {
+            if (spendingId.isNotBlank()) {
+                val spendingUiData = getSpendingUseCase(spendingId)
+                namingText = spendingUiData.name
+                amountText = spendingUiData.amount
+                dateText = spendingUiData.date
+                photoUri = spendingUiData.photoUri
+                isHidden = spendingUiData.isHidden
+                isPlanned = spendingUiData.isPlanned
+                isManualTotal = spendingUiData.isManualTotal
+                detailsList = getSpendingDetailsUseCase(spendingId)
+                isDuplicate = spendingUiData.isDuplicate
+                onCategoryIdLoaded(spendingUiData.categoryId)
+                canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not()
 
-                    updateUI()
-                }
+                updateTotal()
+                updateUI()
             }
         }
+    }
 
     private fun updateUI() {
         _stateFlow.update { state }
@@ -192,7 +251,9 @@ class SpendingEditViewModel(
 
 data class SpendingEditState(
     val spendingId: String,
+    val canDuplicate: Boolean,
     val isCategoriesOpened: Boolean,
+    val isDuplicate: Boolean,
     val onPageChanged: (Boolean) -> Unit,
     val namingText: String,
     val amountText: String,
@@ -200,13 +261,17 @@ data class SpendingEditState(
     var photoUri: Uri?,
     val detailsList: List<DetailUiData>,
     val isOkActive: Boolean,
+    val isPlanned: Boolean,
     val isHidden: Boolean,
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
     val onDateChanged: (String) -> Unit,
+    val onPlannedChanged: () -> Unit,
     val onSave: () -> Unit,
     val onHideChanged: () -> Unit,
+    val deleteSpending: () -> Unit,
+    val onDuplicate: () -> Unit,
     val onNext: (String) -> Unit,
 )
 

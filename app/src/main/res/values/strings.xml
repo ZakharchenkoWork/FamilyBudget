@@ -5,9 +5,15 @@
     <string name="authorization">Authorization</string>
     <string name="spendings_previous_title">Previous spendings</string>
     <string name="spendings_planned_title">Planned spendings</string>
-    <string name="spendings_filter">Filter</string>
+    <string name="spendings_filter_title">Filter</string>
+    <string name="spendings_filter_daily">Daily</string>
+    <string name="spendings_filter_monthly">Monthly</string>
+    <string name="spendings_filter_yearly">Yearly</string>
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
+    <string name="editing_spending_title">Editing spending</string>
+    <string name="editing_planned_spending_title">Editing planned spending</string>
+    <string name="editing_hidden_spending_title">Editing hidden spending</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
@@ -21,7 +27,9 @@
     <string name="wrong_password">Wrong email or password.</string>
     <string name="privacy_policy_start">By clicking on \'Register\', you indicate that you have read and agreed with our</string>
     <string name="privacy_policy_end">Privacy Policy.</string>
+    <string name="category_name_hint">Name</string>
     <string name="category_new">New category</string>
+    <string name="category_edit">Edit category</string>
     <string name="category_beauty">Beauty</string>
     <string name="category_education">Education</string>
     <string name="category_entertaiment">Entertaiment</string>
@@ -71,12 +79,19 @@
     <string name="message_hidden">Spending will be shown</string>
     <string name="message_shown">Spending will be hidden</string>
     <string name="detail_dialog_title">Changing spending components</string>
-    <string name="button_hide">Hide spending</string>
+    <string name="button_duplicate">Duplicate</string>
+    <string name="button_spent">Make spent</string>
+    <string name="button_planned">Make planned</string>
+    <string name="button_edit">Edit</string>
+    <string name="button_hide">Make hidden</string>
+    <string name="button_show">Make visible</string>
     <string name="button_delete">Delete</string>
     <string name="button_save">Save</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="detail_dialog_details_hint">Current bill components</string>
     <string name="detail_dialog_suggestions_hint">Suggestions</string>
+    <string name="editing_spending_duplicate">Editing Spending Duplicate</string>
+    <string name="spending_show_title">Your spending</string>
 
 </resources>

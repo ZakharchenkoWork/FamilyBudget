@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.ui.spandings.list
 
-import com.faigenbloom.famillyspandings.comon.Countable
 import com.faigenbloom.famillyspandings.comon.toSortableDate
+import com.faigenbloom.famillyspandings.domain.spendings.Countable
 import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
 import java.time.LocalDate
 import java.util.UUID

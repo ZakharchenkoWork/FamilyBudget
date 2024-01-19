@@ -155,7 +155,7 @@ fun CameraScreen(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxSize(),
-                painter = painterResource(id = R.drawable.photo),
+                painter = painterResource(id = R.drawable.icon_photo),
                 contentDescription = null,
             )
         }

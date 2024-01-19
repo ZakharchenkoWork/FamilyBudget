@@ -15,5 +15,9 @@ class SpendingsRepository(
 
     suspend fun markSpendingPurchased(spendingId: String) =
         dataSource.updatePlanned(spendingId, false)
+
+    suspend fun deleteSpending(spendingId: String) {
+        dataSource.deleteSpending(spendingId)
+    }
 }
 

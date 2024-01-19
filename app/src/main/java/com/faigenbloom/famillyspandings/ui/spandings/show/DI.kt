@@ -8,7 +8,6 @@ import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesMapper
 import com.faigenbloom.famillyspandings.ui.spandings.DetailsMapper
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingsMapper
-import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -22,7 +21,6 @@ val spendingShowModule = module {
         SaveSpendingUseCase(
             idGeneratorUseCase = get(),
             spendingsRepository = get(),
-            ioDispatcher = Dispatchers.IO,
             spendingsMapper = get<SpendingsMapper>(),
         )
     }
@@ -31,7 +29,6 @@ val spendingShowModule = module {
             idGeneratorUseCase = get(),
             detailsRepository = get(),
             getSpendingDetailsUseCase = get(),
-            ioDispatcher = Dispatchers.IO,
             detailsMapper = get<DetailsMapper>(),
         )
     }

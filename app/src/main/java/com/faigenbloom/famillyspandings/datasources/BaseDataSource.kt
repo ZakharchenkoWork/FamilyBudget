@@ -18,6 +18,7 @@ interface BaseDataSource {
     ): Boolean
 
     suspend fun getAllCategories(): List<CategoryEntity>
+    suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity>
     suspend fun addCategory(categoryEntity: CategoryEntity)
 
     suspend fun saveSpending(spending: SpendingEntity)
@@ -44,4 +45,8 @@ interface BaseDataSource {
     suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef>
     suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef)
     suspend fun deleteSpendingDetail(id: String)
+    suspend fun deleteSpending(id: String)
+    suspend fun getSpendingsByCategory(id: String): List<SpendingEntity>
+    suspend fun deleteCategory(id: String)
+    suspend fun changeCategoryHidden(id: String, isHidden: Boolean)
 }

@@ -23,7 +23,9 @@ import com.faigenbloom.famillyspandings.comon.SPENDING_OPTIONAL_ID_KEY
 import com.faigenbloom.famillyspandings.comon.SPENDING_PHOTO
 import com.faigenbloom.famillyspandings.comon.fromJson
 import com.faigenbloom.famillyspandings.comon.getPoppedArgument
+import com.faigenbloom.famillyspandings.ui.categories.CategoriesState
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesViewModel
+import com.faigenbloom.famillyspandings.ui.categories.NO_INDEX
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,7 +37,7 @@ fun NavGraphBuilder.spendingEditPage(
     ) -> Unit,
     onShowMessage: (MessageTypes) -> Unit,
     onPhotoRequest: (id: String) -> Unit,
-    onCategoryPhotoRequest: (id: String) -> Unit,
+    onCategoryPhotoRequest: (id: String?) -> Unit,
     onCalendarOpened: (String) -> Unit,
     onSpendingDialogRequest: (List<DetailUiData>) -> Unit,
     onNext: (String) -> Unit,
@@ -57,35 +59,40 @@ fun NavGraphBuilder.spendingEditPage(
 
 
         val spendingsViewModel = koinViewModel<SpendingEditViewModel>()
-        spendingsViewModel.onNext = onNext
+        val state by spendingsViewModel
+            .stateFlow
+            .collectAsState()
+
+        spendingsViewModel.onNext = {
+            if (it.isNotBlank())
+                onNext(it)
+            else
+                onBack()
+        }
         spendingsViewModel.onShowMessage = onShowMessage
         spendingsViewModel.onScreenTransition = {
             options(
                 false,
                 if (it) {
-                    getCategoryMenuState()
+                    getCategoryMenuState(categoryState)
                 } else {
-                    getEditSpendingMenuState()
+                    getEditSpendingMenuState(state)
                 },
             )
         }
         spendingsViewModel.onCategoryIdLoaded = {
             categoriesViewModel.onCategoryIdLoaded(it)
         }
-        categoriesViewModel.onCategorySelected = {
-            spendingsViewModel.onCategorySelected(it)
-        }
+        categoriesViewModel.onCategorySelected = spendingsViewModel::onCategorySelected
 
-        val state by spendingsViewModel
-            .stateFlow
-            .collectAsState()
+
 
         options(
             false,
             if (state.isCategoriesOpened) {
-                getCategoryMenuState()
+                getCategoryMenuState(categoryState)
             } else {
-                getEditSpendingMenuState()
+                getEditSpendingMenuState(state)
             },
         )
         backStack.getPoppedArgument(DATE, "")?.let { calendarDate ->
@@ -99,7 +106,6 @@ fun NavGraphBuilder.spendingEditPage(
             }
         backStack.getPoppedArgument<String>(PHOTO_REASON_ARG)
             ?.let { reason ->
-
                 val id: String? = backStack.getPoppedArgument(ID_ARG)
                 when (reason) {
                     SPENDING_PHOTO -> {
@@ -110,18 +116,11 @@ fun NavGraphBuilder.spendingEditPage(
                         } else {
                         }
                     }
-
                     CATEGORY_PHOTO -> {
-                        val uri: Uri? =
-                            backStack.getPoppedArgument(PHOTO_KEY)
-                        uri?.let {
-                            categoryState.onCategoryPhotoUriChanged(
-                                id ?: "",
-                                it,
-                            )
+                        backStack.getPoppedArgument<Uri>(PHOTO_KEY, null)?.let {
+                            categoryState.onCategoryPhotoUriChanged(it)
                         }
                     }
-
                     else -> {}
                 }
             }
@@ -138,32 +137,66 @@ fun NavGraphBuilder.spendingEditPage(
     }
 }
 
-fun getCategoryMenuState(): FloatingMenuState {
+fun getCategoryMenuState(categoryState: CategoriesState): FloatingMenuState {
     return FloatingMenuState(
         icon = R.drawable.icon_plus,
-        onMenuClick = {//TODO: ADD CATEGORY DIALOG
+        onMenuClick = {
+            categoryState.onCategoryDialogVisibilityChanged(NO_INDEX)
         },
     )
 }
 
-fun getEditSpendingMenuState(): FloatingMenuState {
+fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
     return FloatingMenuState(
         icon = R.drawable.icon_options,
         listOf(
             MenuItemState(
                 label = R.string.button_save,
-                icon = R.drawable.icon_ok,
-                onClick = {},
+                icon = if (state.isOkActive) {
+                    R.drawable.icon_ok
+                } else {
+                    R.drawable.icon_ok_inactive
+                },
+                semantics = SPENDING_SAVE_BUTTON,
+                onClick = state.onSave,
+
+                ),
+            MenuItemState(
+                label = if (state.isPlanned) {
+                    R.string.button_spent
+                } else {
+                    R.string.button_planned
+                },
+                icon = if (state.isPlanned) {
+                    R.drawable.icon_list_planned_outlined
+                } else {
+                    R.drawable.icon_list_outlined
+                },
+                onClick = state.onPlannedChanged,
             ),
             MenuItemState(
-                label = R.string.button_hide,
-                icon = R.drawable.icon_hidden,
-                onClick = {},
+                label = if (state.isHidden) {
+                    R.string.button_show
+                } else {
+                    R.string.button_hide
+                },
+                icon = if (state.isHidden) {
+                    R.drawable.icon_shown
+                } else {
+                    R.drawable.icon_hidden
+                },
+                onClick = state.onHideChanged,
             ),
             MenuItemState(
                 label = R.string.button_delete,
                 icon = R.drawable.icon_delete,
-                onClick = {},
+                onClick = state.deleteSpending,
+            ),
+            MenuItemState(
+                isShown = state.canDuplicate,
+                label = R.string.button_duplicate,
+                icon = R.drawable.icon_duplicate,
+                onClick = state.onDuplicate,
             ),
         ),
     )
@@ -172,7 +205,7 @@ fun getEditSpendingMenuState(): FloatingMenuState {
 data object SpendingEditRoute : BaseDestination(
     route = "SpendingEditPage$SPENDING_ID_QUERY",
 ) {
-    operator fun invoke(id: String = "") = if (id.isNotEmpty()) {
+    operator fun invoke(id: String = "") = if (id.isNotBlank()) {
         route.replace(SPENDING_OPTIONAL_ID_KEY, id)
     } else {
         route.replace(SPENDING_ID_QUERY, "")

@@ -6,7 +6,6 @@ import com.faigenbloom.famillyspandings.comon.Mapper
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.domain.GenerateIdUseCase
 import com.faigenbloom.famillyspandings.repositories.DetailsRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,14 +13,13 @@ class SaveDetailsUseCase<T : Identifiable>(
     private val idGeneratorUseCase: GenerateIdUseCase,
     private val detailsRepository: DetailsRepository,
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<T>,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val detailsMapper: Mapper<T, SpendingDetailEntity>,
 ) {
     suspend operator fun invoke(
         spendingId: String,
         details: List<T>,
     ) {
-        withContext(ioDispatcher) {
+        withContext(Dispatchers.IO) {
             val oldSpendingDetails = getSpendingDetailsUseCase.invoke(spendingId)
             oldSpendingDetails.forEach { oldDetail ->
                 val newDetail = details.firstOrNull { newDetail ->

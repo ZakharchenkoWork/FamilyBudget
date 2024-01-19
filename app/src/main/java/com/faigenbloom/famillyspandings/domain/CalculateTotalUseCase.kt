@@ -10,8 +10,10 @@ class CalculateTotalUseCase {
         amountText: String,
     ): String {
         return if (!isManualTotal) {
-            var total = 0.0
-            detailsList.forEach { total += if (it.amount.isNotEmpty()) it.amount.toDouble() else 0.0 }
+            val total = detailsList
+                .sumOf {
+                    if (it.amount.isNotBlank()) it.amount.toDouble() else 0.0
+                }
             (total * 100).toLong().toReadableMoney()
         } else {
             amountText

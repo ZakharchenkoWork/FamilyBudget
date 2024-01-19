@@ -11,9 +11,9 @@ class GetCategoriesUseCase<T : Identifiable>(
     private val categoriesRepository: CategoriesRepository,
     private val categoriesMapper: Mapper<T, CategoryEntity>,
 ) {
-    suspend operator fun invoke(): List<T> {
+    suspend operator fun invoke(showHidden: Boolean): List<T> {
         return withContext(Dispatchers.IO) {
-            categoriesRepository.getCategories()
+            categoriesRepository.getCategories(showHidden)
                 .sortedBy {
                     it.isDefault
                 }.map {

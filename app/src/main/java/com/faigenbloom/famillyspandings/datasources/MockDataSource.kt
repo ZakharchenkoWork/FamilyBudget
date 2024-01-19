@@ -10,12 +10,27 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntit
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsList
+import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
 
 class MockDataSource : BaseDataSource {
     val categories: ArrayList<CategoryEntity> = ArrayList(
         DefaultCategories.values().map { defaultCategory ->
             CategoryEntity(id = defaultCategory.name, isDefault = true)
+        },
+    )
+    val spendingsEntity: ArrayList<SpendingEntity> = ArrayList(
+        mockSpendingsWithCategoryList.map {
+            SpendingEntity(
+                id = it.id,
+                name = it.name,
+                amount = it.amount,
+                date = it.date.toLongDate(),
+                categoryId = it.category.id,
+                photoUri = null,
+                isPlanned = false,
+                isManualTotal = true,
+                isHidden = false,
+            )
         },
     )
 
@@ -36,38 +51,23 @@ class MockDataSource : BaseDataSource {
         return categories
     }
 
+    override suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity> {
+        return categories.filter { it.isHidden == isHidden }
+    }
+
+
     override suspend fun saveSpending(
         spending: SpendingEntity,
     ) {
-
+        spendingsEntity.add(spending)
     }
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
-        return mockSpendingsList.map {
-            SpendingEntity(
-                id = it.id,
-                name = it.name,
-                amount = it.amount,
-                date = it.date.toLongDate(),
-                categoryId = it.category.id,
-                photoUri = null,
-                isPlanned = false,
-                isHidden = false,
-            )
-        }
+        return spendingsEntity
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
-        return SpendingEntity(
-            id = "",
-            name = "",
-            amount = 0L,
-            date = 0L,
-            categoryId = "",
-            photoUri = null,
-            isPlanned = false,
-            isHidden = false,
-        )
+        return spendingsEntity.first { it.id == id }
     }
     override suspend fun getBudgetData(): BudgetEntity {
         return BudgetEntity(
@@ -132,6 +132,23 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun deleteSpendingDetail(id: String) {
 
+    }
+
+    override suspend fun deleteSpending(id: String) {
+        spendingsEntity.removeIf { it.id == id }
+    }
+
+    override suspend fun getSpendingsByCategory(id: String): List<SpendingEntity> {
+        return spendingsEntity.filter { it.categoryId == id }
+    }
+
+    override suspend fun deleteCategory(id: String) {
+        categories.removeIf { it.id == id }
+    }
+
+    override suspend fun changeCategoryHidden(id: String, isHidden: Boolean) {
+        val index = categories.indexOfFirst { it.id == id }
+        categories[index] = categories[index].copy(isHidden = isHidden)
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

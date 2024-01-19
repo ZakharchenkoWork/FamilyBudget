@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.UUID
 
 fun LocalDate.toReadableDate(): String {
@@ -31,7 +32,11 @@ fun LocalDate.toLongDate(): Long {
 }
 
 fun String.toLongDate(): Long {
-    return this.toLocalDate().toEpochDay() * 24 * 60 * 60 * 1000
+    return try {
+        this.toLocalDate().toEpochDay() * 24 * 60 * 60 * 1000
+    } catch (dtpe: DateTimeParseException) {
+        getCurrentDate()
+    }
 }
 
 fun getCurrentDate(): Long {
@@ -47,7 +52,7 @@ fun Long.toLocalDate(): LocalDate {
         .atZone(ZoneId.systemDefault()).toLocalDate()
 }
 
-fun String.checkOrGenId() = if (this.isEmpty()) {
+fun String.checkOrGenId() = if (this.isBlank()) {
     UUID.randomUUID().toString()
 } else {
     this

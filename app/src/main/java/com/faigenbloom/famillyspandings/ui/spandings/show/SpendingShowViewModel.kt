@@ -39,6 +39,12 @@ class SpendingShowViewModel(
     private var details: List<DetailUiData> = emptyList()
     private var isPlanned: Boolean = false
     private var isHidden: Boolean = false
+    private var isManualTotal: Boolean = false
+
+    var onEditSpending: (String) -> Unit = {}
+    private fun onEditClicked() {
+        onEditSpending(spendingId)
+    }
 
     private fun markPurchased() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -48,9 +54,7 @@ class SpendingShowViewModel(
         }
     }
 
-    private fun createDuplicate(
-        onDuplicateCreated: (String) -> Unit,
-    ) {
+    private fun createDuplicate() {
         viewModelScope.launch(Dispatchers.IO) {
             val duplicateSpendingId = saveSpendingUseCase(
                 spending = SpendingUiData(
@@ -62,6 +66,7 @@ class SpendingShowViewModel(
                     photoUri = photoUri,
                     isPlanned = isPlanned,
                     isHidden = isHidden,
+                    isManualTotal = isHidden,
                     isDuplicate = true,
                 ),
             )
@@ -69,9 +74,8 @@ class SpendingShowViewModel(
                 spendingId = duplicateSpendingId,
                 details = details,
             )
-            viewModelScope.launch(Dispatchers.Main) {
-                onDuplicateCreated(duplicateSpendingId)
-            }
+
+            onEditSpending(duplicateSpendingId)
         }
     }
 
@@ -85,13 +89,15 @@ class SpendingShowViewModel(
             photoUri = photoUri,
             details = details,
             isPlanned = isPlanned,
+            isHidden = isHidden,
             onMarkPurchasedClicked = ::markPurchased,
             onDuplicateClicked = ::createDuplicate,
+            onEditClicked = ::onEditClicked,
         )
     private val _spendingsStateFlow = MutableStateFlow(state)
     val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
         viewModelScope.launch(Dispatchers.IO) {
-            if (spendingId.isNotEmpty()) {
+            if (spendingId.isNotBlank()) {
                 val spending = getSpendingUseCase(spendingId)
                 name = spending.name
                 amount = spending.amount
@@ -101,6 +107,7 @@ class SpendingShowViewModel(
                 details = getSpendingDetailsUseCase(spendingId)
                 isPlanned = spending.isPlanned
                 isHidden = spending.isHidden
+                isManualTotal = spending.isManualTotal
                 updateUI()
             }
         }
@@ -119,7 +126,9 @@ data class SpendingShowState(
     val category: CategoryUiData,
     val photoUri: Uri?,
     val details: List<DetailUiData>,
+    val isHidden: Boolean,
     val isPlanned: Boolean,
-    val onDuplicateClicked: (onDuplicateCreated: (String) -> Unit) -> Unit,
+    val onEditClicked: () -> Unit,
+    val onDuplicateClicked: () -> Unit,
     val onMarkPurchasedClicked: () -> Unit,
 )

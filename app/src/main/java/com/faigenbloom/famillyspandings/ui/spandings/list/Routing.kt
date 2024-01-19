@@ -18,20 +18,26 @@ fun NavGraphBuilder.spendingsListPage(
     options: (
         showNavigation: Boolean,
         index: Int,
-        menuState: FloatingMenuState,
     ) -> Unit,
+    menuCallback: (menuState: FloatingMenuState) -> Unit,
     onOpenSpending: (String) -> Unit,
 ) {
     composable(
         route = SpendingsListPage.route,
     ) {
-        val viewModel = koinViewModel<SpendingsPageViewModel>()
+        val viewModel = koinViewModel<SpendingsListPageViewModel>()
         val state by viewModel
             .spendingsStateFlow
             .collectAsState()
-        options(
-            true, 0,
-            getMainMenu(state, options),
+        options(true, 0)
+        menuCallback(
+            getMainMenu(
+                state = state,
+                menuCallback = menuCallback,
+                dailyClicked = { viewModel.onDailyFiltered() },
+                monthlyClicked = { viewModel.onMonthlyFiltered() },
+                yearlyClicked = { viewModel.onYearlyFiltered() },
+            ),
         )
         viewModel.reloadData()
         SpendingsListPage(
@@ -46,11 +52,10 @@ fun NavGraphBuilder.spendingsListPage(
 
 fun getMainMenu(
     state: SpendingsState,
-    options: (
-        showNavigation: Boolean,
-        index: Int,
-        menuState: FloatingMenuState,
-    ) -> Unit,
+    menuCallback: (menuState: FloatingMenuState) -> Unit,
+    yearlyClicked: () -> Unit,
+    monthlyClicked: () -> Unit,
+    dailyClicked: () -> Unit,
 ): FloatingMenuState {
     return FloatingMenuState(
         R.drawable.icon_options,
@@ -69,26 +74,54 @@ fun getMainMenu(
                 onClick = state.onPlannedSwitched,
             ),
             MenuItemState(
-                label = R.string.spendings_filter,
+                label = R.string.spendings_filter_title,
                 icon = R.drawable.icon_filter,
                 onClick = {
-                    options(true, 0, getFilterMenu())
+                    menuCallback(
+                        getFilterMenu(
+                            monthlyClicked = monthlyClicked,
+                            yearlyClicked = yearlyClicked,
+                            dailyClicked = dailyClicked,
+                            onClose = {
+                                menuCallback(
+                                    getMainMenu(
+                                        state,
+                                        menuCallback,
+                                        yearlyClicked,
+                                        monthlyClicked,
+                                        dailyClicked,
+                                    ),
+                                )
+                            },
+                        ),
+                    )
                 },
             ),
         ),
     )
 }
 
-fun getFilterMenu(): FloatingMenuState {
+fun getFilterMenu(
+    yearlyClicked: () -> Unit,
+    monthlyClicked: () -> Unit,
+    dailyClicked: () -> Unit,
+    onClose: () -> Unit,
+): FloatingMenuState {
     return FloatingMenuState(
-        R.drawable.icon_filter,
-        listOf(
+        icon = R.drawable.icon_filter,
+        onMenuClick = onClose,
+        items = listOf(
             MenuItemState(
-                label = R.string.spendings_filter,
-                icon = R.drawable.icon_list_outlined,
-                onClick = {
-
-                },
+                label = R.string.spendings_filter_yearly,
+                onClick = yearlyClicked,
+            ),
+            MenuItemState(
+                label = R.string.spendings_filter_monthly,
+                onClick = monthlyClicked,
+            ),
+            MenuItemState(
+                label = R.string.spendings_filter_daily,
+                onClick = dailyClicked,
             ),
         ),
     )
