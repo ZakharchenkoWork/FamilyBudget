@@ -9,8 +9,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseDestination
+import com.faigenbloom.famillyspandings.comon.CALENDAR_END_DATE_ARG
+import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
 import com.faigenbloom.famillyspandings.comon.FloatingMenuState
 import com.faigenbloom.famillyspandings.comon.MenuItemState
+import com.faigenbloom.famillyspandings.comon.getPoppedArgument
 import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.spendingsListPage(
@@ -20,12 +23,19 @@ fun NavGraphBuilder.spendingsListPage(
         index: Int,
     ) -> Unit,
     menuCallback: (menuState: FloatingMenuState) -> Unit,
+    onCalendarRequested: ((fromDate: String, toDate: String) -> Unit),
     onOpenSpending: (String) -> Unit,
 ) {
     composable(
         route = SpendingsListPage.route,
-    ) {
-        val viewModel = koinViewModel<SpendingsListPageViewModel>()
+    ) { backStack ->
+        val viewModel = koinViewModel<SpendingsListViewModel>()
+        viewModel.onCalendarRequested = onCalendarRequested
+
+        viewModel.onDateRangeChanged(
+            backStack.getPoppedArgument(CALENDAR_START_DATE_ARG, "") ?: "",
+            backStack.getPoppedArgument(CALENDAR_END_DATE_ARG, "") ?: "",
+        )
         val state by viewModel
             .spendingsStateFlow
             .collectAsState()
@@ -34,9 +44,10 @@ fun NavGraphBuilder.spendingsListPage(
             getMainMenu(
                 state = state,
                 menuCallback = menuCallback,
-                dailyClicked = { viewModel.onDailyFiltered() },
-                monthlyClicked = { viewModel.onMonthlyFiltered() },
-                yearlyClicked = { viewModel.onYearlyFiltered() },
+                rangeClicked = viewModel::calendarRequest,
+                dailyClicked = viewModel::onDailyFiltered,
+                monthlyClicked = viewModel::onMonthlyFiltered,
+                yearlyClicked = viewModel::onYearlyFiltered,
             ),
         )
         viewModel.reloadData()
@@ -53,6 +64,7 @@ fun NavGraphBuilder.spendingsListPage(
 fun getMainMenu(
     state: SpendingsState,
     menuCallback: (menuState: FloatingMenuState) -> Unit,
+    rangeClicked: () -> Unit,
     yearlyClicked: () -> Unit,
     monthlyClicked: () -> Unit,
     dailyClicked: () -> Unit,
@@ -79,6 +91,7 @@ fun getMainMenu(
                 onClick = {
                     menuCallback(
                         getFilterMenu(
+                            rangeClicked = rangeClicked,
                             monthlyClicked = monthlyClicked,
                             yearlyClicked = yearlyClicked,
                             dailyClicked = dailyClicked,
@@ -87,6 +100,7 @@ fun getMainMenu(
                                     getMainMenu(
                                         state,
                                         menuCallback,
+                                        rangeClicked,
                                         yearlyClicked,
                                         monthlyClicked,
                                         dailyClicked,
@@ -102,6 +116,7 @@ fun getMainMenu(
 }
 
 fun getFilterMenu(
+    rangeClicked: () -> Unit,
     yearlyClicked: () -> Unit,
     monthlyClicked: () -> Unit,
     dailyClicked: () -> Unit,
@@ -111,6 +126,10 @@ fun getFilterMenu(
         icon = R.drawable.icon_filter,
         onMenuClick = onClose,
         items = listOf(
+            MenuItemState(
+                label = R.string.spendings_filter_range,
+                onClick = rangeClicked,
+            ),
             MenuItemState(
                 label = R.string.spendings_filter_yearly,
                 onClick = yearlyClicked,

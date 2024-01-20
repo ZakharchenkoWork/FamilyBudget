@@ -5,10 +5,22 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 import java.util.UUID
 
+const val ONE_DAY: Long = 24 * 60 * 60 * 1000
+const val ONE_MONTH: Long = 31 * ONE_DAY
+const val ONE_YEAR: Long = 365 * ONE_DAY
 fun LocalDate.toReadableDate(): String {
-    return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+    return this.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()))
+}
+
+fun LocalDate.toReadableMonth(): String {
+    return this.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault()))
+}
+
+fun LocalDate.toReadableYear(): String {
+    return this.format(DateTimeFormatter.ofPattern("yyyy", Locale.getDefault()))
 }
 
 fun Long.toReadableDate(): String {
@@ -28,19 +40,19 @@ fun LocalDate.toSortableDate(): Int {
 }
 
 fun LocalDate.toLongDate(): Long {
-    return this.toEpochDay() * 24 * 60 * 60 * 1000
+    return this.toEpochDay() * ONE_DAY
 }
 
 fun String.toLongDate(): Long {
     return try {
-        this.toLocalDate().toEpochDay() * 24 * 60 * 60 * 1000
+        this.toLocalDate().toEpochDay() * ONE_DAY
     } catch (dtpe: DateTimeParseException) {
         getCurrentDate()
     }
 }
 
 fun getCurrentDate(): Long {
-    return LocalDate.now().toEpochDay() * 24 * 60 * 60 * 1000
+    return LocalDate.now().toEpochDay() * ONE_DAY
 }
 
 fun String.toLocalDate(): LocalDate {

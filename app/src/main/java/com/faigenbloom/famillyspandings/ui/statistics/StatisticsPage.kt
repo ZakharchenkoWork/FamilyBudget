@@ -42,10 +42,10 @@ import androidx.core.net.toUri
 import androidx.palette.graphics.Palette
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.PieChart
-import com.faigenbloom.famillyspandings.comon.PieChartData
 import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.comon.ui.PieChart
+import com.faigenbloom.famillyspandings.comon.ui.PieChartData
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import syncronizer
 

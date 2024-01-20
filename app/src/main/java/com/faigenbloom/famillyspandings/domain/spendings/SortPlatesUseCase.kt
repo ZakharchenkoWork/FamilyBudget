@@ -270,8 +270,13 @@ enum class PlateSizeType {
     SIZE_THREE_BY_THREE,
 }
 
-interface Divider<T : Countable> {
-    fun prepareGroups(data: List<T>): List<List<T>>
+abstract class Divider<T : Countable>(
+    val startDate: Long,
+    val endDate: Long,
+) {
+    abstract fun prepareGroups(
+        list: List<T>,
+    ): List<List<T>>
 }
 
 data class Pattern<T>(val plates: List<PlateSizeType>) {

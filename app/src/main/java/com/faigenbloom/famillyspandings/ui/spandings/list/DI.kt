@@ -10,7 +10,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val spendingsPageModule = module {
-    viewModelOf(::SpendingsListPageViewModel)
+    viewModelOf(::SpendingsListViewModel)
     singleOf(::SpendingsMapper)
     singleOf(::CategoriesMapper)
     single { SortPlatesUseCase<SpendingCategoryUiData>() }

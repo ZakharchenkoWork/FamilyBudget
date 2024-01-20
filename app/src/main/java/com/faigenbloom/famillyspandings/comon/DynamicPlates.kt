@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
@@ -51,6 +52,7 @@ const val THREE: Float = 3f
 fun DynamicPlatesHolder(
     datedPatterns: List<List<Pattern<SpendingCategoryUiData>>>,
     onSpendingClicked: (String) -> Unit,
+    filterType: FilterType,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -66,9 +68,12 @@ fun DynamicPlatesHolder(
                         .background(MaterialTheme.colorScheme.secondary),
                 ) {
                     Text(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        text = datedPatterns[dateIndex][0].items[0].date.toReadableDate(),
+                        modifier = Modifier.padding(16.dp),
+                        text = when (filterType) {
+                            is FilterType.Daily -> datedPatterns[dateIndex][0].items[0].date.toReadableDate()
+                            is FilterType.Monthly -> datedPatterns[dateIndex][0].items[0].date.toReadableMonth()
+                            is FilterType.Yearly -> datedPatterns[dateIndex][0].items[0].date.toReadableYear()
+                        },
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                     )
@@ -99,18 +104,14 @@ private fun GetPlates(
 ) {
     val plates = pattern.plates
     when {
-        plates.size == 1 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_THREE
-        -> {
+        plates.size == 1 && plates[0] == PlateSizeType.SIZE_THREE_BY_THREE -> {
             Plate_3x3(
                 spendingData = pattern.items[0],
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 2 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_THREE_BY_ONE
+        plates.size == 2 && plates[0] == PlateSizeType.SIZE_THREE_BY_TWO && plates[1] == PlateSizeType.SIZE_THREE_BY_ONE
 
         -> {
             Plate_3x2_3x1(
@@ -119,10 +120,7 @@ private fun GetPlates(
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_THREE_BY_TWO && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE
 
         -> {
             Plate_3x2_2x1_1x1(
@@ -131,215 +129,140 @@ private fun GetPlates(
             )
         }
 
-        plates.size == 1 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_TWO
-        -> {
+        plates.size == 1 && plates[0] == PlateSizeType.SIZE_THREE_BY_TWO -> {
             Plate_3x2(
                 spendingData = pattern.items[0],
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_TWO_BY_TWO && plates[1] == PlateSizeType.SIZE_THREE_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE -> {
             Plate_2x2_3x1_2x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 4 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 4 && plates[0] == PlateSizeType.SIZE_TWO_BY_TWO && plates[1] == PlateSizeType.SIZE_THREE_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE && plates[3] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x2_3x1_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 2 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE
-        -> {
+        plates.size == 2 && plates[0] == PlateSizeType.SIZE_TWO_BY_TWO && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE -> {
             Plate_2x2_2x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_TWO_BY_TWO && plates[1] == PlateSizeType.SIZE_ONE_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x2_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_THREE_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE && plates[1] == PlateSizeType.SIZE_THREE_BY_ONE && plates[2] == PlateSizeType.SIZE_THREE_BY_ONE -> {
             Plate_3x1_3x1_3x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 4 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 4 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE && plates[1] == PlateSizeType.SIZE_THREE_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE && plates[3] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_3x1_3x1_2x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 4 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_TWO_BY_ONE
-        -> {
+        plates.size == 4 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE && plates[3] == PlateSizeType.SIZE_TWO_BY_ONE -> {
             Plate_3x1_2x1_2x1_2x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 5 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[4] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 5 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE && plates[3] == PlateSizeType.SIZE_ONE_BY_ONE && plates[4] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_3x1_2x1_2x1_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 4 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 4 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE && plates[3] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_3x1_2x1_2x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 1 &&
-            plates[0] == PlateSizeType.SIZE_THREE_BY_ONE
-        -> {
+        plates.size == 1 && plates[0] == PlateSizeType.SIZE_THREE_BY_ONE -> {
             Plate_3x1(
                 spendingData = pattern.items[0],
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 2 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_TWO &&
-            plates[1] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 2 && plates[0] == PlateSizeType.SIZE_TWO_BY_TWO && plates[1] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x2_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_TWO_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_TWO_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_TWO_BY_ONE -> {
             Plate_2x1_2x1_2x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 4 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[3] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 4 && plates[0] == PlateSizeType.SIZE_TWO_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE && plates[3] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x1_2x1_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_TWO_BY_ONE && plates[1] == PlateSizeType.SIZE_TWO_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x1_2x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 2 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 2 && plates[0] == PlateSizeType.SIZE_TWO_BY_ONE && plates[1] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_2x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 1 &&
-            plates[0] == PlateSizeType.SIZE_TWO_BY_ONE
-        -> {
+        plates.size == 1 && plates[0] == PlateSizeType.SIZE_TWO_BY_ONE -> {
             Plate_2x1(
                 spendingData = pattern.items[0],
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 3 &&
-            plates[0] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[2] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 3 && plates[0] == PlateSizeType.SIZE_ONE_BY_ONE && plates[1] == PlateSizeType.SIZE_ONE_BY_ONE && plates[2] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_1x1_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 2 &&
-            plates[0] == PlateSizeType.SIZE_ONE_BY_ONE &&
-            plates[1] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 2 && plates[0] == PlateSizeType.SIZE_ONE_BY_ONE && plates[1] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_1x1_1x1(
                 spendingData = pattern.items,
                 onSpendingClicked = onSpendingClicked,
             )
         }
 
-        plates.size == 1 &&
-            plates[0] == PlateSizeType.SIZE_ONE_BY_ONE
-        -> {
+        plates.size == 1 && plates[0] == PlateSizeType.SIZE_ONE_BY_ONE -> {
             Plate_1x1(
                 spendingData = pattern.items[0],
                 onSpendingClicked = onSpendingClicked,
@@ -487,8 +410,7 @@ fun Plate_2x2_3x1_1x1_1x1(
                 onSpendingClicked = onSpendingClicked,
             )
             Row(
-                modifier = Modifier
-                    .weight(ONE_THIRD),
+                modifier = Modifier.weight(ONE_THIRD),
             ) {
                 SpendingItem(
                     modifier = Modifier
@@ -839,8 +761,7 @@ fun Plate_3x1_2x1_2x1_1x1(
                     onSpendingClicked = onSpendingClicked,
                 )
                 Spacer(
-                    modifier = Modifier
-                        .weight(HALF),
+                    modifier = Modifier.weight(HALF),
                 )
             }
         }
@@ -1101,8 +1022,7 @@ fun Plate_2x1(
             onSpendingClicked = onSpendingClicked,
         )
         Spacer(
-            modifier = Modifier
-                .weight(ONE_THIRD),
+            modifier = Modifier.weight(ONE_THIRD),
         )
     }
 }
@@ -1177,14 +1097,12 @@ fun SpendingItem(
             Row(
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.primary
-                            .copy(alpha = 0.9f),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
                     )
                     .fillMaxWidth(),
             ) {
                 Text(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     text = item.name,
                 )
             }
@@ -1212,6 +1130,7 @@ fun Plate_3x3_Preview() {
                     ),
                 ),
                 onSpendingClicked = { },
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1237,6 +1156,7 @@ fun Plate_3x2_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1264,6 +1184,7 @@ fun Plate_3x2_3x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1293,6 +1214,7 @@ fun Plate_3x2_2x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1322,6 +1244,7 @@ fun Plate_2x2_3x1_2x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1353,6 +1276,7 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1380,6 +1304,7 @@ fun Plate_2x2_2x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1409,6 +1334,7 @@ fun Plate_2x2_1x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1436,6 +1362,7 @@ fun Plate_2x2_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1465,6 +1392,7 @@ fun Plate_3x1_3x1_3x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1496,6 +1424,7 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1527,6 +1456,7 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1560,6 +1490,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1591,6 +1522,7 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1620,6 +1552,7 @@ fun Plate_2x1_2x1_2x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1651,6 +1584,7 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1680,6 +1614,7 @@ fun Plate_2x1_2x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1705,6 +1640,7 @@ fun Plate_3x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1732,6 +1668,7 @@ fun Plate_2x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1799,6 +1736,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }
@@ -1833,6 +1771,7 @@ fun PlateWithDuplicatesAndDatesPreview() {
                     ),
                 ),
                 onSpendingClicked = {},
+                filterType = FilterType.Daily(),
             )
         }
     }

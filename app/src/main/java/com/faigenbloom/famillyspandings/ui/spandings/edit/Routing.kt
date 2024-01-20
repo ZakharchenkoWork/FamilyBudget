@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseDestination
+import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
 import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
-import com.faigenbloom.famillyspandings.comon.DATE
 import com.faigenbloom.famillyspandings.comon.DETAILS_LIST_ARG
 import com.faigenbloom.famillyspandings.comon.FloatingMenuState
 import com.faigenbloom.famillyspandings.comon.ID_ARG
@@ -95,7 +95,7 @@ fun NavGraphBuilder.spendingEditPage(
                 getEditSpendingMenuState(state)
             },
         )
-        backStack.getPoppedArgument(DATE, "")?.let { calendarDate ->
+        backStack.getPoppedArgument(CALENDAR_START_DATE_ARG, "")?.let { calendarDate ->
             state.onDateChanged(calendarDate)
         }
         backStack.getPoppedArgument<String>(DETAILS_LIST_ARG, null)

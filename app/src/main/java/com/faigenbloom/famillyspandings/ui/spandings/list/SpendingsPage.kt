@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.DynamicPlatesHolder
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
@@ -48,6 +49,7 @@ fun SpendingsListPage(
             } else {
                 DynamicPlatesHolder(
                     datedPatterns = state.spendings,
+                    filterType = state.filterType,
                     onSpendingClicked = onOpenSpending,
                 )
             }
@@ -103,6 +105,7 @@ fun SpandingsEmptyPagePreview() {
                     isPlannedListShown = false,
                     isLoading = false,
                     onPlannedSwitched = {},
+                    filterType = FilterType.Daily(),
                 ),
             )
         }
@@ -177,6 +180,7 @@ fun SpandingsPagePreview() {
                     isPlannedListShown = false,
                     isLoading = false,
                     onPlannedSwitched = {},
+                    filterType = FilterType.Daily(),
                 ),
             )
         }

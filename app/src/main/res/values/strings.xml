@@ -9,6 +9,7 @@
     <string name="spendings_filter_daily">Daily</string>
     <string name="spendings_filter_monthly">Monthly</string>
     <string name="spendings_filter_yearly">Yearly</string>
+    <string name="spendings_filter_range">Select range</string>
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
     <string name="editing_spending_title">Editing spending</string>

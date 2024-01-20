@@ -3,9 +3,12 @@ package com.faigenbloom.famillyspandings.ui.spandings.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.comon.toLocalDate
+import com.faigenbloom.famillyspandings.comon.toLongDate
 import com.faigenbloom.famillyspandings.comon.toLongMoney
+import com.faigenbloom.famillyspandings.comon.toReadableDate
 import com.faigenbloom.famillyspandings.domain.categories.GetCategoryByIdUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.Divider
+import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.GetAllSpendingsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
@@ -20,7 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SpendingsListPageViewModel(
+class SpendingsListViewModel(
     private val getAllSpendingsUseCase: GetAllSpendingsUseCase<SpendingUiData>,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
     private val sortPlatesUseCase: SortPlatesUseCase<SpendingCategoryUiData>,
@@ -29,22 +32,55 @@ class SpendingsListPageViewModel(
     private var spendings: List<List<Pattern<SpendingCategoryUiData>>> = emptyList()
     private var isPlanned: Boolean = false
     private var isLoading: Boolean = true
-    private var filterType: FilterType = FilterType.DAILY
+    private var filterType: FilterType = FilterType.Daily()
+    private var fromDate: Long = filterType.from
+    private var toDate: Long = filterType.to
+
+    var onCalendarRequested: (fromDate: String, toDate: String) -> Unit = { _, _ ->
+
+    }
+
+    val onDateRangeChanged: (fromDate: String, toDate: String) -> Unit = { fromDate, toDate ->
+        if (fromDate.isNotBlank() && toDate.isNotBlank()) {
+            this.fromDate = fromDate.toLongDate()
+            this.toDate = toDate.toLongDate()
+            lastSpendings = emptyList()
+            reloadData()
+        }
+    }
+
     private fun onPlannedSwitched() {
         isPlanned = isPlanned.not()
+
+        filterType = when (filterType) {
+            is FilterType.Daily -> FilterType.Daily(isPlanned)
+            is FilterType.Monthly -> FilterType.Monthly(isPlanned)
+            is FilterType.Yearly -> FilterType.Yearly(isPlanned)
+        }
+
         reloadData()
     }
 
+    fun calendarRequest() {
+        onCalendarRequested(fromDate.toReadableDate(), toDate.toReadableDate())
+    }
+
     fun onDailyFiltered() {
-        filterType = FilterType.DAILY
+        filterType = FilterType.Daily(fromDate, toDate)
+        lastSpendings = emptyList()
+        reloadData()
     }
 
     fun onMonthlyFiltered() {
-        filterType = FilterType.MONTHLY
+        filterType = FilterType.Monthly(fromDate, toDate)
+        lastSpendings = emptyList()
+        reloadData()
     }
 
     fun onYearlyFiltered() {
-        filterType = FilterType.YEAR
+        filterType = FilterType.Yearly(fromDate, toDate)
+        lastSpendings = emptyList()
+        reloadData()
     }
 
     private val spendingsState: SpendingsState
@@ -52,6 +88,7 @@ class SpendingsListPageViewModel(
             spendings,
             isPlannedListShown = isPlanned,
             isLoading = isLoading,
+            filterType = filterType,
             onPlannedSwitched = ::onPlannedSwitched,
         )
     private val _spendingsStateFlow = MutableStateFlow(spendingsState)
@@ -62,9 +99,9 @@ class SpendingsListPageViewModel(
 
     private fun getDividerForFilter(): Divider<SpendingCategoryUiData> {
         return when (filterType) {
-            FilterType.DAILY -> DayGroupDivider()
-            FilterType.MONTHLY -> MonthGroupDivider()
-            FilterType.YEAR -> YearGroupDivider()
+            is FilterType.Daily -> DayGroupDivider(filterType.from, filterType.to)
+            is FilterType.Monthly -> MonthGroupDivider(filterType.from, filterType.to)
+            is FilterType.Yearly -> YearGroupDivider(filterType.from, filterType.to)
         }
     }
 
@@ -87,18 +124,12 @@ class SpendingsListPageViewModel(
     private fun updateUI() {
         _spendingsStateFlow.update { spendingsState }
     }
-
-}
-
-enum class FilterType {
-    DAILY,
-    MONTHLY,
-    YEAR,
 }
 
 data class SpendingsState(
     val spendings: List<List<Pattern<SpendingCategoryUiData>>>,
     val isPlannedListShown: Boolean,
+    val filterType: FilterType,
     val isLoading: Boolean,
     val onPlannedSwitched: (() -> Unit),
 )

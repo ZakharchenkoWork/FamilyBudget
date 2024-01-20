@@ -12,7 +12,6 @@ import com.faigenbloom.famillyspandings.ui.spandings.DetailsMapper
 import com.faigenbloom.famillyspandings.ui.spandings.edit.mockDetailsList
 import io.mockk.every
 import io.mockk.mockkStatic
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -69,7 +68,6 @@ class SaveDetailsUseCaseTest {
             idGeneratorUseCase = idGeneratorUseCase,
             detailsRepository = detailsRepository,
             getSpendingDetailsUseCase = getSpendingDetailsUseCase,
-            ioDispatcher = Dispatchers.IO,
             detailsMapper = detailsMapper,
         )
 

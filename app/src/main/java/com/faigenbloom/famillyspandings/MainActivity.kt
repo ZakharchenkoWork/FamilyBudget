@@ -32,8 +32,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.faigenbloom.famillyspandings.comon.CALENDAR_END_DATE_ARG
+import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
 import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
-import com.faigenbloom.famillyspandings.comon.DATE
 import com.faigenbloom.famillyspandings.comon.DETAILS_LIST_ARG
 import com.faigenbloom.famillyspandings.comon.FloatingActionMenu
 import com.faigenbloom.famillyspandings.comon.FloatingMenuState
@@ -200,6 +201,11 @@ class MainActivity : ComponentActivity() {
 
                                 },
                                 menuCallback = { floatingMenuState = it },
+                                onCalendarRequested = { from, to ->
+                                    mainNavController.navigate(
+                                        CalendarRoute(startDate = from, endDate = to),
+                                    )
+                                },
                                 onOpenSpending = {
                                     mainNavController.navigate(
                                         SpendingShowRoute(it),
@@ -250,7 +256,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onCalendarOpened = {
                                     mainNavController.navigate(
-                                        CalendarRoute(it),
+                                        CalendarRoute(startDate = it),
                                     )
                                 },
                                 onSpendingDialogRequest = {
@@ -363,9 +369,12 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                             calendarDialog(
-                                onDatePicked = { date ->
+                                onDatePicked = { startDate, endDate ->
                                     mainNavController.popBack(
-                                        hashMapOf(DATE to date),
+                                        hashMapOf(
+                                            CALENDAR_START_DATE_ARG to startDate,
+                                            CALENDAR_END_DATE_ARG to endDate,
+                                        ),
                                     )
                                 },
                             )

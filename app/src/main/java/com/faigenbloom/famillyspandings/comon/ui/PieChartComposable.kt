@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.comon
+package com.faigenbloom.famillyspandings.comon.ui
 
 import CircularArc
 import androidx.compose.foundation.Image

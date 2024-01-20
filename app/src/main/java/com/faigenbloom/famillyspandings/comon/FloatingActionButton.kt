@@ -113,13 +113,13 @@ fun FilterFab(
                 },
             )
         },
-        containerColor = colorScheme.secondary,
+        containerColor = colorScheme.onBackground,
         shape = CircleShape,
     ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
-            tint = colorScheme.tertiary,
+            tint = colorScheme.primary,
         )
     }
 
@@ -207,7 +207,7 @@ fun MenuButton(
                     contentDescription = item.semantics
                 },
             shape = CircleShape,
-            containerColor = colorScheme.secondary,
+            containerColor = colorScheme.onBackground,
             onClick = item.onClick,
         ) {
             Icon(
@@ -216,7 +216,7 @@ fun MenuButton(
                     .aspectRatio(1f),
                 painter = painterResource(icon),
                 contentDescription = null,
-                tint = colorScheme.tertiary,
+                tint = colorScheme.primary,
             )
         }
     }
@@ -230,7 +230,7 @@ fun MenuLabel(
     Box(
         modifier = modifier
             .background(
-                color = colorScheme.secondary,
+                color = colorScheme.onBackground,
                 shape = RoundedCornerShape(4.dp),
             ),
     ) {
@@ -238,7 +238,7 @@ fun MenuLabel(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp),
             text = stringResource(id = label),
-            color = colorScheme.tertiary,
+            color = colorScheme.primary,
             style = typography.labelMedium,
             maxLines = 1,
         )
