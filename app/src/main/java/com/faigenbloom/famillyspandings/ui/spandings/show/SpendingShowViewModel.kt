@@ -5,12 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.comon.ID_ARG
-import com.faigenbloom.famillyspandings.domain.SaveSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.famillyspandings.domain.SetPurchasedSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.categories.GetCategoryByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingUiData
@@ -19,6 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Currency
+import java.util.Locale
 
 class SpendingShowViewModel(
     savedStateHandle: SavedStateHandle,
@@ -28,6 +31,7 @@ class SpendingShowViewModel(
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
     private val setPurchasedSpendingUseCase: SetPurchasedSpendingUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
+    private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[ID_ARG] ?: ""
 
@@ -40,6 +44,7 @@ class SpendingShowViewModel(
     private var isPlanned: Boolean = false
     private var isHidden: Boolean = false
     private var isManualTotal: Boolean = false
+    private var currency: Currency = Currency.getInstance(Locale.getDefault())
 
     var onEditSpending: (String) -> Unit = {}
     private fun onEditClicked() {
@@ -55,7 +60,7 @@ class SpendingShowViewModel(
     }
 
     private fun createDuplicate() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val duplicateSpendingId = saveSpendingUseCase(
                 spending = SpendingUiData(
                     id = "",
@@ -84,6 +89,7 @@ class SpendingShowViewModel(
             id = spendingId,
             name = name,
             amount = amount,
+            currency = currency,
             date = date,
             category = category,
             photoUri = photoUri,
@@ -96,7 +102,7 @@ class SpendingShowViewModel(
         )
     private val _spendingsStateFlow = MutableStateFlow(state)
     val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             if (spendingId.isNotBlank()) {
                 val spending = getSpendingUseCase(spendingId)
                 name = spending.name
@@ -108,6 +114,7 @@ class SpendingShowViewModel(
                 isPlanned = spending.isPlanned
                 isHidden = spending.isHidden
                 isManualTotal = spending.isManualTotal
+                currency = getChosenCurrencyUseCase()
                 updateUI()
             }
         }
@@ -122,6 +129,7 @@ data class SpendingShowState(
     val id: String,
     val name: String,
     val amount: String,
+    val currency: Currency,
     val date: String,
     val category: CategoryUiData,
     val photoUri: Uri?,

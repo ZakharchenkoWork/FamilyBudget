@@ -4,7 +4,7 @@ import com.faigenbloom.famillyspandings.ui.categories.mockCategoriesList
 
 
 val mockCategoriesSummaryList = mockCategoriesList.map {
-    CategorySummary(
+    CategorySummaryUi(
         id = it.id,
         nameId = it.nameId,
         iconId = it.iconId,
@@ -12,6 +12,6 @@ val mockCategoriesSummaryList = mockCategoriesList.map {
         name = null,
         iconUri = null,
     )
-}.filterIndexed { index: Int, _: CategorySummary ->
+}.filterIndexed { index: Int, _: CategorySummaryUi ->
     return@filterIndexed index != 0
 }

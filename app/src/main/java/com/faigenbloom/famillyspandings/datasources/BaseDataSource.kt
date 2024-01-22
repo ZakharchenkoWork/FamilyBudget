@@ -6,7 +6,6 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntit
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import java.util.Currency
-import java.util.Locale
 
 interface BaseDataSource {
     suspend fun login(email: String, password: String): Boolean
@@ -30,10 +29,7 @@ interface BaseDataSource {
         return Currency.getAvailableCurrencies().toList()
     }
 
-    fun getChoosenCurrency(): Currency {
-        return Currency.getInstance(Locale.getDefault())
-    }
-
+    suspend fun getChosenCurrency(): Currency
     suspend fun updateCategoryPhoto(id: String, photoUri: String)
     suspend fun getCategory(id: String): CategoryEntity
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>

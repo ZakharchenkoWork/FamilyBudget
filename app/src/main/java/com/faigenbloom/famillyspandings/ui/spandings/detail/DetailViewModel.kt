@@ -3,6 +3,8 @@ package com.faigenbloom.famillyspandings.ui.spandings.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faigenbloom.famillyspandings.comon.toNormalizedMoney
+import com.faigenbloom.famillyspandings.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetAllSpendingDetailsUseCase
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingDetailListWrapper
@@ -11,10 +13,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Currency
+import java.util.Locale
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val getAllSpendingDetailsUseCase: GetAllSpendingDetailsUseCase<DetailUiData>,
+    private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
     private var spendingDetails: ArrayList<DetailUiData> =
         DetailsDialogArgs(savedStateHandle).getList()
@@ -28,6 +33,7 @@ class DetailViewModel(
     private var suggestionChosen: Int = -1
     private var detailChosen: Int = -1
     private var isBarcodeScannerVisible: Boolean = false
+    private var currency: Currency = Currency.getInstance(Locale.getDefault())
 
     var onSave: (updateDetails: SpendingDetailListWrapper) -> Unit = { }
     private fun onDetailClicked(index: Int) {
@@ -50,7 +56,7 @@ class DetailViewModel(
     }
 
     private fun onAmountChanged(amount: String) {
-        amountText = amount
+        amountText = amount.toNormalizedMoney()
         updateUI()
     }
 
@@ -126,6 +132,7 @@ class DetailViewModel(
             detailChosen = detailChosen,
             suggestionChosen = suggestionChosen,
             isBarcodeScannerVisible = isBarcodeScannerVisible,
+            currency = currency,
             onDetailClicked = ::onDetailClicked,
             addDetailToList = ::addDetailToList,
             onNameChanged = ::onNameChanged,
@@ -141,6 +148,7 @@ class DetailViewModel(
     val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch(Dispatchers.IO) {
             allDetails = getAllSpendingDetailsUseCase()
+            currency = getChosenCurrencyUseCase()
             updateUI()
         }
     }
@@ -160,6 +168,7 @@ data class DetailDialogState(
     val suggestions: List<DetailUiData>,
     val suggestionChosen: Int,
     val isBarcodeScannerVisible: Boolean,
+    val currency: Currency,
     val onNameChanged: (String) -> Unit,
     val onAmountChanged: (String) -> Unit,
     val onBarCodeFound: (barCode: String) -> Unit,

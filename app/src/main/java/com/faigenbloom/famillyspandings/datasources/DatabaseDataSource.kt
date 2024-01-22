@@ -5,6 +5,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import java.util.Currency
+import java.util.Locale
 
 class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun login(email: String, password: String): Boolean {
@@ -57,6 +59,10 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun saveBudgetData(budget: BudgetEntity) {
         appDatabase.budgetDao().update(budget)
+    }
+
+    override suspend fun getChosenCurrency(): Currency {
+        return Currency.getInstance(Locale.getDefault())
     }
 
     override suspend fun updateCategoryPhoto(id: String, photoUri: String) {

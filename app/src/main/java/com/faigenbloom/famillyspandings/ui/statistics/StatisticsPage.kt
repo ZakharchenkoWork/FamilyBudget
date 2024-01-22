@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -44,10 +45,13 @@ import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.comon.ui.PieChart
 import com.faigenbloom.famillyspandings.comon.ui.PieChartData
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import syncronizer
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun StatisticsPage(state: StatisicsState) {
@@ -91,23 +95,26 @@ private fun BarChartContent(state: StatisicsState) {
                 rememberScrollState = rememberScrollState,
                 bars = state.categorySummary.map {
                     BarData(
-                        value = it.amount.toFloat() / state.max.toFloat(),
+                        value = it.barDataValue,
                         color = asColor(it),
                     )
                 },
                 sideLabel = {
                     Text(
                         modifier = Modifier.padding(end = 4.dp),
-                        text = "${(state.max / 10) * it}",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = state.sideLabelValues[it],
+                        style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.secondaryContainer,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 topLabel = {
                     Text(
                         modifier = Modifier
-                            .padding(start = 57.dp), // TODO: WTF YOU ARE NOT WORKING!!!!!!
-                        text = "$",
+                            .padding(start = 57.dp),
+                        text = state.currency.symbol,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -179,19 +186,15 @@ fun TopText() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp),
     ) {
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             text = stringResource(R.string.this_month_spending_s_title),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.secondaryContainer,
-        )
-        Image(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = R.drawable.calendar),
-            contentDescription = "",
         )
     }
 }
@@ -214,23 +217,26 @@ private fun PieChartContent(state: StatisicsState) {
             )
         },
         label = { paddings, value ->
-            Text(
-                modifier = Modifier
-                    .padding(
-                        paddings,
-                    ),
-                text = "${value.toInt()} %",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.secondary,
-            )
+            if (value.toInt() > 1) {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            paddings,
+                        ),
+                    text = "${value.toInt()}%",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
         },
     )
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        text = "${state.sum}",
+        text = MoneyTextTransformation(state.currency.currencyCode)
+            .filter(state.sum),
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineLarge,
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -278,7 +284,7 @@ fun BottomRow(state: StatisicsState) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "${categorySummary.amount}",
+                        text = state.currency.currencyCode,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondaryContainer,
                     )
@@ -289,14 +295,14 @@ fun BottomRow(state: StatisicsState) {
 }
 
 @Composable
-fun asColor(categorySummary: CategorySummary): Color {
+fun asColor(categorySummary: CategorySummaryUi): Color {
     return categorySummary.iconUri?.let {
         asColor(iconUri = it.toUri())
     } ?: categorySummary.iconId?.let {
         asColor(icon = it)
     } ?: asColor(
         categorySummary.name ?: categorySummary.nameId?.let { stringResource(id = it) }
-            ?: "",
+        ?: "",
     )
 }
 
@@ -329,7 +335,7 @@ fun asColor(iconUri: Uri): Color {
 }
 
 @Composable
-fun CategorySummary.getImage(): Painter {
+fun CategorySummaryUi.getImage(): Painter {
     return this.iconUri?.let {
         rememberImagePainter(it)
     } ?: this.iconId?.let {
@@ -337,9 +343,9 @@ fun CategorySummary.getImage(): Painter {
     } ?: painterResource(id = R.drawable.icon_photo)
 }
 
-@Preview
+/*@Preview
 @Composable
-fun StatisticsPagePreview() {
+fun StatisticsBarChartPagePreview() {
     FamillySpandingsTheme {
         Surface {
             StatisticsPage(
@@ -347,8 +353,28 @@ fun StatisticsPagePreview() {
                     categorySummary = mockCategoriesSummaryList,
                     sum = 7500,
                     max = 1000,
+                    currency = Currency.getInstance(Locale.getDefault()),
                     isPieChartOpened = false,
                     onPageChanged = {},
+                ),
+            )
+        }
+    }
+}*/
+@Preview
+@Composable
+fun StatisticsPieChartPagePreview() {
+    FamillySpandingsTheme {
+        Surface {
+            StatisticsPage(
+                state = StatisicsState(
+                    categorySummary = mockCategoriesSummaryList,
+                    sum = "7500.00",
+                    max = 1000,
+                    currency = Currency.getInstance(Locale.getDefault()),
+                    isPieChartOpened = true,
+                    onPageChanged = {},
+                    sideLabelValues = Array(10) { "$it+0" },
                 ),
             )
         }

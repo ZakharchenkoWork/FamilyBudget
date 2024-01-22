@@ -11,6 +11,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCros
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
 import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
+import java.util.Currency
+import java.util.Locale
 
 class MockDataSource : BaseDataSource {
     val categories: ArrayList<CategoryEntity> = ArrayList(
@@ -69,6 +71,7 @@ class MockDataSource : BaseDataSource {
     override suspend fun getSpending(id: String): SpendingEntity {
         return spendingsEntity.first { it.id == id }
     }
+
     override suspend fun getBudgetData(): BudgetEntity {
         return BudgetEntity(
             familyTotal = 475500L,
@@ -79,6 +82,10 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun saveBudgetData(budget: BudgetEntity) {
+    }
+
+    override suspend fun getChosenCurrency(): Currency {
+        return Currency.getInstance(Locale.getDefault())
     }
 
     override suspend fun updateCategoryPhoto(id: String, photoUri: String) {

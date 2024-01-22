@@ -19,7 +19,7 @@ fun NavGraphBuilder.settingsPage(
         route = SettingsRoute(),
     ) {
         bottomNavigationOptions(true, 5)
-        val state by koinViewModel<SettingsPageViewModel>().budgetStateFlow.collectAsState()
+        val state by koinViewModel<SettingsPageViewModel>().stateFlow.collectAsState()
 
         SettingsPage(
             state = state,

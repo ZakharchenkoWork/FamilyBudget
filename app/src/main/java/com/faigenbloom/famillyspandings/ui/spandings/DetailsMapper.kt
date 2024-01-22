@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.ui.spandings
 
 import com.faigenbloom.famillyspandings.comon.Mapper
 import com.faigenbloom.famillyspandings.comon.toLongMoney
+import com.faigenbloom.famillyspandings.comon.toNormalizedMoney
 import com.faigenbloom.famillyspandings.comon.toReadableMoney
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 
@@ -10,7 +11,7 @@ class DetailsMapper : Mapper<DetailUiData, SpendingDetailEntity>() {
         return DetailUiData(
             id = entity.id,
             name = entity.name,
-            amount = entity.amount.toReadableMoney(),
+            amount = entity.amount.toReadableMoney().toNormalizedMoney(),
             barcode = entity.barcode,
         )
     }

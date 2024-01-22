@@ -1,8 +1,9 @@
-package com.faigenbloom.famillyspandings.domain
+package com.faigenbloom.famillyspandings.domain.spendings
 
 import com.faigenbloom.famillyspandings.comon.Identifiable
 import com.faigenbloom.famillyspandings.comon.Mapper
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.domain.GenerateIdUseCase
 import com.faigenbloom.famillyspandings.repositories.SpendingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

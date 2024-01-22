@@ -12,5 +12,6 @@ val domainModule = module {
     singleOf(::SetPurchasedSpendingUseCase)
     singleOf(::DeleteSpendingUseCase)
     singleOf(::DeleteCategoryUseCase)
+    singleOf(::GetChosenCurrencyUseCase)
 }
 

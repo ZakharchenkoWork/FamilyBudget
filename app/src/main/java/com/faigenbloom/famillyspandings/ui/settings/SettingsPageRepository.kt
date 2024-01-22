@@ -8,7 +8,7 @@ class SettingsPageRepository(private val dataSource: BaseDataSource) {
         return dataSource.getAllCurrencies()
     }
 
-    fun getChosenCurrency(): Currency {
-        return dataSource.getChoosenCurrency()
+    suspend fun getChosenCurrency(): Currency {
+        return dataSource.getChosenCurrency()
     }
 }

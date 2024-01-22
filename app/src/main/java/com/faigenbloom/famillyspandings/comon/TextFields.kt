@@ -37,9 +37,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
+import java.util.Currency
 
 @Composable
 fun BaseTextField(
@@ -75,18 +77,22 @@ fun BaseTextField(
         singleLine = true,
         keyboardActions = keyboardActions,
         visualTransformation = if (passwordVisible || textFieldType != TextFieldType.Password) {
-            VisualTransformation.None
+            if (textFieldType is TextFieldType.Money) {
+                MoneyTextTransformation(textFieldType.currency.currencyCode)
+            } else {
+                VisualTransformation.None
+            }
         } else {
             PasswordVisualTransformation()
         },
-        keyboardOptions = textFieldType.toKeyboardOptions(),
+        keyboardOptions = textFieldType.keyboardOptions,
         supportingText = {
             if (isError) {
                 Text(text = stringResource(id = errorTextId))
             }
         },
-        trailingIcon = {
-            if (textFieldType == TextFieldType.Password) {
+        trailingIcon = if (textFieldType == TextFieldType.Password) {
+            {
                 val image = if (passwordVisible) {
                     painterResource(id = R.drawable.icon_shown)
                 } else {
@@ -99,6 +105,8 @@ fun BaseTextField(
                     Icon(painter = image, description)
                 }
             }
+        } else {
+            null
         },
     )
 }
@@ -122,8 +130,13 @@ fun SimpleTextField(
             modifier = modifier,
             value = text,
             textStyle = textStyle.copy(textAlign = textAlign),
-            keyboardOptions = textFieldType.toKeyboardOptions(),
+            keyboardOptions = textFieldType.keyboardOptions,
             onValueChange = onValueChange,
+            visualTransformation = if (textFieldType is TextFieldType.Money) {
+                MoneyTextTransformation(textFieldType.currency.currencyCode)
+            } else {
+                VisualTransformation.None
+            },
             cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
             decorationBox = { innerTextField ->
                 if (text.isBlank()) {
@@ -142,28 +155,18 @@ fun SimpleTextField(
     }
 }
 
-enum class TextFieldType {
-    Normal,
-    Email,
-    Money,
-    Password,
-    ;
+sealed class TextFieldType(val keyboardOptions: KeyboardOptions) {
+    data object Normal :
+        TextFieldType(KeyboardOptions(keyboardType = KeyboardType.Text))
 
-    fun toKeyboardOptions(): KeyboardOptions {
-        return when (this) {
-            Password ->
-                KeyboardOptions(keyboardType = KeyboardType.Password)
+    data object Email :
+        TextFieldType(KeyboardOptions(keyboardType = KeyboardType.Email))
 
-            Email ->
-                KeyboardOptions(keyboardType = KeyboardType.Email)
+    data class Money(val currency: Currency) :
+        TextFieldType(KeyboardOptions(keyboardType = KeyboardType.Decimal))
 
-            Normal ->
-                KeyboardOptions(keyboardType = KeyboardType.Text)
-
-            Money ->
-                KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        }
-    }
+    data object Password :
+        TextFieldType(KeyboardOptions(keyboardType = KeyboardType.Email))
 }
 
 @Preview(showBackground = true)

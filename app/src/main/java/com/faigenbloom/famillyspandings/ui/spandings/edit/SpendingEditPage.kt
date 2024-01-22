@@ -37,12 +37,15 @@ import com.faigenbloom.famillyspandings.comon.StripeBar
 import com.faigenbloom.famillyspandings.comon.TextFieldType
 import com.faigenbloom.famillyspandings.comon.TopBar
 import com.faigenbloom.famillyspandings.comon.ui.AnimateEnter
+import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesPage
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesState
 import com.faigenbloom.famillyspandings.ui.categories.mockCategoriesList
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun SpendingEditPage(
@@ -115,7 +118,7 @@ fun Information(
             modifier = Modifier.padding(top = 16.dp),
             state = state,
         )
-        DatailsList(
+        DetailsList(
             state = state,
             onSpendingDialogRequest = {
                 onSpendingDialogRequest("")
@@ -168,7 +171,7 @@ private fun TopInfo(
                 },
                 text = state.amountText,
                 labelId = R.string.spending_details_amount,
-                textFieldType = TextFieldType.Money,
+                textFieldType = TextFieldType.Money(state.currency),
                 onTextChange = state.onAmountTextChanged,
             )
             Text(
@@ -189,7 +192,7 @@ private fun TopInfo(
 }
 
 @Composable
-fun DatailsList(
+fun DetailsList(
     state: SpendingEditState,
     onSpendingDialogRequest: () -> Unit,
 ) {
@@ -202,6 +205,7 @@ fun DatailsList(
         items(state.detailsList.size) { detailIndex ->
             DetailsItem(
                 state = state,
+                currencyCode = state.currency.currencyCode,
                 detailIndex = detailIndex,
             )
         }
@@ -246,6 +250,7 @@ fun AddItemLine(onSpendingDialogRequest: () -> Unit) {
 @Composable
 fun DetailsItem(
     state: SpendingEditState,
+    currencyCode: String,
     detailIndex: Int,
 ) {
     val spendingDetail = state.detailsList[detailIndex]
@@ -272,7 +277,8 @@ fun DetailsItem(
                     .padding(horizontal = 8.dp)
                     .semantics { contentDescription = SPENDING_DETAIL_AMOUNT + detailIndex },
                 textAlign = TextAlign.End,
-                text = spendingDetail.amount,
+                text = MoneyTextTransformation(currencyCode)
+                    .filter(spendingDetail.amount),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -356,6 +362,7 @@ fun SpendingEditPageCategoriesPreview() {
                     amountText = "",
                     dateText = "",
                     detailsList = emptyList(),
+                    currency = Currency.getInstance(Locale.getDefault()),
                     isHidden = false,
                     isDuplicate = false,
                     isPlanned = false,
@@ -418,6 +425,7 @@ fun SpendingEditPageDetailsPreview() {
                     photoUri = null,
                     isDuplicate = true,
                     isPlanned = true,
+                    currency = Currency.getInstance(Locale.getDefault()),
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
                     onDateChanged = { },

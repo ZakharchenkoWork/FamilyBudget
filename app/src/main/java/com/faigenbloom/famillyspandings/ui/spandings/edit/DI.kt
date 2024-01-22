@@ -1,9 +1,9 @@
 package com.faigenbloom.famillyspandings.ui.spandings.edit
 
-import com.faigenbloom.famillyspandings.domain.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.spandings.DetailsMapper
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingsMapper
 import org.koin.androidx.viewmodel.dsl.viewModelOf

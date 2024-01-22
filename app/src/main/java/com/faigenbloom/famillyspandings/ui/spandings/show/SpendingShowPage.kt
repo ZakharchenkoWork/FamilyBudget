@@ -33,10 +33,13 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.categories.mockCategoriesList
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import com.faigenbloom.famillyspandings.ui.spandings.edit.mockDetailsList
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun SpendingShowPage(
@@ -75,7 +78,10 @@ fun SpendingShowPage(
                 state = state,
             )
         }
-        DatailsList(state.details)
+        DetailsList(
+            detailsList = state.details,
+            currencyCode = state.currency.currencyCode,
+        )
     }
 }
 
@@ -152,7 +158,8 @@ fun Stripe(
             modifier = Modifier
                 .weight(0.5f)
                 .padding(vertical = 8.dp),
-            text = state.amount,
+            text = MoneyTextTransformation(state.currency.currencyCode)
+                .filter(state.amount),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge,
@@ -222,11 +229,15 @@ fun Information(
 }
 
 @Composable
-fun DatailsList(detailsList: List<DetailUiData>) {
+fun DetailsList(
+    detailsList: List<DetailUiData>,
+    currencyCode: String,
+) {
     LazyColumn {
         items(detailsList.size) { detailIndex ->
             DetailsItem(
                 spendingDetail = detailsList[detailIndex],
+                currencyCode = currencyCode,
             )
         }
     }
@@ -235,6 +246,7 @@ fun DatailsList(detailsList: List<DetailUiData>) {
 @Composable
 fun DetailsItem(
     spendingDetail: DetailUiData,
+    currencyCode: String,
 ) {
     Column(
         modifier = Modifier
@@ -257,7 +269,8 @@ fun DetailsItem(
                     .padding(horizontal = 8.dp),
                 textAlign = TextAlign.End,
                 color = MaterialTheme.colorScheme.onBackground,
-                text = spendingDetail.amount,
+                text = MoneyTextTransformation(currencyCode)
+                    .filter(spendingDetail.amount),
             )
         }
         Spacer(
@@ -281,6 +294,7 @@ fun SpendingEditPageDetailsPreview() {
                     name = "Home",
                     amount = "10.00",
                     date = "01.11.2023",
+                    currency = Currency.getInstance(Locale.getDefault()),
                     category = mockCategoriesList[1],
                     photoUri = null,
                     isPlanned = true,

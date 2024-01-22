@@ -1,43 +1,48 @@
 package com.faigenbloom.famillyspandings.ui.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.faigenbloom.famillyspandings.domain.GetChosenCurrencyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Currency
+import java.util.Locale
 
 class SettingsPageViewModel(
     repository: SettingsPageRepository,
+    private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
     private var name: String = ""
     private var surname: String = ""
-    private var chosenCurrency: Currency = repository.getChosenCurrency()
+    private var chosenCurrency: Currency = Currency.getInstance(Locale.getDefault())
     private var isNotificationsEnabled: Boolean = true
     private val currenciesList: List<Currency> = repository.getAllCurrencies()
     private var isCurrenciesDropdownVisible: Boolean = false
 
     private val onNameChanged: (String) -> Unit = {
         name = it
-        _budgetStateFlow.update { budgetState }
+        updateUi()
     }
 
     private val onSurnameChanged: (String) -> Unit = {
         surname = it
-        _budgetStateFlow.update { budgetState }
+        updateUi()
     }
     private val onNotificationsCheckChanged: ((Boolean) -> Unit) = {
         isNotificationsEnabled = it
-        _budgetStateFlow.update { budgetState }
+        updateUi()
     }
     private val onCurrenciesDropdownVisibilityChanged: (Boolean) -> Unit = {
         isCurrenciesDropdownVisible = it
-        _budgetStateFlow.update { budgetState }
+        updateUi()
     }
     private val onCurrencyChanged: (currency: Currency) -> Unit = {
         chosenCurrency = it
-        _budgetStateFlow.update { budgetState }
+        updateUi()
     }
-    private val budgetState: SettingsState
+    private val state: SettingsState
         get() = SettingsState(
             name = name,
             surname = surname,
@@ -52,8 +57,15 @@ class SettingsPageViewModel(
             onCurrencyChanged = onCurrencyChanged,
         )
 
-    private val _budgetStateFlow = MutableStateFlow(budgetState)
-    val budgetStateFlow = _budgetStateFlow.asStateFlow()
+    private val _stateFlow = MutableStateFlow(state)
+    val stateFlow = _stateFlow.asStateFlow().apply {
+        viewModelScope.launch {
+            chosenCurrency = getChosenCurrencyUseCase()
+            updateUi()
+        }
+    }
+
+    private fun updateUi() = _stateFlow.update { state }
 }
 
 data class SettingsState(

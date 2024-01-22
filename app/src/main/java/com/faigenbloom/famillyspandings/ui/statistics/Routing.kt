@@ -17,7 +17,7 @@ fun NavGraphBuilder.statisticsPage(
         route = StatisticsRoute(),
     ) {
         bottomNavigationOptions(true, 3)
-        val state by koinViewModel<StatisticsPageViewModel>().statisicsStateFlow.collectAsState()
+        val state by koinViewModel<StatisticsPageViewModel>().stateFlow.collectAsState()
 
         StatisticsPage(state)
     }

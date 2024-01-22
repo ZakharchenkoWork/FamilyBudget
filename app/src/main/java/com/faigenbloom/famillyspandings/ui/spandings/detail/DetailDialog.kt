@@ -38,12 +38,15 @@ import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.comon.BaseTextField
 import com.faigenbloom.famillyspandings.comon.SimpleTextField
 import com.faigenbloom.famillyspandings.comon.TextFieldType
+import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.camera.BarCodeCamera
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.transparent
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun DetailDialog(
@@ -137,7 +140,8 @@ fun DetailsList(state: DetailDialogState) {
                                 modifier = Modifier
                                     .weight(0.3f),
                                 textAlign = TextAlign.End,
-                                text = spendingDetail.amount,
+                                text = MoneyTextTransformation(state.currency.currencyCode)
+                                    .filter(spendingDetail.amount),
                                 color = colorScheme.onBackground,
                             )
                             Image(
@@ -180,7 +184,7 @@ private fun ManualInputs(state: DetailDialogState) {
                     .semantics { contentDescription = DETAIL_DIALOG_AMOUNT_INPUT },
                 text = state.amount,
                 labelId = R.string.spending_details_amount,
-                textFieldType = TextFieldType.Money,
+                textFieldType = TextFieldType.Money(state.currency),
                 onTextChange = state.onAmountChanged,
             )
             Image(
@@ -272,7 +276,8 @@ private fun SuggestionsList(
                                 modifier = Modifier
                                     .weight(0.3f),
                                 textAlign = TextAlign.End,
-                                text = spendingDetail.amount,
+                                text = MoneyTextTransformation(state.currency.currencyCode)
+                                    .filter(spendingDetail.amount),
                                 color = colorScheme.onBackground,
                             )
                         }
@@ -348,6 +353,7 @@ fun DetailDialogEmptyPreview() {
                 spendingDetails = emptyList(),
                 suggestions = emptyList(),
                 suggestionChosen = 3,
+                currency = Currency.getInstance(Locale.getDefault()),
                 onNameChanged = { },
                 onAmountChanged = { },
                 onSuggestionClicked = { },
@@ -378,6 +384,7 @@ fun DetailDialogPreview() {
                 spendingDetails = mockSuggestions,
                 suggestions = mockSuggestions,
                 suggestionChosen = 3,
+                currency = Currency.getInstance(Locale.getDefault()),
                 onNameChanged = { },
                 onAmountChanged = { },
                 onSuggestionClicked = { },

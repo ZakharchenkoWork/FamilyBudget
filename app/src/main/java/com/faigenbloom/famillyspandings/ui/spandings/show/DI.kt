@@ -1,10 +1,10 @@
 package com.faigenbloom.famillyspandings.ui.spandings.show
 
-import com.faigenbloom.famillyspandings.domain.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.categories.GetCategoryByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesMapper
 import com.faigenbloom.famillyspandings.ui.spandings.DetailsMapper
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingsMapper

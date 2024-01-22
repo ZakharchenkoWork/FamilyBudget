@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.comon.SPENDING_ID_ARG
 import com.faigenbloom.famillyspandings.comon.getCurrentDate
 import com.faigenbloom.famillyspandings.comon.toLongDate
+import com.faigenbloom.famillyspandings.comon.toNormalizedMoney
 import com.faigenbloom.famillyspandings.domain.CalculateTotalUseCase
+import com.faigenbloom.famillyspandings.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.famillyspandings.domain.NormalizeDateUseCase
-import com.faigenbloom.famillyspandings.domain.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
 import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
 import com.faigenbloom.famillyspandings.ui.spandings.SpendingDetailListWrapper
@@ -22,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Currency
+import java.util.Locale
 
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
@@ -30,6 +34,7 @@ class SpendingEditViewModel(
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
     private val getSpendingUseCase: GetSpendingUseCase<SpendingUiData>,
+    private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val deleteSpendingUseCase: DeleteSpendingUseCase,
     private val calculateTotalUseCase: CalculateTotalUseCase,
 ) : ViewModel() {
@@ -46,6 +51,7 @@ class SpendingEditViewModel(
     private var isDuplicate: Boolean = false
     private var canDuplicate: Boolean = false
     private var selectedCategory: CategoryUiData? = null
+    private var currency: Currency = Currency.getInstance(Locale.getDefault())
 
     var onNext: (String) -> Unit = {}
     var onShowMessage: (MessageTypes) -> Unit = {}
@@ -171,7 +177,7 @@ class SpendingEditViewModel(
     }
 
     private fun onAmountTextChanged(amount: String) {
-        amountText = amount
+        amountText = amount.toNormalizedMoney()
         isManualTotal = amount.isNotBlank()
         updateUI()
     }
@@ -201,6 +207,7 @@ class SpendingEditViewModel(
             isHidden = isHidden,
             isDuplicate = isDuplicate,
             isPlanned = isPlanned,
+            currency = currency,
             onHideChanged = ::onHideChanged,
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
@@ -236,7 +243,7 @@ class SpendingEditViewModel(
                 isDuplicate = spendingUiData.isDuplicate
                 onCategoryIdLoaded(spendingUiData.categoryId)
                 canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not()
-
+                currency = getChosenCurrencyUseCase()
                 updateTotal()
                 updateUI()
             }
@@ -263,6 +270,7 @@ data class SpendingEditState(
     val isOkActive: Boolean,
     val isPlanned: Boolean,
     val isHidden: Boolean,
+    val currency: Currency,
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
