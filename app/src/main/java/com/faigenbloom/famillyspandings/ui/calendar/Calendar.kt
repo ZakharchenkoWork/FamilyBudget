@@ -32,8 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.toLongDate
-import com.faigenbloom.famillyspandings.comon.toReadableDate
+import com.faigenbloom.famillyspandings.common.toLongDate
+import com.faigenbloom.famillyspandings.common.toReadableDate
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable

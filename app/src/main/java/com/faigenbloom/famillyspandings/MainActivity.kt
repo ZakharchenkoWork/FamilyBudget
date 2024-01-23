@@ -32,20 +32,20 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.faigenbloom.famillyspandings.comon.CALENDAR_END_DATE_ARG
-import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
-import com.faigenbloom.famillyspandings.comon.CATEGORY_PHOTO
-import com.faigenbloom.famillyspandings.comon.DETAILS_LIST_ARG
-import com.faigenbloom.famillyspandings.comon.FloatingActionMenu
-import com.faigenbloom.famillyspandings.comon.FloatingMenuState
-import com.faigenbloom.famillyspandings.comon.GalleryPhotoContract
-import com.faigenbloom.famillyspandings.comon.GalleryRequest
-import com.faigenbloom.famillyspandings.comon.ID_ARG
-import com.faigenbloom.famillyspandings.comon.PHOTO_KEY
-import com.faigenbloom.famillyspandings.comon.PHOTO_REASON_ARG
-import com.faigenbloom.famillyspandings.comon.QR_KEY
-import com.faigenbloom.famillyspandings.comon.SPENDING_PHOTO
-import com.faigenbloom.famillyspandings.comon.toJson
+import com.faigenbloom.famillyspandings.common.CALENDAR_END_DATE_ARG
+import com.faigenbloom.famillyspandings.common.CALENDAR_START_DATE_ARG
+import com.faigenbloom.famillyspandings.common.CATEGORY_PHOTO
+import com.faigenbloom.famillyspandings.common.DETAILS_LIST_ARG
+import com.faigenbloom.famillyspandings.common.FloatingActionMenu
+import com.faigenbloom.famillyspandings.common.FloatingMenuState
+import com.faigenbloom.famillyspandings.common.GalleryPhotoContract
+import com.faigenbloom.famillyspandings.common.GalleryRequest
+import com.faigenbloom.famillyspandings.common.ID_ARG
+import com.faigenbloom.famillyspandings.common.PHOTO_KEY
+import com.faigenbloom.famillyspandings.common.PHOTO_REASON_ARG
+import com.faigenbloom.famillyspandings.common.QR_KEY
+import com.faigenbloom.famillyspandings.common.SPENDING_PHOTO
+import com.faigenbloom.famillyspandings.common.toJson
 import com.faigenbloom.famillyspandings.ui.budget.budgetPage
 import com.faigenbloom.famillyspandings.ui.calendar.CalendarRoute
 import com.faigenbloom.famillyspandings.ui.calendar.calendarDialog
@@ -62,15 +62,15 @@ import com.faigenbloom.famillyspandings.ui.onboarding.onboardingPage
 import com.faigenbloom.famillyspandings.ui.register.RegisterRoute
 import com.faigenbloom.famillyspandings.ui.register.registerPage
 import com.faigenbloom.famillyspandings.ui.settings.settingsPage
-import com.faigenbloom.famillyspandings.ui.spandings.detail.DetailDialogRoute
-import com.faigenbloom.famillyspandings.ui.spandings.detail.detailDialog
-import com.faigenbloom.famillyspandings.ui.spandings.edit.MessageTypes
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
-import com.faigenbloom.famillyspandings.ui.spandings.edit.spendingEditPage
-import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingsListPage
-import com.faigenbloom.famillyspandings.ui.spandings.list.spendingsListPage
-import com.faigenbloom.famillyspandings.ui.spandings.show.SpendingShowRoute
-import com.faigenbloom.famillyspandings.ui.spandings.show.spendingShowPage
+import com.faigenbloom.famillyspandings.ui.spendings.detail.DetailDialogRoute
+import com.faigenbloom.famillyspandings.ui.spendings.detail.detailDialog
+import com.faigenbloom.famillyspandings.ui.spendings.edit.MessageTypes
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SpendingEditRoute
+import com.faigenbloom.famillyspandings.ui.spendings.edit.spendingEditPage
+import com.faigenbloom.famillyspandings.ui.spendings.list.SpendingsListPage
+import com.faigenbloom.famillyspandings.ui.spendings.list.spendingsListPage
+import com.faigenbloom.famillyspandings.ui.spendings.show.SpendingShowRoute
+import com.faigenbloom.famillyspandings.ui.spendings.show.spendingShowPage
 import com.faigenbloom.famillyspandings.ui.statistics.statisticsPage
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import io.github.g00fy2.quickie.QRResult
@@ -284,7 +284,14 @@ class MainActivity : ComponentActivity() {
                                     ->
                                     withBottomNavigation = showNavigation
                                     selectedBottomNavigationIndex = index
-                                    floatingMenuState = null
+                                },
+                                options = { menuState ->
+                                    floatingMenuState = menuState
+                                },
+                                onCalendarRequested = { from, to ->
+                                    mainNavController.navigate(
+                                        CalendarRoute(startDate = from, endDate = to),
+                                    )
                                 },
                             )
                             budgetPage(

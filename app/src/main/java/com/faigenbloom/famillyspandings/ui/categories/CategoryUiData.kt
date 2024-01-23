@@ -1,6 +1,6 @@
 package com.faigenbloom.famillyspandings.ui.categories
 
-import com.faigenbloom.famillyspandings.comon.Identifiable
+import com.faigenbloom.famillyspandings.common.Identifiable
 
 data class CategoryUiData(
     override val id: String,

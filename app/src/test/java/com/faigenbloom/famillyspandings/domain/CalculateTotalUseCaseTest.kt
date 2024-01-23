@@ -1,6 +1,6 @@
 package com.faigenbloom.famillyspandings.domain
 
-import com.faigenbloom.famillyspandings.ui.spandings.edit.mockDetailsList
+import com.faigenbloom.famillyspandings.ui.spendings.edit.mockDetailsList
 import io.kotest.matchers.shouldBe
 import org.junit.Test
 

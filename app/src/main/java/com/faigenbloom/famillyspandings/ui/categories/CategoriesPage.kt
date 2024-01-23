@@ -34,7 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.BaseTextField
+import com.faigenbloom.famillyspandings.common.BaseTextField
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable

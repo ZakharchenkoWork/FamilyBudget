@@ -1,6 +1,6 @@
 package com.faigenbloom.famillyspandings.ui.categories
 
-import com.faigenbloom.famillyspandings.comon.Mapper
+import com.faigenbloom.famillyspandings.common.Mapper
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 

@@ -4,7 +4,7 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.domain.spendings.Countable
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
+import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.maps.shouldContain

@@ -2,9 +2,9 @@ package com.faigenbloom.famillyspandings
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.faigenbloom.famillyspandings.comon.toReadableMoney
-import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
+import com.faigenbloom.famillyspandings.common.toReadableMoney
+import com.faigenbloom.famillyspandings.ui.spendings.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

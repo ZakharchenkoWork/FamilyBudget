@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.domain
 
-import com.faigenbloom.famillyspandings.comon.toReadableMoney
-import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
+import com.faigenbloom.famillyspandings.common.toReadableMoney
+import com.faigenbloom.famillyspandings.ui.spendings.DetailUiData
 
 class CalculateTotalUseCase {
     operator fun invoke(

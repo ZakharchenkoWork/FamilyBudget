@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.domain.categories
 
-import com.faigenbloom.famillyspandings.comon.Identifiable
-import com.faigenbloom.famillyspandings.comon.Mapper
+import com.faigenbloom.famillyspandings.common.Identifiable
+import com.faigenbloom.famillyspandings.common.Mapper
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.repositories.CategoriesRepository
 import kotlinx.coroutines.Dispatchers

@@ -6,12 +6,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.faigenbloom.famillyspandings.comon.BaseDestination
-import com.faigenbloom.famillyspandings.comon.ID_KEY_QUERY
-import com.faigenbloom.famillyspandings.comon.OPTIONAL_ID_ARG
-import com.faigenbloom.famillyspandings.comon.OPTIONAL_ID_KEY
-import com.faigenbloom.famillyspandings.comon.PHOTO_REASON
-import com.faigenbloom.famillyspandings.comon.PHOTO_REASON_ARG
+import com.faigenbloom.famillyspandings.common.BaseDestination
+import com.faigenbloom.famillyspandings.common.ID_KEY_QUERY
+import com.faigenbloom.famillyspandings.common.OPTIONAL_ID_ARG
+import com.faigenbloom.famillyspandings.common.OPTIONAL_ID_KEY
+import com.faigenbloom.famillyspandings.common.PHOTO_REASON
+import com.faigenbloom.famillyspandings.common.PHOTO_REASON_ARG
 import java.io.File
 
 fun NavGraphBuilder.cameraPage(

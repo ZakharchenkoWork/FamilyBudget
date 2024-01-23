@@ -5,8 +5,8 @@ import com.faigenbloom.famillyspandings.MainDispatcherRule
 import com.faigenbloom.famillyspandings.datasources.MockDataSource
 import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.repositories.SpendingsRepository
-import com.faigenbloom.famillyspandings.ui.spandings.SpendingUiData
-import com.faigenbloom.famillyspandings.ui.spandings.SpendingsMapper
+import com.faigenbloom.famillyspandings.ui.spendings.SpendingUiData
+import com.faigenbloom.famillyspandings.ui.spendings.SpendingsMapper
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkStatic

@@ -1,8 +1,8 @@
 package com.faigenbloom.famillyspandings.domain.spendings.dividers
 
-import com.faigenbloom.famillyspandings.comon.toSortableDate
+import com.faigenbloom.famillyspandings.common.toSortableDate
 import com.faigenbloom.famillyspandings.domain.spendings.Divider
-import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingCategoryUiData
+import com.faigenbloom.famillyspandings.ui.spendings.list.SpendingCategoryUiData
 
 class DayGroupDivider(
     startDate: Long,

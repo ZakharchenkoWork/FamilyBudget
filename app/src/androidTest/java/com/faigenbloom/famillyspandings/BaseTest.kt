@@ -10,21 +10,21 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.faigenbloom.famillyspandings.comon.BACK_BUTTON
-import com.faigenbloom.famillyspandings.comon.MENU_FLOATING_BUTTON
-import com.faigenbloom.famillyspandings.comon.RIGHT_TOP_BAR_BUTTON
+import com.faigenbloom.famillyspandings.common.BACK_BUTTON
+import com.faigenbloom.famillyspandings.common.MENU_FLOATING_BUTTON
+import com.faigenbloom.famillyspandings.common.RIGHT_TOP_BAR_BUTTON
 import com.faigenbloom.famillyspandings.ui.categories.FIRST_CATEGORY
-import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
-import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_ADD_TO_LIST
-import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_AMOUNT_INPUT
-import com.faigenbloom.famillyspandings.ui.spandings.detail.DETAIL_DIALOG_NAME_INPUT
-import com.faigenbloom.famillyspandings.ui.spandings.detail.OK_BUTTON
-import com.faigenbloom.famillyspandings.ui.spandings.detail.SUGGESTION_TITLE
-import com.faigenbloom.famillyspandings.ui.spandings.edit.ADD_DETAIL_BUTTON
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_AMOUNT_INPUT
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_NAME_INPUT
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SPENDING_SAVE_BUTTON
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
+import com.faigenbloom.famillyspandings.ui.spendings.DetailUiData
+import com.faigenbloom.famillyspandings.ui.spendings.detail.DETAIL_DIALOG_ADD_TO_LIST
+import com.faigenbloom.famillyspandings.ui.spendings.detail.DETAIL_DIALOG_AMOUNT_INPUT
+import com.faigenbloom.famillyspandings.ui.spendings.detail.DETAIL_DIALOG_NAME_INPUT
+import com.faigenbloom.famillyspandings.ui.spendings.detail.OK_BUTTON
+import com.faigenbloom.famillyspandings.ui.spendings.detail.SUGGESTION_TITLE
+import com.faigenbloom.famillyspandings.ui.spendings.edit.ADD_DETAIL_BUTTON
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SPENDING_AMOUNT_INPUT
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SPENDING_NAME_INPUT
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SPENDING_SAVE_BUTTON
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SpendingEditRoute
 
 
 abstract class BaseTest {

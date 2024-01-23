@@ -4,8 +4,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.faigenbloom.famillyspandings.comon.BaseDestination
-import com.faigenbloom.famillyspandings.comon.QR_KEY
+import com.faigenbloom.famillyspandings.common.BaseDestination
+import com.faigenbloom.famillyspandings.common.QR_KEY
 import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.familyPage(

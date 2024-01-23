@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.datasources
 
-import com.faigenbloom.famillyspandings.comon.toLongDate
-import com.faigenbloom.famillyspandings.comon.toLongMoney
+import com.faigenbloom.famillyspandings.common.toLongDate
+import com.faigenbloom.famillyspandings.common.toLongMoney
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
@@ -9,8 +9,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntit
 
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
-import com.faigenbloom.famillyspandings.ui.spandings.detail.mockSuggestions
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
+import com.faigenbloom.famillyspandings.ui.spendings.detail.mockSuggestions
+import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
 import java.util.Currency
 import java.util.Locale
 

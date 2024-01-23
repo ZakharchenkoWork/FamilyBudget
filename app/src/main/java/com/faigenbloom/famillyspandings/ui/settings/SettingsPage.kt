@@ -27,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.BaseTextField
-import com.faigenbloom.famillyspandings.comon.StripeBar
-import com.faigenbloom.famillyspandings.comon.TopBar
+import com.faigenbloom.famillyspandings.common.BaseTextField
+import com.faigenbloom.famillyspandings.common.StripeBar
+import com.faigenbloom.famillyspandings.common.TopBar
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import java.util.Currency

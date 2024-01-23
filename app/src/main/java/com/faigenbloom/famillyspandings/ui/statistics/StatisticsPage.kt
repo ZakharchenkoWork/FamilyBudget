@@ -6,12 +6,14 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -43,11 +46,14 @@ import androidx.core.net.toUri
 import androidx.palette.graphics.Palette
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.StripeBar
-import com.faigenbloom.famillyspandings.comon.TopBar
-import com.faigenbloom.famillyspandings.comon.ui.MoneyTextTransformation
-import com.faigenbloom.famillyspandings.comon.ui.PieChart
-import com.faigenbloom.famillyspandings.comon.ui.PieChartData
+import com.faigenbloom.famillyspandings.common.StripeBar
+import com.faigenbloom.famillyspandings.common.TopBar
+import com.faigenbloom.famillyspandings.common.toReadableDate
+import com.faigenbloom.famillyspandings.common.toReadableMoney
+import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
+import com.faigenbloom.famillyspandings.common.ui.PieChart
+import com.faigenbloom.famillyspandings.common.ui.PieChartData
+import com.faigenbloom.famillyspandings.domain.statistics.FilterType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import syncronizer
 import java.util.Currency
@@ -79,169 +85,209 @@ private fun BarChartContent(state: StatisicsState) {
     val barLeftPadding = 16.dp
     val rememberScrollState: LazyListState = rememberLazyListState()
     Column {
-        TopText()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-        ) {
-            BarChart(
+        TopText(state)
+        if (state.isNoDataToShow) {
+            NoDataToShow()
+        } else {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(400.dp),
-                linesColor = MaterialTheme.colorScheme.secondary,
-                barWidth = barWidth,
-                barLeftPadding = barLeftPadding,
-                rememberScrollState = rememberScrollState,
-                bars = state.categorySummary.map {
-                    BarData(
-                        value = it.barDataValue,
-                        color = asColor(it),
-                    )
-                },
-                sideLabel = {
-                    Text(
-                        modifier = Modifier.padding(end = 4.dp),
-                        text = state.sideLabelValues[it],
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                topLabel = {
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 57.dp),
-                        text = state.currency.symbol,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    )
-                },
-                bottomRow = { innerScrollState ->
-                    LazyRow(
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                            .syncronizer(
-                                scope = rememberCoroutineScope(),
-                                fromState = rememberScrollState,
-                                toState = innerScrollState,
-                            ),
-                        state = rememberScrollState,
-                        content = {
-                            item {
-                                Spacer(
-                                    modifier = Modifier
-                                        .width(61.5.dp),
+                    .padding(vertical = 16.dp),
+            ) {
+                BarChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    linesColor = MaterialTheme.colorScheme.secondary,
+                    barWidth = barWidth,
+                    barLeftPadding = barLeftPadding,
+                    rememberScrollState = rememberScrollState,
+                    bars = state.categorySummary.map {
+                        BarData(
+                            value = it.barDataValue,
+                            color = asColor(it),
+                        )
+                    },
+                    sideLabel = {
+                        Text(
+                            modifier = Modifier.padding(end = 4.dp),
+                            text = state.sideLabelValues[it],
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    topLabel = {
+                        Text(
+                            modifier = Modifier.padding(start = 57.dp),
+                            text = state.currency.symbol,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                        )
+                    },
+                    bottomRow = { innerScrollState ->
+                        LazyRow(
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
                                 )
-                                for (index in 0 until state.categorySummary.size) {
+                                .syncronizer(
+                                    scope = rememberCoroutineScope(),
+                                    fromState = rememberScrollState,
+                                    toState = innerScrollState,
+                                ),
+                            state = rememberScrollState,
+                            content = {
+                                item {
+                                    Spacer(
+                                        modifier = Modifier.width(61.5.dp),
+                                    )
+                                    for (index in 0 until state.categorySummary.size) {
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                                )
+                                                .padding(start = barLeftPadding)
+                                                .padding(vertical = 16.dp),
+                                        ) {
+                                            Image(
+                                                modifier = Modifier
+                                                    .size(barWidth)
+                                                    .aspectRatio(1f),
+                                                painter = state.categorySummary[index].getImage(),
+                                                contentScale = ContentScale.Crop,
+                                                contentDescription = "",
+                                            )
+                                        }
+                                    }
                                     Box(
                                         modifier = Modifier
                                             .background(
                                                 color = MaterialTheme.colorScheme.primaryContainer,
                                             )
-                                            .padding(start = barLeftPadding)
                                             .padding(vertical = 16.dp),
                                     ) {
-                                        Image(
+                                        Divider(
                                             modifier = Modifier
-                                                .size(barWidth)
-                                                .aspectRatio(1f),
-                                            painter = state.categorySummary[index].getImage(),
-                                            contentScale = ContentScale.Crop,
-                                            contentDescription = "",
+                                                .width(barLeftPadding)
+                                                .height(barWidth),
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            thickness = barLeftPadding,
                                         )
                                     }
                                 }
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
-                                        )
-                                        .padding(vertical = 16.dp),
-                                ) {
-                                    Divider(
-                                        modifier = Modifier
-                                            .width(barLeftPadding)
-                                            .height(barWidth),
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        thickness = barLeftPadding,
-                                    )
-                                }
-                            }
-                        },
-                    )
-                },
-            )
+                            },
+                        )
+                    },
+                )
+            }
         }
     }
 }
 
 @Composable
-fun TopText() {
+fun TopText(state: StatisicsState) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Image(
+            modifier = Modifier
+                .size(32.dp)
+                .aspectRatio(1f)
+                .clickable {
+                    state.onDateMoved(false)
+                },
+            painter = painterResource(id = R.drawable.icon_arrow_back),
+            contentDescription = null,
+        )
         Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.this_month_spending_s_title),
-            style = MaterialTheme.typography.titleLarge,
+            text = if (state.filterType is FilterType.Daily ||
+                (state.filterType is FilterType.Range &&
+                        state.filterType.from == state.filterType.to)
+            ) {
+                stringResource(
+                    id = R.string.statistics_small_title_day,
+                    state.filterType.from.toReadableDate(),
+                )
+            } else {
+                stringResource(
+                    id = R.string.statistics_small_title_range,
+                    state.filterType.from.toReadableDate(),
+                    state.filterType.to.toReadableDate(),
+                )
+            },
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.secondaryContainer,
+        )
+        Image(
+            modifier = Modifier
+                .size(32.dp)
+                .aspectRatio(1f)
+                .clickable {
+                    state.onDateMoved(true)
+                },
+            painter = painterResource(id = R.drawable.icon_arrow_next),
+            contentDescription = null,
         )
     }
 }
 
 @Composable
 private fun PieChartContent(state: StatisicsState) {
-    TopText()
-    PieChart(
-        chartData = state.categorySummary.map {
-            PieChartData(
-                valuePercent = it.amountPercent.toFloat(),
-                color = asColor(categorySummary = it),
-            )
-        },
-        central = {
-            Image(
-                modifier = Modifier.size(90.dp),
-                painter = painterResource(id = R.drawable.icon),
-                contentDescription = "",
-            )
-        },
-        label = { paddings, value ->
-            if (value.toInt() > 1) {
-                Text(
-                    modifier = Modifier
-                        .padding(
+    TopText(state = state)
+    if (state.isNoDataToShow) {
+        NoDataToShow()
+    } else {
+        PieChart(
+            chartData = state.categorySummary.map {
+                PieChartData(
+                    valuePercent = it.amountPercent.toFloat(),
+                    color = asColor(categorySummary = it),
+                )
+            },
+            central = {
+                Image(
+                    modifier = Modifier.size(90.dp),
+                    painter = painterResource(id = R.drawable.icon),
+                    contentDescription = "",
+                )
+            },
+            label = { paddings, value ->
+                if (value.toInt() > 1) {
+                    Text(
+                        modifier = Modifier.padding(
                             paddings,
                         ),
-                    text = "${value.toInt()}%",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            }
-        },
-    )
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        text = MoneyTextTransformation(state.currency.currencyCode)
-            .filter(state.sum),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.secondaryContainer,
-    )
-    BottomRow(state)
+                        text = "${value.toInt()}%",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                }
+            },
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = MoneyTextTransformation(state.currency.currencyCode).filter(state.sum),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+        )
+        BottomRow(state)
+    }
 }
 
 @Composable
@@ -277,7 +323,8 @@ fun BottomRow(state: StatisicsState) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "${categorySummary.amount}",
+                        text = categorySummary.amount.toReadableMoney(),
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondaryContainer,
                     )
@@ -295,14 +342,31 @@ fun BottomRow(state: StatisicsState) {
 }
 
 @Composable
+fun NoDataToShow() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxSize(),
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.spendings_no_spendings_message),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+        )
+    }
+
+}
+
+
+@Composable
 fun asColor(categorySummary: CategorySummaryUi): Color {
     return categorySummary.iconUri?.let {
         asColor(iconUri = it.toUri())
     } ?: categorySummary.iconId?.let {
         asColor(icon = it)
     } ?: asColor(
-        categorySummary.name ?: categorySummary.nameId?.let { stringResource(id = it) }
-        ?: "",
+        categorySummary.name ?: categorySummary.nameId?.let { stringResource(id = it) } ?: "",
     )
 }
 
@@ -343,7 +407,7 @@ fun CategorySummaryUi.getImage(): Painter {
     } ?: painterResource(id = R.drawable.icon_photo)
 }
 
-/*@Preview
+@Preview
 @Composable
 fun StatisticsBarChartPagePreview() {
     FamillySpandingsTheme {
@@ -351,16 +415,25 @@ fun StatisticsBarChartPagePreview() {
             StatisticsPage(
                 state = StatisicsState(
                     categorySummary = mockCategoriesSummaryList,
-                    sum = 7500,
+                    sum = "7500",
                     max = 1000,
                     currency = Currency.getInstance(Locale.getDefault()),
                     isPieChartOpened = false,
                     onPageChanged = {},
+                    sideLabelValues = Array(10) { "$it+0" },
+                    filterType = FilterType.Monthly(),
+                    isNoDataToShow = false,
+                    rangeClicked = {},
+                    yearlyClicked = {},
+                    monthlyClicked = {},
+                    dailyClicked = {},
+                    onDateMoved = {},
                 ),
             )
         }
     }
-}*/
+}
+
 @Preview
 @Composable
 fun StatisticsPieChartPagePreview() {
@@ -372,9 +445,43 @@ fun StatisticsPieChartPagePreview() {
                     sum = "7500.00",
                     max = 1000,
                     currency = Currency.getInstance(Locale.getDefault()),
+                    filterType = FilterType.Monthly(),
                     isPieChartOpened = true,
+                    isNoDataToShow = false,
                     onPageChanged = {},
                     sideLabelValues = Array(10) { "$it+0" },
+                    rangeClicked = {},
+                    yearlyClicked = {},
+                    monthlyClicked = {},
+                    dailyClicked = {},
+                    onDateMoved = {},
+                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun StatisticsNoDataPagePreview() {
+    FamillySpandingsTheme {
+        Surface {
+            StatisticsPage(
+                state = StatisicsState(
+                    categorySummary = emptyList(),
+                    sum = "7500.00",
+                    max = 1000,
+                    currency = Currency.getInstance(Locale.getDefault()),
+                    filterType = FilterType.Monthly(),
+                    isPieChartOpened = true,
+                    isNoDataToShow = true,
+                    onPageChanged = {},
+                    sideLabelValues = Array(10) { "$it+0" },
+                    rangeClicked = {},
+                    yearlyClicked = {},
+                    monthlyClicked = {},
+                    dailyClicked = {},
+                    onDateMoved = {},
                 ),
             )
         }

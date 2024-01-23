@@ -5,11 +5,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
-import com.faigenbloom.famillyspandings.comon.BaseDestination
-import com.faigenbloom.famillyspandings.comon.CALENDAR_END_DATE
-import com.faigenbloom.famillyspandings.comon.CALENDAR_END_DATE_ARG
-import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE
-import com.faigenbloom.famillyspandings.comon.CALENDAR_START_DATE_ARG
+import com.faigenbloom.famillyspandings.common.BaseDestination
+import com.faigenbloom.famillyspandings.common.CALENDAR_END_DATE
+import com.faigenbloom.famillyspandings.common.CALENDAR_END_DATE_ARG
+import com.faigenbloom.famillyspandings.common.CALENDAR_START_DATE
+import com.faigenbloom.famillyspandings.common.CALENDAR_START_DATE_ARG
 
 fun NavGraphBuilder.calendarDialog(
     onDatePicked: (String, String) -> Unit,

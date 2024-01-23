@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.comon.coders.BarcodeAnalyzer
+import com.faigenbloom.famillyspandings.common.coders.BarcodeAnalyzer
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

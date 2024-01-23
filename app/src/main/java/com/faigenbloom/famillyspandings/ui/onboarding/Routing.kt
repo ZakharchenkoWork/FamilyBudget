@@ -2,7 +2,7 @@ package com.faigenbloom.famillyspandings.ui.onboarding
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.faigenbloom.famillyspandings.comon.BaseDestination
+import com.faigenbloom.famillyspandings.common.BaseDestination
 
 fun NavGraphBuilder.onboardingPage(
     onLogin: () -> Unit,

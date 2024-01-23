@@ -7,9 +7,9 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCros
 import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.repositories.DetailsRepository
-import com.faigenbloom.famillyspandings.ui.spandings.DetailUiData
-import com.faigenbloom.famillyspandings.ui.spandings.DetailsMapper
-import com.faigenbloom.famillyspandings.ui.spandings.edit.mockDetailsList
+import com.faigenbloom.famillyspandings.ui.spendings.DetailUiData
+import com.faigenbloom.famillyspandings.ui.spendings.DetailsMapper
+import com.faigenbloom.famillyspandings.ui.spendings.edit.mockDetailsList
 import io.mockk.every
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest

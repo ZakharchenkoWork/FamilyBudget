@@ -1,11 +1,11 @@
 package com.faigenbloom.famillyspandings.domain
 
-import com.faigenbloom.famillyspandings.comon.getCurrentDate
-import com.faigenbloom.famillyspandings.comon.toLongDate
+import com.faigenbloom.famillyspandings.common.getCurrentDate
+import com.faigenbloom.famillyspandings.common.toLongDate
 import com.faigenbloom.famillyspandings.domain.spendings.dividers.DayGroupDivider
 import com.faigenbloom.famillyspandings.domain.spendings.dividers.MonthGroupDivider
 import com.faigenbloom.famillyspandings.domain.spendings.dividers.YearGroupDivider
-import com.faigenbloom.famillyspandings.ui.spandings.list.mockSpendingsWithCategoryList
+import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

@@ -4,23 +4,63 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.faigenbloom.famillyspandings.comon.BaseDestination
+import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.common.BaseDestination
+import com.faigenbloom.famillyspandings.common.CALENDAR_END_DATE_ARG
+import com.faigenbloom.famillyspandings.common.CALENDAR_START_DATE_ARG
+import com.faigenbloom.famillyspandings.common.FloatingMenuState
+import com.faigenbloom.famillyspandings.common.MenuItemState
+import com.faigenbloom.famillyspandings.common.getPoppedArgument
 import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.statisticsPage(
-    bottomNavigationOptions: (
-        showNavigation: Boolean,
-        index: Int,
+    bottomNavigationOptions: (showNavigation: Boolean, index: Int) -> Unit,
+    options: (
+        menuState: FloatingMenuState,
     ) -> Unit,
+    onCalendarRequested: ((fromDate: String, toDate: String) -> Unit),
 ) {
     composable(
         route = StatisticsRoute(),
-    ) {
+    ) { backStack ->
         bottomNavigationOptions(true, 3)
-        val state by koinViewModel<StatisticsPageViewModel>().stateFlow.collectAsState()
+        val viewModel = koinViewModel<StatisticsPageViewModel>()
+        val state by viewModel.stateFlow.collectAsState()
+        viewModel.onCalendarRequested = onCalendarRequested
+        viewModel.onDateRangeChanged(
+            backStack.getPoppedArgument(CALENDAR_START_DATE_ARG, "") ?: "",
+            backStack.getPoppedArgument(CALENDAR_END_DATE_ARG, "") ?: "",
+        )
+        options(getStatistcsMenuState(state))
 
         StatisticsPage(state)
     }
+}
+
+fun getStatistcsMenuState(
+    state: StatisicsState,
+): FloatingMenuState {
+    return FloatingMenuState(
+        icon = R.drawable.icon_filter,
+        items = listOf(
+            MenuItemState(
+                label = R.string.spendings_filter_range,
+                onClick = state.rangeClicked,
+            ),
+            MenuItemState(
+                label = R.string.spendings_filter_yearly,
+                onClick = state.yearlyClicked,
+            ),
+            MenuItemState(
+                label = R.string.spendings_filter_monthly,
+                onClick = state.monthlyClicked,
+            ),
+            MenuItemState(
+                label = R.string.spendings_filter_daily,
+                onClick = state.dailyClicked,
+            ),
+        ),
+    )
 }
 
 data object StatisticsRoute : BaseDestination(route = "StatisticsRoute") {

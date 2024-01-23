@@ -10,10 +10,10 @@ import com.faigenbloom.famillyspandings.ui.family.familyPageModule
 import com.faigenbloom.famillyspandings.ui.login.loginPageModule
 import com.faigenbloom.famillyspandings.ui.register.registerPageModule
 import com.faigenbloom.famillyspandings.ui.settings.settingsPageModule
-import com.faigenbloom.famillyspandings.ui.spandings.detail.detailsModule
-import com.faigenbloom.famillyspandings.ui.spandings.edit.spendingEditModule
-import com.faigenbloom.famillyspandings.ui.spandings.list.spendingsPageModule
-import com.faigenbloom.famillyspandings.ui.spandings.show.spendingShowModule
+import com.faigenbloom.famillyspandings.ui.spendings.detail.detailsModule
+import com.faigenbloom.famillyspandings.ui.spendings.edit.spendingEditModule
+import com.faigenbloom.famillyspandings.ui.spendings.list.spendingsPageModule
+import com.faigenbloom.famillyspandings.ui.spendings.show.spendingShowModule
 import com.faigenbloom.famillyspandings.ui.statistics.statisticsPageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication

@@ -3,7 +3,7 @@ package com.faigenbloom.famillyspandings.datasources.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.faigenbloom.famillyspandings.comon.toSortableDate
+import com.faigenbloom.famillyspandings.common.toSortableDate
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity.Companion.TABLE_NAME
 import com.faigenbloom.famillyspandings.domain.spendings.Countable
 

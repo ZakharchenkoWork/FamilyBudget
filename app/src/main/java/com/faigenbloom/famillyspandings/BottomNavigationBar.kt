@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.ui.budget.BudgetRoute
 import com.faigenbloom.famillyspandings.ui.settings.SettingsRoute
-import com.faigenbloom.famillyspandings.ui.spandings.edit.SpendingEditRoute
-import com.faigenbloom.famillyspandings.ui.spandings.list.SpendingsListPage
+import com.faigenbloom.famillyspandings.ui.spendings.edit.SpendingEditRoute
+import com.faigenbloom.famillyspandings.ui.spendings.list.SpendingsListPage
 import com.faigenbloom.famillyspandings.ui.statistics.StatisticsRoute
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
