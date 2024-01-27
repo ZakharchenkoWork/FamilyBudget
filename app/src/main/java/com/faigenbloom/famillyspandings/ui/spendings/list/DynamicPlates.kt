@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
-package com.faigenbloom.famillyspandings.common
+package com.faigenbloom.famillyspandings.ui.spendings.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -18,24 +18,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
+import com.faigenbloom.famillyspandings.common.toReadableDate
+import com.faigenbloom.famillyspandings.common.toReadableMonth
+import com.faigenbloom.famillyspandings.common.toReadableYear
+import com.faigenbloom.famillyspandings.common.ui.LoadingIndicator
+import com.faigenbloom.famillyspandings.domain.spendings.DatedList
 import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
-import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
-import com.faigenbloom.famillyspandings.ui.spendings.list.SpendingCategoryUiData
-import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
-import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
 
@@ -50,7 +51,7 @@ const val THREE: Float = 3f
 
 @Composable
 fun DynamicPlatesHolder(
-    datedPatterns: List<List<Pattern<SpendingCategoryUiData>>>,
+    datedPatterns: LazyPagingItems<DatedList>,
     onSpendingClicked: (String) -> Unit,
     filterType: FilterType,
 ) {
@@ -58,40 +59,55 @@ fun DynamicPlatesHolder(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        repeat(datedPatterns.size) { dateIndex ->
-            stickyHeader {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .background(MaterialTheme.colorScheme.secondary),
-                ) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = when (filterType) {
-                            is FilterType.Daily -> datedPatterns[dateIndex][0].items[0].date.toReadableDate()
-                            is FilterType.Monthly -> datedPatterns[dateIndex][0].items[0].date.toReadableMonth()
-                            is FilterType.Yearly -> datedPatterns[dateIndex][0].items[0].date.toReadableYear()
-                        },
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                }
-            }
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp),
-                ) {
-                    for (pattern in datedPatterns[dateIndex]) {
-                        GetPlates(
-                            pattern = pattern,
-                            onSpendingClicked = onSpendingClicked,
+        if (datedPatterns.loadState.prepend is LoadState.Loading) {
+            item { LoadingIndicator() }
+        }
+        repeat(datedPatterns.itemCount) { dateIndex ->
+            datedPatterns.peek(dateIndex)?.let { datedPattern ->
+                stickyHeader(key = datedPattern.date.toReadableDate()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                            .background(MaterialTheme.colorScheme.secondary),
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text =
+                            when (filterType) {
+                                is FilterType.Daily -> datedPattern.date.toReadableDate()
+                                is FilterType.Monthly -> datedPattern.date.toReadableMonth()
+                                is FilterType.Yearly -> datedPattern.date.toReadableYear()
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
                         )
                     }
                 }
+
+                items(datedPattern.patterns.size) { patternIndex ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                    ) {
+                        GetPlates(
+                            pattern = datedPattern[patternIndex],
+                            onSpendingClicked = onSpendingClicked,
+                        )
+                    }
+                    if (patternIndex == datedPattern.patterns.size - 1) {
+                        datedPatterns[dateIndex]
+                    }
+                }
             }
+        }
+
+        if (datedPatterns.loadState.refresh is LoadState.Loading) {
+            item { LoadingIndicator() }
+        }
+        if (datedPatterns.loadState.append is LoadState.Loading) {
+            item { LoadingIndicator() }
         }
     }
 }
@@ -1108,6 +1124,7 @@ fun SpendingItem(
         }
     }
 }
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -1775,3 +1792,4 @@ fun PlateWithDuplicatesAndDatesPreview() {
         }
     }
 }
+*/

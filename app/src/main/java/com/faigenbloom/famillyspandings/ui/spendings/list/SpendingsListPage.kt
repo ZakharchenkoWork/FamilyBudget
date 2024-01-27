@@ -1,14 +1,11 @@
 package com.faigenbloom.famillyspandings.ui.spendings.list
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,14 +15,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.faigenbloom.famillyspandings.R
-import com.faigenbloom.famillyspandings.common.DynamicPlatesHolder
 import com.faigenbloom.famillyspandings.common.TopBar
+import com.faigenbloom.famillyspandings.common.isEmpty
+import com.faigenbloom.famillyspandings.common.ui.LoadingIndicator
+import com.faigenbloom.famillyspandings.domain.spendings.DatedList
 import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.ninepatch.painterResourceNinePath
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun SpendingsListPage(
@@ -43,26 +46,29 @@ fun SpendingsListPage(
                 },
             ),
         )
+        val lazyPagingItems = state.spendingsPager.collectAsLazyPagingItems()
+
         if (state.isLoading.not()) {
-            if (state.spendings.isEmpty()) {
-                EmptySpendings(modifier = modifier)
+            if (lazyPagingItems.isEmpty()) {
+                if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
+                    LoadingIndicator()
+                } else {
+                    EmptySpendings(modifier = modifier)
+                }
+
             } else {
                 DynamicPlatesHolder(
-                    datedPatterns = state.spendings,
+                    datedPatterns = lazyPagingItems,
                     filterType = state.filterType,
                     onSpendingClicked = onOpenSpending,
                 )
             }
         } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
+            LoadingIndicator()
         }
     }
 }
+
 
 @Composable
 fun EmptySpendings(
@@ -92,16 +98,15 @@ fun EmptySpendings(
     }
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun SpandingsEmptyPagePreview() {
     FamillySpandingsTheme {
-        Scaffold { _ ->
+        Surface {
             SpendingsListPage(
                 onOpenSpending = {},
                 state = SpendingsState(
-                    spendings = emptyList(),
+                    spendingsPager = flowOf(value = PagingData.empty()),
                     isPlannedListShown = false,
                     isLoading = false,
                     onPlannedSwitched = {},
@@ -112,69 +117,73 @@ fun SpandingsEmptyPagePreview() {
     }
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
 fun SpandingsPagePreview() {
     FamillySpandingsTheme {
-        Scaffold { _ ->
+        Surface {
             SpendingsListPage(
                 onOpenSpending = {},
                 state = SpendingsState(
-                    spendings =
-                    listOf(
-                        listOf(
-                            Pattern<SpendingCategoryUiData>(
-                                listOf(
-                                    PlateSizeType.SIZE_THREE_BY_ONE,
+                    spendingsPager = flowOf(
+                        value = PagingData.from(
+                            listOf(
+                                DatedList(
+                                    listOf(
+                                        Pattern<SpendingCategoryUiData>(
+                                            listOf(
+                                                PlateSizeType.SIZE_THREE_BY_ONE,
+                                            ),
+                                        ).apply {
+                                            items = listOf(
+                                                mockSpendingsWithCategoryList[0],
+                                            )
+                                        },
+                                        Pattern<SpendingCategoryUiData>(
+                                            listOf(
+                                                PlateSizeType.SIZE_TWO_BY_ONE,
+                                            ),
+                                        ).apply {
+                                            items = listOf(
+                                                mockSpendingsWithCategoryList[0],
+                                            )
+                                        },
+                                        Pattern<SpendingCategoryUiData>(
+                                            listOf(
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                            ),
+                                        ).apply {
+                                            items = listOf(
+                                                mockSpendingsWithCategoryList[0],
+                                                mockSpendingsWithCategoryList[1],
+                                                mockSpendingsWithCategoryList[2],
+                                            )
+                                        },
+                                        Pattern<SpendingCategoryUiData>(
+                                            listOf(
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                            ),
+                                        ).apply {
+                                            items = listOf(
+                                                mockSpendingsWithCategoryList[0],
+                                                mockSpendingsWithCategoryList[1],
+                                            )
+                                        },
+                                        Pattern<SpendingCategoryUiData>(
+                                            listOf(
+                                                PlateSizeType.SIZE_ONE_BY_ONE,
+                                            ),
+                                        ).apply {
+                                            items = listOf(
+                                                mockSpendingsWithCategoryList[0],
+                                            )
+                                        },
+                                    ),
                                 ),
-                            ).apply {
-                                items = listOf(
-                                    mockSpendingsWithCategoryList[0],
-                                )
-                            },
-                            Pattern<SpendingCategoryUiData>(
-                                listOf(
-                                    PlateSizeType.SIZE_TWO_BY_ONE,
-                                ),
-                            ).apply {
-                                items = listOf(
-                                    mockSpendingsWithCategoryList[0],
-                                )
-                            },
-                            Pattern<SpendingCategoryUiData>(
-                                listOf(
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                ),
-                            ).apply {
-                                items = listOf(
-                                    mockSpendingsWithCategoryList[0],
-                                    mockSpendingsWithCategoryList[1],
-                                    mockSpendingsWithCategoryList[2],
-                                )
-                            },
-                            Pattern<SpendingCategoryUiData>(
-                                listOf(
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                ),
-                            ).apply {
-                                items = listOf(
-                                    mockSpendingsWithCategoryList[0],
-                                    mockSpendingsWithCategoryList[1],
-                                )
-                            },
-                            Pattern<SpendingCategoryUiData>(
-                                listOf(
-                                    PlateSizeType.SIZE_ONE_BY_ONE,
-                                ),
-                            ).apply {
-                                items = listOf(
-                                    mockSpendingsWithCategoryList[0],
-                                )
-                            },
+                            ),
                         ),
                     ),
                     isPlannedListShown = false,

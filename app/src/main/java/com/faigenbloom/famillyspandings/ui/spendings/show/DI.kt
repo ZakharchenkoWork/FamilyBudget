@@ -6,8 +6,8 @@ import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesMapper
-import com.faigenbloom.famillyspandings.ui.spendings.DetailsMapper
-import com.faigenbloom.famillyspandings.ui.spendings.SpendingsMapper
+import com.faigenbloom.famillyspandings.ui.spendings.mappers.DetailsMapper
+import com.faigenbloom.famillyspandings.ui.spendings.mappers.SpendingsMapper
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

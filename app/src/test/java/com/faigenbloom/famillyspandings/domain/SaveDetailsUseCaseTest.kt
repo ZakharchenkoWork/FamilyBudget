@@ -8,8 +8,8 @@ import com.faigenbloom.famillyspandings.domain.details.GetSpendingDetailsByIdUse
 import com.faigenbloom.famillyspandings.domain.details.SaveDetailsUseCase
 import com.faigenbloom.famillyspandings.repositories.DetailsRepository
 import com.faigenbloom.famillyspandings.ui.spendings.DetailUiData
-import com.faigenbloom.famillyspandings.ui.spendings.DetailsMapper
 import com.faigenbloom.famillyspandings.ui.spendings.edit.mockDetailsList
+import com.faigenbloom.famillyspandings.ui.spendings.mappers.DetailsMapper
 import io.mockk.every
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest

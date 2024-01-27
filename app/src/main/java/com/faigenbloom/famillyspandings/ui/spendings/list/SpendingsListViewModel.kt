@@ -2,39 +2,31 @@ package com.faigenbloom.famillyspandings.ui.spendings.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faigenbloom.famillyspandings.common.toLocalDate
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.faigenbloom.famillyspandings.common.toLongDate
-import com.faigenbloom.famillyspandings.common.toLongMoney
 import com.faigenbloom.famillyspandings.common.toReadableDate
-import com.faigenbloom.famillyspandings.domain.categories.GetCategoryByIdUseCase
-import com.faigenbloom.famillyspandings.domain.spendings.Divider
+import com.faigenbloom.famillyspandings.domain.spendings.DatedList
 import com.faigenbloom.famillyspandings.domain.spendings.FilterType
-import com.faigenbloom.famillyspandings.domain.spendings.GetAllSpendingsUseCase
-import com.faigenbloom.famillyspandings.domain.spendings.Pattern
-import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
-import com.faigenbloom.famillyspandings.domain.spendings.dividers.DayGroupDivider
-import com.faigenbloom.famillyspandings.domain.spendings.dividers.MonthGroupDivider
-import com.faigenbloom.famillyspandings.domain.spendings.dividers.YearGroupDivider
-import com.faigenbloom.famillyspandings.ui.categories.CategoryUiData
-import com.faigenbloom.famillyspandings.ui.spendings.SpendingUiData
-import kotlinx.coroutines.Dispatchers
+import com.faigenbloom.famillyspandings.domain.spendings.SpendingsPagingSource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class SpendingsListViewModel(
-    private val getAllSpendingsUseCase: GetAllSpendingsUseCase<SpendingUiData>,
-    private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
-    private val sortPlatesUseCase: SortPlatesUseCase<SpendingCategoryUiData>,
+    private val spendingsPagingSource: SpendingsPagingSource,
 ) : ViewModel() {
-    private var lastSpendings: List<SpendingCategoryUiData> = emptyList()
-    private var spendings: List<List<Pattern<SpendingCategoryUiData>>> = emptyList()
     private var isPlanned: Boolean = false
     private var isLoading: Boolean = true
-    private var filterType: FilterType = FilterType.Daily()
+    private var filterType: FilterType = FilterType.Daily(isPlanned)
     private var fromDate: Long = filterType.from
     private var toDate: Long = filterType.to
+
+    private var spendingsPager: Flow<PagingData<DatedList>> = flowOf(PagingData.empty())
 
     var onCalendarRequested: (fromDate: String, toDate: String) -> Unit = { _, _ ->
 
@@ -44,7 +36,6 @@ class SpendingsListViewModel(
         if (fromDate.isNotBlank()) {
             this.fromDate = fromDate.toLongDate()
             this.toDate = toDate.ifBlank { fromDate }.toLongDate()
-            lastSpendings = emptyList()
             reloadData()
         }
     }
@@ -67,37 +58,34 @@ class SpendingsListViewModel(
 
     fun onDailyFiltered() {
         filterType = if (filterType is FilterType.Daily) {
-            FilterType.Daily()
+            FilterType.Daily(isPlanned)
         } else {
-            FilterType.Daily(fromDate, toDate)
+            FilterType.Daily(fromDate, toDate, isPlanned)
         }
-        lastSpendings = emptyList()
         reloadData()
     }
 
     fun onMonthlyFiltered() {
         filterType = if (filterType is FilterType.Monthly) {
-            FilterType.Monthly()
+            FilterType.Monthly(isPlanned)
         } else {
-            FilterType.Monthly(fromDate, toDate)
+            FilterType.Monthly(fromDate, toDate, isPlanned)
         }
-        lastSpendings = emptyList()
         reloadData()
     }
 
     fun onYearlyFiltered() {
         filterType = if (filterType is FilterType.Yearly) {
-            FilterType.Yearly()
+            FilterType.Yearly(isPlanned)
         } else {
-            FilterType.Yearly(fromDate, toDate)
+            FilterType.Yearly(fromDate, toDate, isPlanned)
         }
-        lastSpendings = emptyList()
         reloadData()
     }
 
     private val spendingsState: SpendingsState
         get() = SpendingsState(
-            spendings,
+            spendingsPager = spendingsPager,
             isPlannedListShown = isPlanned,
             isLoading = isLoading,
             filterType = filterType,
@@ -109,28 +97,17 @@ class SpendingsListViewModel(
         reloadData()
     }
 
-    private fun getDividerForFilter(): Divider<SpendingCategoryUiData> {
-        return when (filterType) {
-            is FilterType.Daily -> DayGroupDivider(filterType.from, filterType.to)
-            is FilterType.Monthly -> MonthGroupDivider(filterType.from, filterType.to)
-            is FilterType.Yearly -> YearGroupDivider(filterType.from, filterType.to)
-        }
-    }
-
     fun reloadData() {
         isLoading = true
         updateUI()
-        viewModelScope.launch(Dispatchers.IO) {
-            val spendingsUpdatedList = getAllSpendingsUseCase(isPlanned).map {
-                it.toSpendingData(getCategoryByIdUseCase(it.categoryId))
-            }
-            if (lastSpendings != spendingsUpdatedList) {
-                lastSpendings = spendingsUpdatedList
-                spendings = sortPlatesUseCase(getDividerForFilter(), lastSpendings)
-            }
-            isLoading = false
-            updateUI()
-        }
+        spendingsPager = Pager(
+            pagingSourceFactory = { spendingsPagingSource },
+            initialKey = filterType,
+            config = pagingConfig,
+        ).flow.cachedIn(viewModelScope)
+
+        isLoading = false
+        updateUI()
     }
 
     private fun updateUI() {
@@ -139,20 +116,16 @@ class SpendingsListViewModel(
 }
 
 data class SpendingsState(
-    val spendings: List<List<Pattern<SpendingCategoryUiData>>>,
+    val spendingsPager: Flow<PagingData<DatedList>>,
     val isPlannedListShown: Boolean,
     val filterType: FilterType,
     val isLoading: Boolean,
     val onPlannedSwitched: (() -> Unit),
 )
 
-fun SpendingUiData.toSpendingData(category: CategoryUiData): SpendingCategoryUiData {
-    return SpendingCategoryUiData(
-        id = id,
-        name = name,
-        category = category,
-        amount = amount.toLongMoney(),
-        date = date.toLocalDate(),
-        isHidden = isHidden,
-    )
-}
+val pagingConfig = PagingConfig(
+    pageSize = 1,
+    prefetchDistance = 1,
+    enablePlaceholders = false,
+    initialLoadSize = 1,
+)

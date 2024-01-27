@@ -50,7 +50,7 @@ fun NavGraphBuilder.spendingsListPage(
                 yearlyClicked = viewModel::onYearlyFiltered,
             ),
         )
-        viewModel.reloadData()
+
         SpendingsListPage(
             modifier = Modifier.padding(
                 bottom = padding.calculateBottomPadding(),

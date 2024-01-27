@@ -4,7 +4,6 @@ import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
 import com.faigenbloom.famillyspandings.domain.spendings.Countable
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
 import com.faigenbloom.famillyspandings.domain.spendings.SortPlatesUseCase
-import com.faigenbloom.famillyspandings.ui.spendings.list.mockSpendingsWithCategoryList
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.maps.shouldContain
@@ -33,7 +32,7 @@ class SortingTest {
 
     @Test
     fun `sorter can recieve array`() = runTest {
-        sorter.findPattern(sorter.preparePlatesSizes(arrayOfSpendings)) shouldBe null
+        sorter.findPattern(sorter.preparePlatesSizes(arrayOfSpendings)) shouldBe emptyList()
     }
 
     @Test
@@ -88,7 +87,7 @@ class SortingTest {
     }
 
     @Test
-    fun `sorter can prepare Array with elements With too big of a difference between Sizes`() =
+    fun `sorter can prepare Array with elements With big difference between Sizes`() =
         runTest {
             val plates = sorter.preparePlatesSizes(
                 listOf(
@@ -99,6 +98,20 @@ class SortingTest {
 
             plates shouldContain Pair(TestCountable(100), PlateSizeType.SIZE_ONE_BY_ONE)
             plates shouldContain Pair(TestCountable(300), PlateSizeType.SIZE_THREE_BY_ONE)
+        }
+
+    @Test
+    fun `sorter can prepare Array with elements With too big of a difference between Sizes`() =
+        runTest {
+            val plates = sorter.preparePlatesSizes(
+                listOf(
+                    TestCountable(100),
+                    TestCountable(900000),
+                ),
+            )
+
+            plates shouldContain Pair(TestCountable(100), PlateSizeType.SIZE_ONE_BY_ONE)
+            plates shouldContain Pair(TestCountable(900000), PlateSizeType.SIZE_THREE_BY_THREE)
         }
 
     @Test
@@ -160,7 +173,7 @@ class SortingTest {
 
             plates shouldContain Pair(TestCountable(100), PlateSizeType.SIZE_ONE_BY_ONE)
             plates shouldContain Pair(TestCountable(120), PlateSizeType.SIZE_ONE_BY_ONE)
-            plates shouldContain Pair(TestCountable(200), PlateSizeType.SIZE_THREE_BY_ONE)
+            plates shouldContain Pair(TestCountable(300), PlateSizeType.SIZE_THREE_BY_ONE)
         }
 
     @Test
@@ -221,33 +234,6 @@ class SortingTest {
             patterns[0].plates[1] shouldBe PlateSizeType.SIZE_ONE_BY_ONE
             patterns[0].items shouldContain TestCountable(100)
         }
-
-    @Test
-    fun `sorter can find TWO sdfaBY ONE with ONE BY ONE pattern`() =
-        runTest {
-            val patterns = sorter.findPattern(
-                sorter.preparePlatesSizes(
-                    listOf(
-                        mockSpendingsWithCategoryList[9],
-                        mockSpendingsWithCategoryList[10],
-                        mockSpendingsWithCategoryList[11],
-                        mockSpendingsWithCategoryList[12],
-                        mockSpendingsWithCategoryList[13],
-                    ),
-                ),
-            )
-            patterns[0].plates[0] shouldBe PlateSizeType.SIZE_THREE_BY_ONE
-            patterns[0].plates[1] shouldBe PlateSizeType.SIZE_THREE_BY_ONE
-            patterns[0].plates[2] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
-            patterns[0].plates[3] shouldBe PlateSizeType.SIZE_ONE_BY_ONE
-            patterns[1].plates[0] shouldBe PlateSizeType.SIZE_TWO_BY_ONE
-            patterns[0].items shouldContain mockSpendingsWithCategoryList[9]
-            patterns[0].items shouldContain mockSpendingsWithCategoryList[10]
-            patterns[0].items shouldContain mockSpendingsWithCategoryList[11]
-            patterns[0].items shouldContain mockSpendingsWithCategoryList[12]
-            patterns[1].items shouldContain mockSpendingsWithCategoryList[13]
-        }
-
     @Test
     fun `sorter can find TWO - ONE BY ONE pattern`() =
         runTest {

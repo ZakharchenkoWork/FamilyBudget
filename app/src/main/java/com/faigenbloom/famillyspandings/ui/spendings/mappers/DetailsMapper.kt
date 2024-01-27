@@ -1,10 +1,11 @@
-package com.faigenbloom.famillyspandings.ui.spendings
+package com.faigenbloom.famillyspandings.ui.spendings.mappers
 
 import com.faigenbloom.famillyspandings.common.Mapper
 import com.faigenbloom.famillyspandings.common.toLongMoney
 import com.faigenbloom.famillyspandings.common.toNormalizedMoney
 import com.faigenbloom.famillyspandings.common.toReadableMoney
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.famillyspandings.ui.spendings.DetailUiData
 
 class DetailsMapper : Mapper<DetailUiData, SpendingDetailEntity>() {
     override fun forUI(entity: SpendingDetailEntity): DetailUiData {

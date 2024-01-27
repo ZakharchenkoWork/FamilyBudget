@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.datasources
 
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.DateRange
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
@@ -42,6 +43,14 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
         return appDatabase.spendingsDao().getSpendings(isPlanned)
+    }
+
+    override suspend fun getSpendingsByDate(
+        isPlanned: Boolean,
+        from: Long,
+        to: Long,
+    ): List<SpendingEntity> {
+        return appDatabase.spendingsDao().getSpendingsByDate(isPlanned, from, to)
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
@@ -124,5 +133,9 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun changeCategoryHidden(id: String, isHidden: Boolean) {
         appDatabase.categoriesDao().hideCategory(id, isHidden)
+    }
+
+    override suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange {
+        return appDatabase.spendingsDao().getSpendingsMinMaxDate(planned)
     }
 }

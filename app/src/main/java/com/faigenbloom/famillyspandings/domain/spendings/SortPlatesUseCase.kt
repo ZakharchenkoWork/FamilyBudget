@@ -1,7 +1,7 @@
 package com.faigenbloom.famillyspandings.domain.spendings
 
 import java.util.SortedMap
-
+const val STEP_BETWEEN_VALUES = 1.5
 class SortPlatesUseCase<T : Countable>(
     private val patterns: List<Pattern<T>> =
         listOf(
@@ -182,9 +182,9 @@ class SortPlatesUseCase<T : Countable>(
             for (item in sortedData) {
                 val value = item.getSortableValue()
 
-                while (value >= lastValue * 1.5) {
+                while (value >= lastValue * STEP_BETWEEN_VALUES && lastPlateSizeIndex < PlateSizeType.values().size - 1) {
                     lastPlateSizeIndex++
-                    lastValue = value
+                    lastValue = (lastValue * STEP_BETWEEN_VALUES).toLong()
                 }
                 result[item] = PlateSizeType.values()[lastPlateSizeIndex]
             }
@@ -278,7 +278,6 @@ abstract class Divider<T : Countable>(
         list: List<T>,
     ): List<List<T>>
 }
-
 data class Pattern<T>(val plates: List<PlateSizeType>) {
     var items: List<T> = emptyList()
 }

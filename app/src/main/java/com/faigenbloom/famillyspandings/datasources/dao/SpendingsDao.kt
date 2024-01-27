@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.faigenbloom.famillyspandings.datasources.entities.DateRange
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
@@ -96,17 +97,35 @@ interface SpendingsDao {
                 "WHERE ${SpendingDetailEntity.COLUMN_NAME} = :name " +
                 "AND ${SpendingDetailEntity.COLUMN_AMOUNT} = :amount",
     )
-    fun getSpendingDetailDuplicate(name: String, amount: Long): SpendingDetailEntity?
+    suspend fun getSpendingDetailDuplicate(name: String, amount: Long): SpendingDetailEntity?
 
     @Query(
         "DELETE FROM ${SpendingEntity.TABLE_NAME} WHERE " +
                 "${SpendingEntity.COLUMN_ID} = :id",
     )
-    fun deleteSpending(id: String)
+    suspend fun deleteSpending(id: String)
 
     @Query(
         "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
                 "WHERE ${SpendingEntity.COLUMN_CATEGORY} = :id ",
     )
-    fun getSpendingsByCategory(id: String): List<SpendingEntity>
+    suspend fun getSpendingsByCategory(id: String): List<SpendingEntity>
+
+    @Query(
+        "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned " +
+                "AND ${SpendingEntity.COLUMN_DATE} >= :from " +
+                "AND ${SpendingEntity.COLUMN_DATE} <= :to",
+    )
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
+
+    @Query(
+        "SELECT " +
+                "MIN(${SpendingEntity.COLUMN_DATE}) AS ${DateRange.COLUMN_MIN}," +
+                " MAX(${SpendingEntity.COLUMN_DATE}) AS ${DateRange.COLUMN_MAX} " +
+                "FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned",
+    )
+    suspend fun getSpendingsMinMaxDate(isPlanned: Boolean): DateRange
 }
+

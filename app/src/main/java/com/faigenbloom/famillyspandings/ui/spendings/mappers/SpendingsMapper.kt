@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.ui.spendings
+package com.faigenbloom.famillyspandings.ui.spendings.mappers
 
 import androidx.core.net.toUri
 import com.faigenbloom.famillyspandings.common.Mapper
@@ -7,6 +7,7 @@ import com.faigenbloom.famillyspandings.common.toLongMoney
 import com.faigenbloom.famillyspandings.common.toReadableDate
 import com.faigenbloom.famillyspandings.common.toReadableMoney
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
+import com.faigenbloom.famillyspandings.ui.spendings.SpendingUiData
 
 class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
     override fun forUI(entity: SpendingEntity): SpendingUiData {

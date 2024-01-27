@@ -12,6 +12,12 @@ class SpendingsRepository(
     suspend fun getSpendings(isPlanned: Boolean) =
         dataSource.getSpendings(isPlanned)
 
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long) =
+        dataSource.getSpendingsByDate(isPlanned, from, to)
+
+    suspend fun getSpendingsMinMaxDate(isPlanned: Boolean) =
+        dataSource.getSpendingsMinMaxDate(isPlanned)
+
 
     suspend fun markSpendingPurchased(spendingId: String) =
         dataSource.updatePlanned(spendingId, false)

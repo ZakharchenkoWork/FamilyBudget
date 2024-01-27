@@ -4,6 +4,7 @@ import com.faigenbloom.famillyspandings.common.toLongDate
 import com.faigenbloom.famillyspandings.common.toLongMoney
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.DateRange
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 
@@ -66,6 +67,14 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
         return spendingsEntity
+    }
+
+    override suspend fun getSpendingsByDate(
+        isPlanned: Boolean,
+        from: Long,
+        to: Long,
+    ): List<SpendingEntity> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getSpending(id: String): SpendingEntity {
@@ -156,6 +165,10 @@ class MockDataSource : BaseDataSource {
     override suspend fun changeCategoryHidden(id: String, isHidden: Boolean) {
         val index = categories.indexOfFirst { it.id == id }
         categories[index] = categories[index].copy(isHidden = isHidden)
+    }
+
+    override suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange {
+        TODO("Not yet implemented")
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

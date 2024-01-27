@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.datasources
 
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
+import com.faigenbloom.famillyspandings.datasources.entities.DateRange
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
@@ -22,6 +23,7 @@ interface BaseDataSource {
 
     suspend fun saveSpending(spending: SpendingEntity)
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getBudgetData(): BudgetEntity
     suspend fun saveBudgetData(budget: BudgetEntity)
@@ -45,4 +47,5 @@ interface BaseDataSource {
     suspend fun getSpendingsByCategory(id: String): List<SpendingEntity>
     suspend fun deleteCategory(id: String)
     suspend fun changeCategoryHidden(id: String, isHidden: Boolean)
+    suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange
 }
