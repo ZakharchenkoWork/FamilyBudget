@@ -30,6 +30,7 @@ import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.common.SimpleTextField
 import com.faigenbloom.famillyspandings.common.StripeBar
 import com.faigenbloom.famillyspandings.common.TopBar
+import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -48,11 +49,22 @@ fun BudgetPage(
             isLeftSelected = state.isMyBudgetOpened,
             onSelectionChanged = state.onPageChanged,
         )
-        Screen(
-            state = state,
-            onAddSpendingClicked = onAddSpendingClicked,
-            onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
-        )
+        AnimateTabs(isLeftTab = state.isMyBudgetOpened) { isMyBudgetOpened ->
+            if (isMyBudgetOpened) {
+                Screen(
+                    state = state,
+                    onAddSpendingClicked = onAddSpendingClicked,
+                    onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
+                )
+            } else {
+                Screen(
+                    state = state,
+                    onAddSpendingClicked = onAddSpendingClicked,
+                    onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
+                )
+            }
+        }
+
     }
 }
 

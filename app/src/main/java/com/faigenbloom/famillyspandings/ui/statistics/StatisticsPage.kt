@@ -50,6 +50,7 @@ import com.faigenbloom.famillyspandings.common.StripeBar
 import com.faigenbloom.famillyspandings.common.TopBar
 import com.faigenbloom.famillyspandings.common.toReadableDate
 import com.faigenbloom.famillyspandings.common.toReadableMoney
+import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
 import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.common.ui.PieChart
 import com.faigenbloom.famillyspandings.common.ui.PieChartData
@@ -71,10 +72,12 @@ fun StatisticsPage(state: StatisicsState) {
             isLeftSelected = state.isPieChartOpened,
             onSelectionChanged = state.onPageChanged,
         )
-        if (state.isPieChartOpened) {
-            PieChartContent(state)
-        } else {
-            BarChartContent(state)
+        AnimateTabs(isLeftTab = state.isPieChartOpened) { isPieChartOpened ->
+            if (isPieChartOpened) {
+                PieChartContent(state)
+            } else {
+                BarChartContent(state)
+            }
         }
     }
 }

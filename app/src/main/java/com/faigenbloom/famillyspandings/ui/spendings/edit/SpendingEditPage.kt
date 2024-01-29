@@ -36,7 +36,7 @@ import com.faigenbloom.famillyspandings.common.BaseTextField
 import com.faigenbloom.famillyspandings.common.StripeBar
 import com.faigenbloom.famillyspandings.common.TextFieldType
 import com.faigenbloom.famillyspandings.common.TopBar
-import com.faigenbloom.famillyspandings.common.ui.AnimateEnter
+import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
 import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesPage
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesState
@@ -82,25 +82,20 @@ fun SpendingEditPage(
             onSelectionChanged = state.onPageChanged,
         )
 
-        AnimateEnter(
-            visible = state.isCategoriesOpened,
-            openFromLeft = true,
-        ) {
-            CategoriesPage(
-                state = categoryState,
-                onCategoryPhotoRequest = onCategoryPhotoRequest,
-            )
-        }
-        AnimateEnter(
-            visible = state.isCategoriesOpened.not(),
-            openFromLeft = false,
-        ) {
-            Information(
-                state = state,
-                onPhotoRequest = onPhotoRequest,
-                onCalendarOpened = onCalendarOpened,
-                onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
-            )
+        AnimateTabs(isLeftTab = state.isCategoriesOpened) { isCategoriesOpened ->
+            if (isCategoriesOpened) {
+                CategoriesPage(
+                    state = categoryState,
+                    onCategoryPhotoRequest = onCategoryPhotoRequest,
+                )
+            } else {
+                Information(
+                    state = state,
+                    onPhotoRequest = onPhotoRequest,
+                    onCalendarOpened = onCalendarOpened,
+                    onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
+                )
+            }
         }
     }
 }
