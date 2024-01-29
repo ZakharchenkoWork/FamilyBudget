@@ -68,13 +68,16 @@ fun FloatingActionMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
         ) {
             floatingState.items?.let { items ->
-
                 FilterFabMenu(
                     items = items,
                     visible = filterFabState == FilterFabState.EXPANDED,
                 )
             }
-
+            floatingState.alwaysVisibleButton?.let { item ->
+                MenuItem(
+                    state = item,
+                )
+            }
             FilterFab(
                 state = filterFabState,
                 icon = floatingState.icon,
@@ -249,6 +252,7 @@ data class FloatingMenuState(
     val icon: Int,
     val items: List<MenuItemState>? = null,
     val onMenuClick: (() -> Unit)? = null,
+    val alwaysVisibleButton: MenuItemState? = null,
 )
 
 data class MenuItemState(

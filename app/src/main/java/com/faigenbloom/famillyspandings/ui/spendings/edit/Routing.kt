@@ -149,18 +149,7 @@ fun getCategoryMenuState(categoryState: CategoriesState): FloatingMenuState {
 fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
     return FloatingMenuState(
         icon = R.drawable.icon_options,
-        listOf(
-            MenuItemState(
-                label = R.string.button_save,
-                icon = if (state.isOkActive) {
-                    R.drawable.icon_ok
-                } else {
-                    R.drawable.icon_ok_inactive
-                },
-                semantics = SPENDING_SAVE_BUTTON,
-                onClick = state.onSave,
-
-                ),
+        items = listOf(
             MenuItemState(
                 label = if (state.isPlanned) {
                     R.string.button_spent
@@ -198,6 +187,16 @@ fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
                 icon = R.drawable.icon_duplicate,
                 onClick = state.onDuplicate,
             ),
+        ),
+        alwaysVisibleButton = MenuItemState(
+            label = R.string.button_save,
+            icon = if (state.isOkActive) {
+                R.drawable.icon_ok
+            } else {
+                R.drawable.icon_ok_inactive
+            },
+            semantics = SPENDING_SAVE_BUTTON,
+            onClick = state.onSave,
         ),
     )
 }
