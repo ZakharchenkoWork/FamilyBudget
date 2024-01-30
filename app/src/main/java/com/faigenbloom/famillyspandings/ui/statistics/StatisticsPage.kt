@@ -248,48 +248,50 @@ fun TopText(state: StatisicsState) {
 
 @Composable
 private fun PieChartContent(state: StatisicsState) {
-    TopText(state = state)
-    if (state.isNoDataToShow) {
-        NoDataToShow()
-    } else {
-        PieChart(
-            chartData = state.categorySummary.map {
-                PieChartData(
-                    valuePercent = it.amountPercent.toFloat(),
-                    color = asColor(categorySummary = it),
-                )
-            },
-            central = {
-                Image(
-                    modifier = Modifier.size(90.dp),
-                    painter = painterResource(id = R.drawable.icon),
-                    contentDescription = "",
-                )
-            },
-            label = { paddings, value ->
-                if (value.toInt() > 1) {
-                    Text(
-                        modifier = Modifier.padding(
-                            paddings,
-                        ),
-                        text = "${value.toInt()}%",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.secondary,
+    Column {
+        TopText(state = state)
+        if (state.isNoDataToShow) {
+            NoDataToShow()
+        } else {
+            PieChart(
+                chartData = state.categorySummary.map {
+                    PieChartData(
+                        valuePercent = it.amountPercent.toFloat(),
+                        color = asColor(categorySummary = it),
                     )
-                }
-            },
-        )
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = MoneyTextTransformation(state.currency.currencyCode).filter(state.sum),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.secondaryContainer,
-        )
-        BottomRow(state)
+                },
+                central = {
+                    Image(
+                        modifier = Modifier.size(90.dp),
+                        painter = painterResource(id = R.drawable.icon),
+                        contentDescription = "",
+                    )
+                },
+                label = { paddings, value ->
+                    if (value.toInt() > 1) {
+                        Text(
+                            modifier = Modifier.padding(
+                                paddings,
+                            ),
+                            text = "${value.toInt()}%",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    }
+                },
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                text = MoneyTextTransformation(state.currency.currencyCode).filter(state.sum),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+            )
+            BottomRow(state)
+        }
     }
 }
 
