@@ -25,5 +25,9 @@ class SpendingsRepository(
     suspend fun deleteSpending(spendingId: String) {
         dataSource.deleteSpending(spendingId)
     }
+
+    suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {
+        return dataSource.getSpendingsTotalSpent(planned, from, to)
+    }
 }
 

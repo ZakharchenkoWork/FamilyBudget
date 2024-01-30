@@ -127,5 +127,14 @@ interface SpendingsDao {
                 "WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned",
     )
     suspend fun getSpendingsMinMaxDate(isPlanned: Boolean): DateRange
+
+    @Query(
+        "SELECT SUM(${SpendingEntity.COLUMN_AMOUNT}) " +
+                "FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned " +
+                "AND ${SpendingEntity.COLUMN_DATE} >= :from " +
+                "AND ${SpendingEntity.COLUMN_DATE} <= :to",
+    )
+    suspend fun getSpendingsTotalSpent(isPlanned: Boolean, from: Long, to: Long): Long
 }
 

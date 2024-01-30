@@ -8,5 +8,6 @@ val repositoryModule = module {
     singleOf(::SpendingsRepository)
     singleOf(::CategoriesRepository)
     singleOf(::CurrencyRepository)
+    singleOf(::BudgetPageRepository)
 }
 

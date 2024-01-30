@@ -29,9 +29,13 @@ import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.common.SimpleTextField
 import com.faigenbloom.famillyspandings.common.StripeBar
+import com.faigenbloom.famillyspandings.common.TextFieldType
 import com.faigenbloom.famillyspandings.common.TopBar
 import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
+import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun BudgetPage(
@@ -113,7 +117,7 @@ private fun Screen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 SimpleTextField(
-                    text = state.familyTotal,
+                    text = state.total,
                     label = stringResource(R.string.budget_label_total),
                     onValueChange = state.onTotalChanged,
                     textStyle = MaterialTheme.typography.titleLarge.copy(
@@ -122,7 +126,7 @@ private fun Screen(
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = "UAH",
+                    text = state.currency.currencyCode,
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleLarge,
                 )
@@ -139,16 +143,19 @@ private fun Screen(
         DataLine(
             label = stringResource(id = R.string.budget_planned_budget),
             amount = state.plannedBudget,
+            currency = state.currency,
             onValueChanged = state.onPlannedBudgetChanged,
         )
         DataLine(
             label = stringResource(R.string.budget_spent),
             amount = state.spent,
+            currency = state.currency,
             onPlusClicked = onAddSpendingClicked,
         )
         DataLine(
             label = stringResource(R.string.budget_planned_spendings),
             amount = state.plannedSpendings,
+            currency = state.currency,
             onPlusClicked = onAddPlannedSpendingClicked,
         )
     }
@@ -158,6 +165,7 @@ private fun Screen(
 private fun DataLine(
     label: String,
     amount: String,
+    currency: Currency,
     onValueChanged: ((String) -> Unit)? = null,
     onPlusClicked: (() -> Unit)? = null,
 ) {
@@ -189,6 +197,7 @@ private fun DataLine(
                     ),
                 text = amount,
                 label = stringResource(R.string.spending_name),
+                textFieldType = TextFieldType.Money(currency),
                 onValueChange = onValueChanged,
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -203,7 +212,8 @@ private fun DataLine(
                     )
                     .weight(1f)
                     .fillMaxWidth(),
-                text = amount,
+                text = MoneyTextTransformation(currency.currencyCode)
+                    .filter(amount),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -227,14 +237,15 @@ fun StatisticsPagePreview() {
         Surface {
             BudgetPage(
                 state = BudgetState(
-                    familyTotal = "4755",
+                    total = "4755",
                     isMyBudgetOpened = true,
                     onPageChanged = { },
-                    plannedBudget = "20000 UAH",
-                    spent = "15245 UAH",
-                    plannedSpendings = "3100 UAH",
+                    plannedBudget = "20000",
+                    spent = "15245",
+                    plannedSpendings = "3100",
                     onPlannedBudgetChanged = { },
                     onTotalChanged = { },
+                    currency = Currency.getInstance(Locale.getDefault()),
                 ),
                 onAddSpendingClicked = { },
                 onAddPlannedSpendingClicked = { },

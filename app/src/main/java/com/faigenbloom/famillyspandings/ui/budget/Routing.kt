@@ -19,7 +19,7 @@ fun NavGraphBuilder.budgetPage(
         route = BudgetRoute(),
     ) {
         bottomNavigationOptions(true, 1)
-        val state by koinViewModel<BudgetPageViewModel>().budgetStateFlow.collectAsState()
+        val state by koinViewModel<BudgetPageViewModel>().stateFlow.collectAsState()
 
         BudgetPage(
             state = state,

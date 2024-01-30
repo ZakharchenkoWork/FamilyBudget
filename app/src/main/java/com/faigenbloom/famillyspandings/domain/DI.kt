@@ -2,6 +2,7 @@ package com.faigenbloom.famillyspandings.domain
 
 import com.faigenbloom.famillyspandings.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.famillyspandings.domain.spendings.DeleteSpendingUseCase
+import com.faigenbloom.famillyspandings.domain.spendings.GetSpentTotalUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -13,5 +14,6 @@ val domainModule = module {
     singleOf(::DeleteSpendingUseCase)
     singleOf(::DeleteCategoryUseCase)
     singleOf(::GetChosenCurrencyUseCase)
+    singleOf(::GetSpentTotalUseCase)
 }
 

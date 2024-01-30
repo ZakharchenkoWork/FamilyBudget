@@ -1,4 +1,4 @@
-package com.faigenbloom.famillyspandings.ui.budget
+package com.faigenbloom.famillyspandings.repositories
 
 import com.faigenbloom.famillyspandings.datasources.BaseDataSource
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity

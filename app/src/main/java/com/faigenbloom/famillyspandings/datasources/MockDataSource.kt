@@ -171,6 +171,10 @@ class MockDataSource : BaseDataSource {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {
+        return 2000
+    }
+
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
         categories.add(categoryEntity)
     }

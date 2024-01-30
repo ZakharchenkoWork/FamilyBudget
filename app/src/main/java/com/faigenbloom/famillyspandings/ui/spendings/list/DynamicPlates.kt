@@ -18,15 +18,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.common.toReadableDate
@@ -37,8 +41,11 @@ import com.faigenbloom.famillyspandings.domain.spendings.DatedList
 import com.faigenbloom.famillyspandings.domain.spendings.FilterType
 import com.faigenbloom.famillyspandings.domain.spendings.Pattern
 import com.faigenbloom.famillyspandings.domain.spendings.PlateSizeType
+import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.famillyspandings.ui.theme.hint
 import com.faigenbloom.famillyspandings.ui.theme.transparent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 const val ONE: Float = 1f
 const val ONE_THIRD: Float = 0.33333334f
@@ -1124,7 +1131,18 @@ fun SpendingItem(
         }
     }
 }
-/*
+
+fun asPage(patterns: List<Pattern<SpendingCategoryUiData>>): Flow<PagingData<DatedList>> {
+    return flowOf(
+        value = PagingData.from(
+            listOf(
+                DatedList(
+                    patterns,
+                ),
+            ),
+        ),
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -1132,7 +1150,7 @@ fun Plate_3x3_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1144,7 +1162,7 @@ fun Plate_3x3_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = { },
                 filterType = FilterType.Daily(),
             )
@@ -1158,7 +1176,7 @@ fun Plate_3x2_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1170,7 +1188,7 @@ fun Plate_3x2_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1184,7 +1202,7 @@ fun Plate_3x2_3x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1198,7 +1216,7 @@ fun Plate_3x2_3x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1212,7 +1230,7 @@ fun Plate_3x2_2x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1228,7 +1246,7 @@ fun Plate_3x2_2x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1242,7 +1260,7 @@ fun Plate_2x2_3x1_2x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1258,7 +1276,7 @@ fun Plate_2x2_3x1_2x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1272,7 +1290,7 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1290,7 +1308,7 @@ fun Plate_2x2_3x1_1x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1304,7 +1322,7 @@ fun Plate_2x2_2x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1318,7 +1336,7 @@ fun Plate_2x2_2x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1332,7 +1350,7 @@ fun Plate_2x2_1x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1348,7 +1366,7 @@ fun Plate_2x2_1x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1362,7 +1380,7 @@ fun Plate_2x2_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1376,7 +1394,7 @@ fun Plate_2x2_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1390,7 +1408,7 @@ fun Plate_3x1_3x1_3x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1406,7 +1424,7 @@ fun Plate_3x1_3x1_3x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1420,7 +1438,7 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1438,7 +1456,7 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1452,7 +1470,7 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1470,7 +1488,7 @@ fun Plate_3x1_2x1_2x1_2x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1484,7 +1502,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1504,7 +1522,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1518,7 +1536,7 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1536,7 +1554,7 @@ fun Plate_3x1_2x1_2x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1550,7 +1568,7 @@ fun Plate_2x1_2x1_2x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1566,7 +1584,7 @@ fun Plate_2x1_2x1_2x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1580,7 +1598,7 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1598,7 +1616,7 @@ fun Plate_2x1_2x1_1x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1612,7 +1630,7 @@ fun Plate_2x1_2x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1628,7 +1646,7 @@ fun Plate_2x1_2x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1642,7 +1660,7 @@ fun Plate_3x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1654,7 +1672,7 @@ fun Plate_3x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1668,7 +1686,7 @@ fun Plate_2x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1682,7 +1700,7 @@ fun Plate_2x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1696,7 +1714,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     listOf(
                         Pattern<SpendingCategoryUiData>(
                             listOf(
@@ -1750,7 +1768,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
                             )
                         },
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )
@@ -1758,6 +1776,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun PlateWithDuplicatesAndDatesPreview() {
@@ -1765,7 +1784,7 @@ fun PlateWithDuplicatesAndDatesPreview() {
     FamillySpandingsTheme {
         Surface {
             DynamicPlatesHolder(
-                listOf(
+                asPage(
                     sorter.findPattern(
                         sorter.preparePlatesSizes(
                             listOf(
@@ -1785,7 +1804,7 @@ fun PlateWithDuplicatesAndDatesPreview() {
                             ),
                         ),
                     ),
-                ),
+                ).collectAsLazyPagingItems(),
                 onSpendingClicked = {},
                 filterType = FilterType.Daily(),
             )

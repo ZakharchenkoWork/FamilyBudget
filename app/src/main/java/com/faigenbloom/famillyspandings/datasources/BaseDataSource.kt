@@ -48,4 +48,5 @@ interface BaseDataSource {
     suspend fun deleteCategory(id: String)
     suspend fun changeCategoryHidden(id: String, isHidden: Boolean)
     suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange
+    suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long
 }

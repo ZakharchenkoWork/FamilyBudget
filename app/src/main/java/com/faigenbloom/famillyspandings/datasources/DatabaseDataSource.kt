@@ -138,4 +138,8 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange {
         return appDatabase.spendingsDao().getSpendingsMinMaxDate(planned)
     }
+
+    override suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {
+        return appDatabase.spendingsDao().getSpendingsTotalSpent(planned, from, to)
+    }
 }
