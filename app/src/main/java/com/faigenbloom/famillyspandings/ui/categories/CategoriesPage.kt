@@ -35,19 +35,25 @@ import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberImagePainter
 import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.common.BaseTextField
+import com.faigenbloom.famillyspandings.common.ui.AnimateError
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 
 @Composable
 fun CategoriesPage(
     state: CategoriesState,
+    onCategoryFinished: () -> Unit,
     onCategoryPhotoRequest: (id: String?) -> Unit,
 ) {
-
     Box {
         LazyColumn(
             content = {
                 items(state.categoriesList.size) { itemIndex ->
-                    Category(state, itemIndex, onCategoryPhotoRequest)
+                    Category(
+                        state = state,
+                        itemIndex = itemIndex,
+                        onCategoryFinished = onCategoryFinished,
+                        onCategoryPhotoRequest = onCategoryPhotoRequest,
+                    )
                 }
             },
         )
@@ -59,76 +65,84 @@ fun CategoriesPage(
 fun Category(
     state: CategoriesState,
     itemIndex: Int,
+    onCategoryFinished: () -> Unit,
     onCategoryPhotoRequest: (id: String) -> Unit,
 ) {
     val item = state.categoriesList[itemIndex]
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .background(
-                color = if (state.selectedIndex == itemIndex) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.tertiary
-                },
-            )
-            .clickable {
-                state.onSelectionChanged(itemIndex)
-            }
-            .semantics {
-                contentDescription = if (itemIndex == 0) FIRST_CATEGORY else ""
-            },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
+    AnimateError(
+        animationTrigger = state.isCategoryError,
+        onFinished = onCategoryFinished,
+    ) { backgroundColor ->
+        Row(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .size(64.dp)
-                .aspectRatio(1f)
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .background(
+                    color = if (state.selectedIndex == itemIndex) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        backgroundColor
+                    },
+                )
                 .clickable {
-                    onCategoryPhotoRequest(item.id)
+                    state.onSelectionChanged(itemIndex)
+                }
+                .semantics {
+                    contentDescription = if (itemIndex == 0) FIRST_CATEGORY else ""
                 },
-            contentScale = ContentScale.Crop,
-            painter =
-            item.iconUri?.let {
-                rememberImagePainter(it)
-            } ?: item.iconId?.let {
-                painterResource(id = it)
-            } ?: painterResource(id = R.drawable.icon_photo),
-            contentDescription = null,
-        )
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(1f),
-            text = item.nameId?.let {
-                stringResource(id = it)
-            } ?: item.name ?: "",
-            color = MaterialTheme.colorScheme.secondary,
-        )
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .size(64.dp)
+                    .aspectRatio(1f)
+                    .clickable {
+                        if (item.iconId == null) {
+                            onCategoryPhotoRequest(item.id)
+                        }
+                    },
+                contentScale = ContentScale.Crop,
+                painter =
+                item.iconUri?.let {
+                    rememberImagePainter(it)
+                } ?: item.iconId?.let {
+                    painterResource(id = it)
+                } ?: painterResource(id = R.drawable.icon_photo),
+                contentDescription = null,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(1f),
+                text = item.nameId?.let {
+                    stringResource(id = it)
+                } ?: item.name ?: "",
+                color = MaterialTheme.colorScheme.secondary,
+            )
 
-        if (state.selectedIndex == itemIndex) {
-            if (item.isDefault.not()) {
+            if (state.selectedIndex == itemIndex) {
+                if (item.isDefault.not()) {
+                    Image(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .clickable {
+                                state.onCategoryDialogVisibilityChanged(itemIndex)
+                            }
+                            .semantics {
+                                contentDescription = EDIT_CATEGORY_BUTTON
+                            },
+                        painter = painterResource(id = R.drawable.icon_edit),
+                        contentDescription = null,
+                    )
+                }
                 Image(
                     modifier = Modifier
-                        .padding(end = 16.dp)
-                        .clickable {
-                            state.onCategoryDialogVisibilityChanged(itemIndex)
-                        }
-                        .semantics {
-                            contentDescription = EDIT_CATEGORY_BUTTON
-                        },
-                    painter = painterResource(id = R.drawable.icon_edit),
+                        .padding(end = 16.dp),
+                    painter = painterResource(id = R.drawable.icon_ok),
                     contentDescription = null,
                 )
             }
-            Image(
-                modifier = Modifier
-                    .padding(end = 16.dp),
-                painter = painterResource(id = R.drawable.icon_ok),
-                contentDescription = null,
-            )
         }
     }
 }
@@ -264,13 +278,14 @@ fun AddNewCategoryPreview() {
                     onNewCategoryNameChanged = {},
                     isSaveCategoryVisible = true,
                     onNewCategorySaved = { },
-                    onCategoryPhotoUriChanged = { },
+                    onCategoryPhotoUriChanged = {},
                     categoryPhotoChooserId = null,
                     newCategoryPhoto = null,
                     isEditCategoryShown = true,
-                    onCategoryDialogVisibilityChanged = { },
-
-                    onDeleteCategory = { },
+                    onCategoryDialogVisibilityChanged = {},
+                    onDeleteCategory = {},
+                    isCategoryError = false,
+                    onCategoryError = {},
                 ),
                 onCategoryPhotoRequest = {},
             )
@@ -299,8 +314,11 @@ fun SpendingEditPagePreview() {
                     onCategoryDialogVisibilityChanged = { },
                     categoryId = null,
                     onDeleteCategory = { },
+                    isCategoryError = false,
+                    onCategoryError = { },
                 ),
                 onCategoryPhotoRequest = {},
+                onCategoryFinished = {},
             )
         }
     }

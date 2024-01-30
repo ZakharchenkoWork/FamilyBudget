@@ -26,6 +26,7 @@ class CategoriesViewModel(
     private var categoryId: String? = null
     private var newCategoryName: String = ""
     private var newCategoryPhoto: Uri? = null
+    private var isCategoryError: Boolean = false
     private var categoryPhotoChooserId: String? = null
     private var isSaveCategoryVisible: Boolean = false
     private var isEditCategoryShown: Boolean = false
@@ -35,6 +36,11 @@ class CategoriesViewModel(
     private fun onCategoryPhotoUriChanged(uri: Uri) {
         newCategoryPhoto = uri
         isSaveCategoryVisible = true
+        updateUI()
+    }
+
+    private fun onCategoryError(isError: Boolean) {
+        isCategoryError = isError
         updateUI()
     }
 
@@ -112,6 +118,8 @@ class CategoriesViewModel(
             isSaveCategoryVisible = isSaveCategoryVisible,
             categoryPhotoChooserId = categoryPhotoChooserId,
             isEditCategoryShown = isEditCategoryShown,
+            isCategoryError = isCategoryError,
+            onCategoryError = ::onCategoryError,
             onSelectionChanged = ::onSelectionChanged,
             onNewCategoryNameChanged = ::onNewCategoryNameChanged,
             onNewCategorySaved = ::onNewCategorySaved,
@@ -156,7 +164,9 @@ data class CategoriesState(
     val onNewCategoryNameChanged: (String) -> Unit,
     val isSaveCategoryVisible: Boolean,
     val isEditCategoryShown: Boolean,
+    val isCategoryError: Boolean,
     val onNewCategorySaved: () -> Unit,
+    val onCategoryError: (Boolean) -> Unit,
     val onDeleteCategory: () -> Unit,
     val onCategoryDialogVisibilityChanged: (Int) -> Unit,
     val onCategoryPhotoUriChanged: (photoUri: Uri) -> Unit,

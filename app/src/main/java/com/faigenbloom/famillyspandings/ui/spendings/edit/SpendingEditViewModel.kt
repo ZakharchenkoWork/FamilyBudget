@@ -47,6 +47,9 @@ class SpendingEditViewModel(
     private var isCategoriesOpened: Boolean = true
     private var isManualTotal: Boolean = false
     private var isHidden: Boolean = false
+    private var isNameError: Boolean = false
+    private var isAmountError: Boolean = false
+    private var isCategoryError: Boolean = false
     private var isPlanned: Boolean = false
     private var isDuplicate: Boolean = false
     private var canDuplicate: Boolean = false
@@ -70,7 +73,7 @@ class SpendingEditViewModel(
     }
 
     private fun onSave() {
-        if (checkAllFilled()) {
+        if (checkAndShowErrors()) {
             viewModelScope.launch {
                 selectedCategory?.id?.let { categoryId ->
                     spendingId = saveSpendingUseCase(
@@ -106,13 +109,36 @@ class SpendingEditViewModel(
         return true
     }
 
+    private fun checkAndShowErrors(): Boolean {
+        if (namingText.isBlank()) {
+            isNameError = true
+        }
+        if (amountText.isBlank()) {
+            isAmountError = true
+        }
+        if (isNameError.not() && isAmountError.not() && selectedCategory == null) {
+            isCategoryError = true
+            onPageChanged(true)
+        }
+        updateUI()
+
+        return checkAllFilled()
+    }
+
+    private fun onResetErrors() {
+        isNameError = false
+        isAmountError = false
+        isCategoryError = false
+        updateUI()
+    }
+
     private fun updateTotal() {
         amountText = calculateTotalUseCase(isManualTotal, detailsList, amountText)
     }
 
     private fun onDuplicate() {
         if (canDuplicate) {
-            if (checkAllFilled()) {
+            if (checkAndShowErrors()) {
                 viewModelScope.launch {
                     selectedCategory?.id?.let { categoryId ->
                         spendingId = saveSpendingUseCase(
@@ -172,7 +198,7 @@ class SpendingEditViewModel(
     }
 
     private fun onNamingTextChanged(name: String) {
-        this.namingText = name
+        namingText = name
         updateUI()
     }
 
@@ -203,11 +229,15 @@ class SpendingEditViewModel(
             canDuplicate = canDuplicate,
             detailsList = detailsList,
             dateText = dateText,
+            isNameError = isNameError,
+            isAmountError = isAmountError,
+            isCategoryError = isCategoryError,
             isOkActive = checkAllFilled(),
             isHidden = isHidden,
             isDuplicate = isDuplicate,
             isPlanned = isPlanned,
             currency = currency,
+            onResetErrors = ::onResetErrors,
             onHideChanged = ::onHideChanged,
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
@@ -264,6 +294,9 @@ data class SpendingEditState(
     val onPageChanged: (Boolean) -> Unit,
     val namingText: String,
     val amountText: String,
+    val isNameError: Boolean,
+    val isAmountError: Boolean,
+    val isCategoryError: Boolean,
     val dateText: String,
     var photoUri: Uri?,
     val detailsList: List<DetailUiData>,
@@ -276,6 +309,7 @@ data class SpendingEditState(
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
     val onDateChanged: (String) -> Unit,
     val onPlannedChanged: () -> Unit,
+    val onResetErrors: () -> Unit,
     val onSave: () -> Unit,
     val onHideChanged: () -> Unit,
     val deleteSpending: () -> Unit,

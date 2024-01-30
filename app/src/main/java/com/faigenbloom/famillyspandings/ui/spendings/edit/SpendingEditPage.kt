@@ -36,6 +36,7 @@ import com.faigenbloom.famillyspandings.common.BaseTextField
 import com.faigenbloom.famillyspandings.common.StripeBar
 import com.faigenbloom.famillyspandings.common.TextFieldType
 import com.faigenbloom.famillyspandings.common.TopBar
+import com.faigenbloom.famillyspandings.common.ui.AnimateError
 import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
 import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
 import com.faigenbloom.famillyspandings.ui.categories.CategoriesPage
@@ -84,8 +85,13 @@ fun SpendingEditPage(
 
         AnimateTabs(isLeftTab = state.isCategoriesOpened) { isCategoriesOpened ->
             if (isCategoriesOpened) {
+                categoryState.onCategoryError(state.isCategoryError)
                 CategoriesPage(
                     state = categoryState,
+                    onCategoryFinished = {
+                        state.onResetErrors()
+                        categoryState.onCategoryError(false)
+                    },
                     onCategoryPhotoRequest = onCategoryPhotoRequest,
                 )
             } else {
@@ -152,23 +158,41 @@ private fun TopInfo(
             modifier = Modifier.weight(0.5f),
             verticalArrangement = Arrangement.Center,
         ) {
-            BaseTextField(
-                modifier = Modifier.semantics {
-                    contentDescription = SPENDING_NAME_INPUT
-                },
-                text = state.namingText,
-                labelId = R.string.spending_details_name,
-                onTextChange = state.onNamingTextChanged,
-            )
-            BaseTextField(
-                modifier = Modifier.semantics {
-                    contentDescription = SPENDING_AMOUNT_INPUT
-                },
-                text = state.amountText,
-                labelId = R.string.spending_details_amount,
-                textFieldType = TextFieldType.Money(state.currency),
-                onTextChange = state.onAmountTextChanged,
-            )
+            AnimateError(
+                animationTrigger = state.isNameError,
+                onFinished = state.onResetErrors,
+            ) { backgroundColor ->
+                BaseTextField(
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                        )
+                        .semantics {
+                            contentDescription = SPENDING_NAME_INPUT
+                        },
+                    text = state.namingText,
+                    labelId = R.string.spending_details_name,
+                    onTextChange = state.onNamingTextChanged,
+                )
+            }
+            AnimateError(
+                animationTrigger = state.isAmountError,
+                onFinished = state.onResetErrors,
+            ) { backgroundColor ->
+                BaseTextField(
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                        )
+                        .semantics {
+                            contentDescription = SPENDING_AMOUNT_INPUT
+                        },
+                    text = state.amountText,
+                    labelId = R.string.spending_details_amount,
+                    textFieldType = TextFieldType.Money(state.currency),
+                    onTextChange = state.onAmountTextChanged,
+                )
+            }
             Text(
                 modifier = Modifier
                     .padding(horizontal = 32.dp, vertical = 4.dp)
@@ -304,6 +328,7 @@ fun SpacerStripe(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
+
             Text(
                 modifier = Modifier
                     .weight(0.5f)
@@ -354,6 +379,7 @@ fun SpendingEditPageCategoriesPreview() {
                     isCategoriesOpened = true,
                     onPageChanged = {},
                     namingText = "",
+                    isNameError = false,
                     amountText = "",
                     dateText = "",
                     detailsList = emptyList(),
@@ -361,6 +387,7 @@ fun SpendingEditPageCategoriesPreview() {
                     isHidden = false,
                     isDuplicate = false,
                     isPlanned = false,
+                    onResetErrors = {},
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     photoUri = null,
@@ -374,6 +401,8 @@ fun SpendingEditPageCategoriesPreview() {
                     canDuplicate = false,
                     onDuplicate = {},
                     onPlannedChanged = {},
+                    isAmountError = false,
+                    isCategoryError = false,
                 ),
                 categoryState = CategoriesState(
                     categoriesList = mockCategoriesList,
@@ -389,8 +418,11 @@ fun SpendingEditPageCategoriesPreview() {
                     isEditCategoryShown = false,
                     onCategoryDialogVisibilityChanged = { },
                     categoryId = null,
-                    onDeleteCategory = { },
-                ),
+                    onDeleteCategory = {},
+                    isCategoryError = false,
+                    onCategoryError = {},
+
+                    ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = { },
@@ -413,8 +445,10 @@ fun SpendingEditPageDetailsPreview() {
                     onPageChanged = {},
                     namingText = "Food",
                     amountText = "19.50",
+                    isNameError = false,
                     dateText = "19.10.2023",
                     detailsList = mockDetailsList,
+                    onResetErrors = {},
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
                     photoUri = null,
@@ -432,6 +466,8 @@ fun SpendingEditPageDetailsPreview() {
                     canDuplicate = false,
                     onDuplicate = {},
                     onPlannedChanged = {},
+                    isAmountError = false,
+                    isCategoryError = false,
                 ),
                 categoryState = CategoriesState(
                     categoriesList =
@@ -449,6 +485,8 @@ fun SpendingEditPageDetailsPreview() {
                     onCategoryDialogVisibilityChanged = { },
                     categoryId = null,
                     onDeleteCategory = { },
+                    isCategoryError = false,
+                    onCategoryError = {},
                 ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
