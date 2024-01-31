@@ -18,12 +18,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.famillyspandings.R
@@ -40,8 +43,6 @@ import java.util.Locale
 @Composable
 fun BudgetPage(
     state: BudgetState,
-    onAddSpendingClicked: () -> Unit,
-    onAddPlannedSpendingClicked: () -> Unit,
 ) {
     Column {
         TopBar(
@@ -57,14 +58,10 @@ fun BudgetPage(
             if (isMyBudgetOpened) {
                 Screen(
                     state = state,
-                    onAddSpendingClicked = onAddSpendingClicked,
-                    onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
                 )
             } else {
                 Screen(
                     state = state,
-                    onAddSpendingClicked = onAddSpendingClicked,
-                    onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
                 )
             }
         }
@@ -75,8 +72,6 @@ fun BudgetPage(
 @Composable
 private fun Screen(
     state: BudgetState,
-    onAddSpendingClicked: () -> Unit,
-    onAddPlannedSpendingClicked: () -> Unit,
 ) {
     Column {
         Row(
@@ -116,14 +111,14 @@ private fun Screen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                SimpleTextField(
+                Text(
                     text = state.total,
-                    label = stringResource(R.string.budget_label_total),
-                    onValueChange = state.onTotalChanged,
-                    textStyle = MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = if (state.isBalanceError.not()) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onError
+                    },
                 )
                 Text(
                     text = state.currency.currencyCode,
@@ -139,7 +134,14 @@ private fun Screen(
             color = MaterialTheme.colorScheme.secondary,
             thickness = 1.dp,
         )
-
+        TotalDataLine(
+            amount = state.totalBalance,
+            currency = state.currency,
+            onValueChanged = state.onTotalBalanceChanged,
+            additionalAmount = state.additionalAmount,
+            onAdditionalAmountValueChanged = state.onAdditionalAmountValueChanged,
+            onIncomeAddClicked = state.onIncomeAddClicked,
+        )
         DataLine(
             label = stringResource(id = R.string.budget_planned_budget),
             amount = state.plannedBudget,
@@ -150,13 +152,11 @@ private fun Screen(
             label = stringResource(R.string.budget_spent),
             amount = state.spent,
             currency = state.currency,
-            onPlusClicked = onAddSpendingClicked,
         )
         DataLine(
             label = stringResource(R.string.budget_planned_spendings),
             amount = state.plannedSpendings,
             currency = state.currency,
-            onPlusClicked = onAddPlannedSpendingClicked,
         )
     }
 }
@@ -167,7 +167,6 @@ private fun DataLine(
     amount: String,
     currency: Currency,
     onValueChanged: ((String) -> Unit)? = null,
-    onPlusClicked: (() -> Unit)? = null,
 ) {
     Text(
         modifier = Modifier
@@ -191,10 +190,8 @@ private fun DataLine(
         onValueChanged?.let {
             SimpleTextField(
                 modifier = Modifier
-                    .padding(
-                        vertical = 4.dp,
-                        horizontal = 16.dp,
-                    ),
+                    .padding(vertical = 4.dp)
+                    .padding(start = 16.dp),
                 text = amount,
                 label = stringResource(R.string.spending_name),
                 textFieldType = TextFieldType.Money(currency),
@@ -206,10 +203,8 @@ private fun DataLine(
         } ?: kotlin.run {
             Text(
                 modifier = Modifier
-                    .padding(
-                        vertical = 4.dp,
-                        horizontal = 16.dp,
-                    )
+                    .padding(vertical = 4.dp)
+                    .padding(start = 16.dp)
                     .weight(1f)
                     .fillMaxWidth(),
                 text = MoneyTextTransformation(currency.currencyCode)
@@ -218,15 +213,94 @@ private fun DataLine(
                 style = MaterialTheme.typography.titleLarge,
             )
         }
-        onPlusClicked?.let { onClick ->
+    }
+}
+
+
+@Composable
+private fun TotalDataLine(
+    amount: String,
+    additionalAmount: String,
+    currency: Currency,
+    onValueChanged: (String) -> Unit,
+    onAdditionalAmountValueChanged: (String) -> Unit,
+    onIncomeAddClicked: () -> Unit,
+) {
+    var isMoneyInputFieldVisibile by rememberSaveable { mutableStateOf(true) }
+
+    Text(
+        modifier = Modifier
+            .padding(top = 16.dp, bottom = 8.dp)
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+            ),
+        text = stringResource(R.string.budget_total_balance),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(color = MaterialTheme.colorScheme.primary),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+
+        SimpleTextField(
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .padding(start = 16.dp),
+            text = amount,
+            label = stringResource(R.string.budget_balance),
+            textFieldType = TextFieldType.Money(currency),
+            onValueChange = onValueChanged,
+            textStyle = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onPrimary,
+            ),
+        )
+        if (isMoneyInputFieldVisibile) {
             Image(
                 modifier = Modifier
                     .size(50.dp)
-                    .clickable { onClick() },
-                painter = painterResource(id = R.drawable.icon_plus),
+                    .padding(horizontal = 16.dp),
+                painter = painterResource(R.drawable.icon_plus),
                 contentDescription = "",
             )
+            SimpleTextField(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .padding(start = 16.dp),
+                text = additionalAmount,
+                label = stringResource(R.string.budget_income),
+                textFieldType = TextFieldType.Money(currency),
+                onValueChange = onAdditionalAmountValueChanged,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                ),
+            )
         }
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    if (isMoneyInputFieldVisibile) {
+                        onIncomeAddClicked()
+                    }
+                    isMoneyInputFieldVisibile = isMoneyInputFieldVisibile.not()
+                },
+            painter = painterResource(
+                id = if (isMoneyInputFieldVisibile) {
+                    R.drawable.icon_ok
+                } else {
+                    R.drawable.icon_plus
+                },
+            ),
+            contentDescription = "",
+        )
     }
 }
 
@@ -239,16 +313,20 @@ fun StatisticsPagePreview() {
                 state = BudgetState(
                     total = "4755",
                     isMyBudgetOpened = true,
-                    onPageChanged = { },
+                    onPageChanged = {},
                     plannedBudget = "20000",
                     spent = "15245",
                     plannedSpendings = "3100",
-                    onPlannedBudgetChanged = { },
-                    onTotalChanged = { },
+                    onPlannedBudgetChanged = {},
+                    onTotalChanged = {},
                     currency = Currency.getInstance(Locale.getDefault()),
+                    isBalanceError = false,
+                    totalBalance = "",
+                    onTotalBalanceChanged = {},
+                    additionalAmount = "44044",
+                    onAdditionalAmountValueChanged = {},
+                    onIncomeAddClicked = {},
                 ),
-                onAddSpendingClicked = { },
-                onAddPlannedSpendingClicked = { },
             )
         }
     }

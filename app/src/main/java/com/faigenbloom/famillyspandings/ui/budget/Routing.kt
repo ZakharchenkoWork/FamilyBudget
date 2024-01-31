@@ -12,8 +12,6 @@ fun NavGraphBuilder.budgetPage(
         showNavigation: Boolean,
         index: Int,
     ) -> Unit,
-    onAddSpendingClicked: () -> Unit,
-    onAddPlannedSpendingClicked: () -> Unit,
 ) {
     composable(
         route = BudgetRoute(),
@@ -23,8 +21,6 @@ fun NavGraphBuilder.budgetPage(
 
         BudgetPage(
             state = state,
-            onAddSpendingClicked = onAddSpendingClicked,
-            onAddPlannedSpendingClicked = onAddPlannedSpendingClicked,
         )
     }
 }

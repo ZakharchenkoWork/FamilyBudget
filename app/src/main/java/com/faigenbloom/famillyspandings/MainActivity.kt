@@ -303,12 +303,6 @@ class MainActivity : ComponentActivity() {
                                     selectedBottomNavigationIndex = index
                                     floatingMenuState = null
                                 },
-                                onAddSpendingClicked = {
-                                    mainNavController.navigate(SpendingEditRoute())
-                                },
-                                onAddPlannedSpendingClicked = {
-                                    mainNavController.navigate(SpendingEditRoute())
-                                },
                             )
                             settingsPage(
                                 bottomNavigationOptions = {

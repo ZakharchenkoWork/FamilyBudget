@@ -64,11 +64,13 @@
     <string name="budget_personal">Personal</string>
     <string name="budget_family">Family</string>
     <string name="budget_balance">Balance</string>
+    <string name="budget_income">Income</string>
     <string name="budget_for_month_label">Till end of the month</string>
     <string name="budget_planned_budget">Planned budget</string>
     <string name="budget_spent">Spent</string>
     <string name="budget_label_total">Total</string>
     <string name="budget_planned_spendings">Planned spendings</string>
+    <string name="budget_total_balance">Total Balance</string>
     <string name="settings_title">Settings</string>
     <string name="settings_personal">Personal Settings</string>
     <string name="settings_currency">Currency</string>

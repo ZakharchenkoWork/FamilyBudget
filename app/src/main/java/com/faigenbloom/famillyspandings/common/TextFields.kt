@@ -141,7 +141,7 @@ fun SimpleTextField(
             decorationBox = { innerTextField ->
                 if (text.isBlank()) {
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = modifier,
                         text = label,
                         textAlign = textAlign,
                         color = MaterialTheme.colorScheme.hint(),

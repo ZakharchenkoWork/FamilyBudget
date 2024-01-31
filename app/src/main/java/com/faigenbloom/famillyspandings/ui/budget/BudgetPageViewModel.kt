@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
 
+
 class BudgetPageViewModel(
     private val repository: BudgetPageRepository,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
@@ -27,24 +28,41 @@ class BudgetPageViewModel(
     private var plannedBudget = ""
     private var spent = ""
     private var plannedSpendings = ""
+    private var totalBalance = ""
+    private var additionalAmount: String = ""
+
     private var currency: Currency = Currency.getInstance(Locale.getDefault())
     private var isMyBudgetOpened: Boolean = true
+    private var isBalanceError: Boolean = false
     private var filter: FilterType = FilterType.Monthly()
-    private var onPageChanged: (Boolean) -> Unit = {
-        isMyBudgetOpened = it
+
+    private fun onAdditionalAmountValueChanged(amount: String) {
+        additionalAmount = amount
         updateUi()
     }
 
-    private var onPlannedBudgetChanged: (String) -> Unit = {
-        plannedBudget = it
-        updateUi()
-        saveBudget()
+    private fun onIncomeAddClicked() {
+
     }
 
-    private var onTotalChanged: (String) -> Unit = {
-        total = it
+    private fun onPageChanged(isOpen: Boolean) {
+        isMyBudgetOpened = isOpen
         updateUi()
-        saveBudget()
+    }
+
+    private fun onPlannedBudgetChanged(amount: String) {
+        plannedBudget = amount
+        updateUi()
+    }
+
+    private fun onTotalChanged(amount: String) {
+        total = amount
+        updateUi()
+    }
+
+    private fun onTotalBalanceChanged(amount: String) {
+        totalBalance = amount
+        updateUi()
     }
 
     private fun saveBudget() {
@@ -64,13 +82,19 @@ class BudgetPageViewModel(
         get() = BudgetState(
             total = total,
             isMyBudgetOpened = isMyBudgetOpened,
-            onPageChanged = onPageChanged,
+            onPageChanged = ::onPageChanged,
             plannedBudget = plannedBudget,
             spent = spent,
             plannedSpendings = plannedSpendings,
+            totalBalance = totalBalance,
+            isBalanceError = isBalanceError,
             currency = currency,
-            onTotalChanged = onTotalChanged,
-            onPlannedBudgetChanged = onPlannedBudgetChanged,
+            onTotalChanged = ::onTotalChanged,
+            onTotalBalanceChanged = ::onTotalBalanceChanged,
+            onPlannedBudgetChanged = ::onPlannedBudgetChanged,
+            additionalAmount = additionalAmount,
+            onAdditionalAmountValueChanged = ::onAdditionalAmountValueChanged,
+            onIncomeAddClicked = ::onIncomeAddClicked,
         )
 
     private val _stateFlow = MutableStateFlow(state)
@@ -78,11 +102,13 @@ class BudgetPageViewModel(
         .apply {
             viewModelScope.launch(Dispatchers.IO) {
                 val budgetData = repository.getBudgetData()
-                total = budgetData.familyTotal.toReadableMoney()
                 plannedBudget = budgetData.plannedBudget.toReadableMoney()
                 spent = getSpentTotalUseCase(false, filter.from, filter.to)
                 plannedSpendings = getSpentTotalUseCase(true, filter.from, filter.to)
+                total = (plannedBudget.toLongMoney() - spent.toLongMoney()).toReadableMoney()
+                isBalanceError = total.toLongMoney() < 0L
                 currency = getChosenCurrencyUseCase()
+                totalBalance = "0"
                 updateUi()
             }
         }
@@ -91,15 +117,20 @@ class BudgetPageViewModel(
         _stateFlow.update { state }
     }
 }
-
 data class BudgetState(
     val total: String,
-    val isMyBudgetOpened: Boolean,
-    val onPageChanged: (Boolean) -> Unit,
+    val totalBalance: String,
     val plannedBudget: String,
     val spent: String,
     val plannedSpendings: String,
     val currency: Currency,
+    val isBalanceError: Boolean,
+    val isMyBudgetOpened: Boolean,
+    val additionalAmount: String,
+    val onAdditionalAmountValueChanged: (String) -> Unit,
+    val onIncomeAddClicked: () -> Unit,
+    val onPageChanged: (Boolean) -> Unit,
     val onTotalChanged: (String) -> Unit,
+    val onTotalBalanceChanged: (String) -> Unit,
     val onPlannedBudgetChanged: (String) -> Unit,
 )
