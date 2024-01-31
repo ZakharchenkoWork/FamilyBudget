@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -226,7 +227,7 @@ private fun TotalDataLine(
     onAdditionalAmountValueChanged: (String) -> Unit,
     onIncomeAddClicked: () -> Unit,
 ) {
-    var isMoneyInputFieldVisibile by rememberSaveable { mutableStateOf(true) }
+    var isMoneyInputFieldVisibile by rememberSaveable { mutableStateOf(false) }
 
     Text(
         modifier = Modifier
@@ -239,68 +240,74 @@ private fun TotalDataLine(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.bodyMedium,
     )
-
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .background(color = MaterialTheme.colorScheme.primary),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        contentAlignment = Alignment.Center,
     ) {
 
-        SimpleTextField(
+        Row(
             modifier = Modifier
-                .padding(vertical = 4.dp)
-                .padding(start = 16.dp),
-            text = amount,
-            label = stringResource(R.string.budget_balance),
-            textFieldType = TextFieldType.Money(currency),
-            onValueChange = onValueChanged,
-            textStyle = MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onPrimary,
-            ),
-        )
-        if (isMoneyInputFieldVisibile) {
-            Image(
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(horizontal = 16.dp),
-                painter = painterResource(R.drawable.icon_plus),
-                contentDescription = "",
-            )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
+        ) {
+
             SimpleTextField(
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .padding(start = 16.dp),
-                text = additionalAmount,
-                label = stringResource(R.string.budget_income),
+                    .weight(0.4f)
+                    .padding(vertical = 4.dp),
+                text = amount,
+                label = stringResource(R.string.budget_balance),
                 textFieldType = TextFieldType.Money(currency),
-                onValueChange = onAdditionalAmountValueChanged,
+                onValueChange = onValueChanged,
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onPrimary,
                 ),
             )
+            if (isMoneyInputFieldVisibile) {
+                Image(
+                    modifier = Modifier
+                        .weight(0.1f)
+                        .size(50.dp),
+                    painter = painterResource(R.drawable.icon_plus),
+                    contentDescription = "",
+                )
+                SimpleTextField(
+                    modifier = Modifier
+                        .weight(0.4f)
+                        .padding(vertical = 4.dp),
+                    text = additionalAmount,
+                    label = stringResource(R.string.budget_income),
+                    textFieldType = TextFieldType.Money(currency),
+                    onValueChange = onAdditionalAmountValueChanged,
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                )
+            }
+            Image(
+                modifier = Modifier
+                    .weight(0.1f)
+                    .padding(start = 8.dp)
+                    .clickable {
+                        if (isMoneyInputFieldVisibile) {
+                            onIncomeAddClicked()
+                        }
+                        isMoneyInputFieldVisibile = isMoneyInputFieldVisibile.not()
+                    },
+                painter = painterResource(
+                    id = if (isMoneyInputFieldVisibile) {
+                        R.drawable.icon_ok
+                    } else {
+                        R.drawable.icon_plus
+                    },
+                ),
+                contentDescription = "",
+            )
         }
-        Image(
-            modifier = Modifier
-                .size(50.dp)
-                .padding(horizontal = 16.dp)
-                .clickable {
-                    if (isMoneyInputFieldVisibile) {
-                        onIncomeAddClicked()
-                    }
-                    isMoneyInputFieldVisibile = isMoneyInputFieldVisibile.not()
-                },
-            painter = painterResource(
-                id = if (isMoneyInputFieldVisibile) {
-                    R.drawable.icon_ok
-                } else {
-                    R.drawable.icon_plus
-                },
-            ),
-            contentDescription = "",
-        )
     }
 }
 
@@ -312,20 +319,23 @@ fun StatisticsPagePreview() {
             BudgetPage(
                 state = BudgetState(
                     total = "4755",
-                    isMyBudgetOpened = true,
-                    onPageChanged = {},
+                    totalBalance = "3242",
                     plannedBudget = "20000",
                     spent = "15245",
                     plannedSpendings = "3100",
-                    onPlannedBudgetChanged = {},
-                    onTotalChanged = {},
                     currency = Currency.getInstance(Locale.getDefault()),
                     isBalanceError = false,
-                    totalBalance = "",
-                    onTotalBalanceChanged = {},
+                    isMyBudgetOpened = true,
                     additionalAmount = "44044",
                     onAdditionalAmountValueChanged = {},
                     onIncomeAddClicked = {},
+                    onPageChanged = {},
+                    onTotalChanged = {},
+                    onTotalBalanceChanged = {},
+                    onPlannedBudgetChanged = {},
+                    monthlyClicked = {},
+                    yearlyClicked = {},
+                    onSave = {},
                 ),
             )
         }

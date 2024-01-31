@@ -301,7 +301,9 @@ class MainActivity : ComponentActivity() {
                                     ->
                                     withBottomNavigation = showNavigation
                                     selectedBottomNavigationIndex = index
-                                    floatingMenuState = null
+                                },
+                                options = { menuState ->
+                                    floatingMenuState = menuState
                                 },
                             )
                             settingsPage(

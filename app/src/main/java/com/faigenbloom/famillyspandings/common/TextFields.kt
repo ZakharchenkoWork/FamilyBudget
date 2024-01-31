@@ -132,6 +132,7 @@ fun SimpleTextField(
             textStyle = textStyle.copy(textAlign = textAlign),
             keyboardOptions = textFieldType.keyboardOptions,
             onValueChange = onValueChange,
+            singleLine = true,
             visualTransformation = if (textFieldType is TextFieldType.Money) {
                 MoneyTextTransformation(textFieldType.currency.currencyCode)
             } else {

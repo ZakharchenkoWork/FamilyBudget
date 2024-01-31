@@ -45,6 +45,14 @@ class BudgetPageViewModel(
 
     }
 
+    private fun monthlyClicked() {
+
+    }
+
+    private fun yearlyClicked() {
+
+    }
+
     private fun onPageChanged(isOpen: Boolean) {
         isMyBudgetOpened = isOpen
         updateUi()
@@ -81,20 +89,23 @@ class BudgetPageViewModel(
     private val state: BudgetState
         get() = BudgetState(
             total = total,
-            isMyBudgetOpened = isMyBudgetOpened,
-            onPageChanged = ::onPageChanged,
+            totalBalance = totalBalance,
             plannedBudget = plannedBudget,
             spent = spent,
             plannedSpendings = plannedSpendings,
-            totalBalance = totalBalance,
-            isBalanceError = isBalanceError,
             currency = currency,
-            onTotalChanged = ::onTotalChanged,
-            onTotalBalanceChanged = ::onTotalBalanceChanged,
-            onPlannedBudgetChanged = ::onPlannedBudgetChanged,
+            isBalanceError = isBalanceError,
+            isMyBudgetOpened = isMyBudgetOpened,
             additionalAmount = additionalAmount,
             onAdditionalAmountValueChanged = ::onAdditionalAmountValueChanged,
             onIncomeAddClicked = ::onIncomeAddClicked,
+            onPageChanged = ::onPageChanged,
+            onTotalChanged = ::onTotalChanged,
+            onTotalBalanceChanged = ::onTotalBalanceChanged,
+            onPlannedBudgetChanged = ::onPlannedBudgetChanged,
+            monthlyClicked = ::monthlyClicked,
+            yearlyClicked = ::yearlyClicked,
+            onSave = ::saveBudget,
         )
 
     private val _stateFlow = MutableStateFlow(state)
@@ -133,4 +144,7 @@ data class BudgetState(
     val onTotalChanged: (String) -> Unit,
     val onTotalBalanceChanged: (String) -> Unit,
     val onPlannedBudgetChanged: (String) -> Unit,
+    val monthlyClicked: () -> Unit,
+    val yearlyClicked: () -> Unit,
+    val onSave: () -> Unit,
 )
