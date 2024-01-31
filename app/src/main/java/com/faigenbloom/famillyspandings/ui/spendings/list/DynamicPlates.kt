@@ -110,12 +110,12 @@ fun DynamicPlatesHolder(
             }
         }
 
-        if (datedPatterns.loadState.refresh is LoadState.Loading) {
+        /*if (datedPatterns.loadState.refresh is LoadState.Loading) {
             item { LoadingIndicator() }
         }
         if (datedPatterns.loadState.append is LoadState.Loading) {
             item { LoadingIndicator() }
-        }
+        }*/
     }
 }
 
@@ -587,6 +587,7 @@ fun Plate_3x1_3x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            ratio = ONE_THIRD,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -594,6 +595,7 @@ fun Plate_3x1_3x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            ratio = ONE_THIRD,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -606,6 +608,7 @@ fun Plate_3x1_3x1_2x1_1x1(
                 modifier = Modifier
                     .weight(TWO_THIRDS)
                     .aspectRatio(HALF),
+                ratio = HALF,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -613,6 +616,7 @@ fun Plate_3x1_3x1_2x1_1x1(
                 modifier = Modifier
                     .weight(ONE_THIRD)
                     .aspectRatio(ONE),
+                ratio = ONE,
                 item = spendingData[3],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -1040,6 +1044,7 @@ fun Plate_2x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(TWO),
+            ratio = TWO,
             item = spendingData,
             onSpendingClicked = onSpendingClicked,
         )
@@ -1056,8 +1061,8 @@ fun Plate_3x2(
 ) {
     SpendingItem(
         modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(ONE_AND_ONE_THIRDS),
+            .fillMaxWidth(),
+        ratio = ONE_AND_ONE_THIRDS,
         item = spendingData,
         onSpendingClicked = onSpendingClicked,
     )
@@ -1066,11 +1071,13 @@ fun Plate_3x2(
 @Composable
 fun SpendingItem(
     modifier: Modifier = Modifier,
+    ratio: Float = ONE_AND_ONE_THIRDS,
     item: SpendingCategoryUiData,
     onSpendingClicked: (String) -> Unit,
 ) {
     Box(
         modifier = modifier
+            .aspectRatio(ratio)
             .padding(end = 16.dp, bottom = 16.dp)
             .clickable {
                 onSpendingClicked(item.id)
@@ -1081,7 +1088,7 @@ fun SpendingItem(
             contentScale = ContentScale.Crop,
             painter = item.category.iconUri?.let {
                 rememberImagePainter(it)
-            } ?: item.category.iconId?.let {
+            } ?: item.category.getResizedIcon()?.let {
                 painterResource(
                     id = it,
                 )
@@ -1195,6 +1202,8 @@ fun Plate_3x2_Preview() {
         }
     }
 }
+
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -1431,7 +1440,7 @@ fun Plate_3x1_3x1_3x1_Preview() {
         }
     }
 }
-
+*/
 @Preview(showBackground = true)
 @Composable
 fun Plate_3x1_3x1_2x1_1x1_Preview() {
@@ -1463,7 +1472,7 @@ fun Plate_3x1_3x1_2x1_1x1_Preview() {
         }
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun Plate_3x1_2x1_2x1_2x1_Preview() {
@@ -1775,6 +1784,7 @@ fun Plate_1x1_1x1_1x1_Preview() {
         }
     }
 }
+*/
 
 /*
 @Preview(showBackground = true)

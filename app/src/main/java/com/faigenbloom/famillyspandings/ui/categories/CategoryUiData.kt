@@ -1,5 +1,6 @@
 package com.faigenbloom.famillyspandings.ui.categories
 
+import com.faigenbloom.famillyspandings.R
 import com.faigenbloom.famillyspandings.common.Identifiable
 
 data class CategoryUiData(
@@ -9,4 +10,11 @@ data class CategoryUiData(
     val iconId: Int? = null,
     val iconUri: String? = null,
     val isDefault: Boolean = false,
-) : Identifiable
+) : Identifiable {
+    fun getResizedIcon(): Int? {
+        return iconId?.let {
+            //when(id == )
+            R.drawable.icon_health_vertical
+        }
+    }
+}
