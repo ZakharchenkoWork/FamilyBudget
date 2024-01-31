@@ -74,9 +74,11 @@ fun FloatingActionMenu(
                 )
             }
             floatingState.alwaysVisibleButton?.let { item ->
-                MenuItem(
-                    state = item,
-                )
+                if (item.isShown) {
+                    MenuItem(
+                        state = item,
+                    )
+                }
             }
             FilterFab(
                 state = filterFabState,

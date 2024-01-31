@@ -24,11 +24,11 @@ class BudgetPageViewModel(
     private val getSpentTotalUseCase: GetSpentTotalUseCase,
 ) : ViewModel() {
 
+    private var totalBalance = "0"
     private var total = ""
     private var plannedBudget = ""
     private var spent = ""
     private var plannedSpendings = ""
-    private var totalBalance = ""
     private var additionalAmount: String = ""
 
     private var currency: Currency = Currency.getInstance(Locale.getDefault())
@@ -42,15 +42,19 @@ class BudgetPageViewModel(
     }
 
     private fun onIncomeAddClicked() {
-
+        totalBalance =
+            (totalBalance.toLongMoney() + additionalAmount.toLongMoney()).toReadableMoney()
+        updateUi()
     }
 
     private fun monthlyClicked() {
-
+        filter = FilterType.Monthly()
+        updateUi()
     }
 
     private fun yearlyClicked() {
-
+        filter = FilterType.Yearly()
+        updateUi()
     }
 
     private fun onPageChanged(isOpen: Boolean) {
@@ -111,18 +115,21 @@ class BudgetPageViewModel(
     private val _stateFlow = MutableStateFlow(state)
     val stateFlow = _stateFlow.asStateFlow()
         .apply {
-            viewModelScope.launch(Dispatchers.IO) {
-                val budgetData = repository.getBudgetData()
-                plannedBudget = budgetData.plannedBudget.toReadableMoney()
-                spent = getSpentTotalUseCase(false, filter.from, filter.to)
-                plannedSpendings = getSpentTotalUseCase(true, filter.from, filter.to)
-                total = (plannedBudget.toLongMoney() - spent.toLongMoney()).toReadableMoney()
-                isBalanceError = total.toLongMoney() < 0L
-                currency = getChosenCurrencyUseCase()
-                totalBalance = "0"
-                updateUi()
-            }
+            reload()
         }
+
+    private fun reload() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val budgetData = repository.getBudgetData()
+            plannedBudget = budgetData.plannedBudget.toReadableMoney()
+            spent = getSpentTotalUseCase(false, filter.from, filter.to)
+            plannedSpendings = getSpentTotalUseCase(true, filter.from, filter.to)
+            total = (plannedBudget.toLongMoney() - spent.toLongMoney()).toReadableMoney()
+            isBalanceError = total.toLongMoney() < 0L
+            currency = getChosenCurrencyUseCase()
+            updateUi()
+        }
+    }
 
     private fun updateUi() {
         _stateFlow.update { state }
