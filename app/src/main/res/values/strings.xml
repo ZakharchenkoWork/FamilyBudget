@@ -66,6 +66,7 @@
     <string name="budget_balance">Balance</string>
     <string name="budget_income">Income</string>
     <string name="budget_for_month_label">Till end of the month</string>
+    <string name="budget_for_year_label">Till end of the year</string>
     <string name="budget_planned_budget">Planned budget</string>
     <string name="budget_spent">Spent</string>
     <string name="budget_label_total">Total</string>

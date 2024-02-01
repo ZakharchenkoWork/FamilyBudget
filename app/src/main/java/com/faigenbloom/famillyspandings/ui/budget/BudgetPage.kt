@@ -37,6 +37,7 @@ import com.faigenbloom.famillyspandings.common.TextFieldType
 import com.faigenbloom.famillyspandings.common.TopBar
 import com.faigenbloom.famillyspandings.common.ui.AnimateTabs
 import com.faigenbloom.famillyspandings.common.ui.MoneyTextTransformation
+import com.faigenbloom.famillyspandings.domain.statistics.FilterType
 import com.faigenbloom.famillyspandings.ui.theme.FamillySpandingsTheme
 import java.util.Currency
 import java.util.Locale
@@ -69,7 +70,6 @@ fun BudgetPage(
 
     }
 }
-
 @Composable
 private fun Screen(
     state: BudgetState,
@@ -93,7 +93,13 @@ private fun Screen(
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    text = stringResource(R.string.budget_for_month_label),
+                    text = stringResource(
+                        if (state.filter is FilterType.Monthly) {
+                            R.string.budget_for_month_label
+                        } else {
+                            R.string.budget_for_year_label
+                        },
+                    ),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -291,6 +297,7 @@ private fun TotalDataLine(
             Image(
                 modifier = Modifier
                     .weight(0.1f)
+                    .size(50.dp)
                     .padding(start = 8.dp)
                     .clickable {
                         if (isMoneyInputFieldVisibile) {
@@ -327,15 +334,16 @@ fun StatisticsPagePreview() {
                     isBalanceError = false,
                     isMyBudgetOpened = true,
                     additionalAmount = "44044",
+                    isSaveVisible = false,
                     onAdditionalAmountValueChanged = {},
                     onIncomeAddClicked = {},
                     onPageChanged = {},
-                    onTotalChanged = {},
                     onTotalBalanceChanged = {},
                     onPlannedBudgetChanged = {},
                     monthlyClicked = {},
                     yearlyClicked = {},
                     onSave = {},
+                    filter = FilterType.Yearly(),
                 ),
             )
         }

@@ -60,9 +60,10 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun getBudgetData(): BudgetEntity {
         return appDatabase.budgetDao().getBudget() ?: BudgetEntity(
             familyTotal = 0L,
-            plannedBudget = 0L,
-            spent = 0L,
-            plannedSpendings = 0L,
+            id = 0L,
+            personalTotal = 0L,
+            plannedBudgetMonth = 0L,
+            plannedBudgetYear = 0L,
         )
     }
 

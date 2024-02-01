@@ -49,3 +49,9 @@ fun String.toNormalizedMoney(): String {
         }
     }
 }
+
+fun String.addAsMoney(amount: String) =
+    (this.toLongMoney() + amount.toLongMoney()).toReadableMoney()
+
+fun String.decAsMoney(amount: String) =
+    (this.toLongMoney() - amount.toLongMoney()).toReadableMoney()

@@ -47,6 +47,7 @@ fun getBudgetMenuState(
             ),
         ),
         alwaysVisibleButton = MenuItemState(
+            isShown = state.isSaveVisible,
             label = R.string.button_save,
             icon = R.drawable.icon_ok,
             onClick = state.onSave,
