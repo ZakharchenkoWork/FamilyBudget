@@ -3,6 +3,8 @@ package com.faigenbloom.famillyspandings.datasources
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DateRange
+import com.faigenbloom.famillyspandings.datasources.entities.FamilyEntity
+import com.faigenbloom.famillyspandings.datasources.entities.PersonEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
@@ -20,7 +22,11 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         email: String,
         password: String,
     ): Boolean {
-        TODO("Not yet implemented")
+        return true
+    }
+
+    override suspend fun getFamily(): FamilyEntity {
+        return appDatabase.familyDao().getFamily()
     }
 
     override suspend fun getAllCategories(): List<CategoryEntity> {
@@ -142,5 +148,17 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {
         return appDatabase.spendingsDao().getSpendingsTotalSpent(planned, from, to)
+    }
+
+    override suspend fun saveFamily(familyEntity: FamilyEntity) {
+        appDatabase.familyDao().saveFamily(familyEntity)
+    }
+
+    override suspend fun getFamilyMembers(): List<PersonEntity> {
+        return appDatabase.familyDao().getFamilyMembers()
+    }
+
+    override suspend fun saveFamilyMembers(members: List<PersonEntity>) {
+        appDatabase.familyDao().saveFamilyMembers(members)
     }
 }

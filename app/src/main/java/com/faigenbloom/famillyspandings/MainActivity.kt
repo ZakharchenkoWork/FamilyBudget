@@ -86,7 +86,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var mainNavController: NavHostController
     private lateinit var scanQrCodeLauncher: ActivityResultLauncher<Nothing?>
     private lateinit var galleryLauncher: ActivityResultLauncher<GalleryRequest>
-    private val isLoggedIn: Boolean = true
     override fun onStart() {
         super.onStart()
         scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
@@ -160,11 +159,7 @@ class MainActivity : ComponentActivity() {
                     ) { padding ->
                         NavHost(
                             navController = mainNavController,
-                            startDestination = if (!isLoggedIn) {
-                                OnboardingRoute()
-                            } else {
-                                SpendingsListPage()
-                            },
+                            startDestination = OnboardingRoute(),
                         ) {
                             onboardingPage(
                                 onLogin = {
@@ -172,6 +167,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onRegister = {
                                     mainNavController.navigate(RegisterRoute())
+                                },
+                                onLoggedIn = {
+                                    mainNavController.navigate(SpendingsListPage())
                                 },
                             )
                             loginPage(
@@ -325,6 +323,9 @@ class MainActivity : ComponentActivity() {
                                     ->
                                     withBottomNavigation = showNavigation
                                     floatingMenuState = null
+                                },
+                                options = { menuState ->
+                                    floatingMenuState = menuState
                                 },
                                 onQRScanRequested = {
                                     scanQrCodeLauncher.launch(null)

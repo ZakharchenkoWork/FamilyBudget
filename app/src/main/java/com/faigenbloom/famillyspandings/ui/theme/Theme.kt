@@ -43,7 +43,6 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = onSecondaryContainerLight,
     tertiaryContainer = tertiaryContainerLight,
 )
-
 @Composable
 fun FamillySpandingsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -71,7 +70,7 @@ fun FamillySpandingsTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content,
     )
 }

@@ -2,13 +2,20 @@ package com.faigenbloom.famillyspandings.ui.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faigenbloom.famillyspandings.domain.family.SaveFamilyMembersUseCase
+import com.faigenbloom.famillyspandings.domain.family.SaveFamilyUseCase
+import com.faigenbloom.famillyspandings.ui.family.PersonUiData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-class RegisterPageViewModel(private val repository: RegisterRepository) : ViewModel() {
+class RegisterPageViewModel(
+    private val repository: RegisterRepository,
+    private val saveFamilyUseCase: SaveFamilyUseCase,
+    private val saveFamilyMembersUseCase: SaveFamilyMembersUseCase,
+) : ViewModel() {
     private var nameText: String = ""
     private var familyNameText: String = ""
     private var emailText: String = ""
@@ -26,7 +33,20 @@ class RegisterPageViewModel(private val repository: RegisterRepository) : ViewMo
     private var onLoginClicked: () -> Unit = {
         if (isRegistrationEnabled) {
             viewModelScope.launch {
+
                 if (repository.register(nameText, familyNameText, emailText, passwordText)) {
+                    val familyId = saveFamilyUseCase(name = familyNameText)
+                    saveFamilyMembersUseCase(
+                        listOf(
+                            PersonUiData(
+                                id = "",
+                                familyName = familyNameText,
+                                familyId = familyId,
+                                name = nameText,
+                                isThisUser = true,
+                            ),
+                        ),
+                    )
                     onLoggedIn()
                 } else {
                     registerError = true
@@ -86,9 +106,9 @@ class RegisterPageViewModel(private val repository: RegisterRepository) : ViewMo
     private fun isValidPasswordFormat(password: String): Boolean {
         val passwordREGEX = Pattern.compile(
             "^" +
-                "(?=\\S+$)" + // no white spaces
-                ".{8,}" + // at least 8 characters
-                "$",
+                    "(?=\\S+$)" + // no white spaces
+                    ".{8,}" + // at least 8 characters
+                    "$",
         )
         return passwordREGEX.matcher(password).matches()
     }

@@ -6,6 +6,8 @@ import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DateRange
 import com.faigenbloom.famillyspandings.datasources.entities.DefaultCategories
+import com.faigenbloom.famillyspandings.datasources.entities.FamilyEntity
+import com.faigenbloom.famillyspandings.datasources.entities.PersonEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
@@ -48,6 +50,13 @@ class MockDataSource : BaseDataSource {
         password: String,
     ): Boolean {
         return email == "a" && password == "aaaaaaaa"
+    }
+
+    override suspend fun getFamily(): FamilyEntity {
+        return FamilyEntity(
+            id = "",
+            name = "",
+        )
     }
 
     override suspend fun getAllCategories(): List<CategoryEntity> {
@@ -174,6 +183,18 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {
         return 2000
+    }
+
+    override suspend fun saveFamily(familyEntity: FamilyEntity) {
+
+    }
+
+    override suspend fun getFamilyMembers(): List<PersonEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveFamilyMembers(members: List<PersonEntity>) {
+
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

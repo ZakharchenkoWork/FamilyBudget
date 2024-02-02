@@ -26,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +51,7 @@ fun BaseTextField(
     @StringRes labelId: Int,
     @StringRes errorTextId: Int = R.string.empty,
     isError: Boolean = false,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     textFieldType: TextFieldType = TextFieldType.Normal,
     onTextChange: (String) -> Unit,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -61,6 +63,8 @@ fun BaseTextField(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         colors = TextFieldDefaults.colors(
+            focusedTextColor = textColor,
+            unfocusedTextColor = textColor,
             focusedContainerColor = containerColor,
             unfocusedContainerColor = containerColor,
             disabledContainerColor = containerColor,

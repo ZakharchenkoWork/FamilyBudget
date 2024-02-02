@@ -6,5 +6,6 @@ import org.koin.dsl.module
 
 val familyPageModule = module {
     viewModelOf(::FamilyPageViewModel)
-    singleOf(::FamilyPageRepository)
+    singleOf(::FamilyMapper)
+    singleOf(::PersonMapper)
 }

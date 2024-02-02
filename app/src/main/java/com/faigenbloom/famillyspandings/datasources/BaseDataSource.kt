@@ -3,6 +3,8 @@ package com.faigenbloom.famillyspandings.datasources
 import com.faigenbloom.famillyspandings.datasources.entities.BudgetEntity
 import com.faigenbloom.famillyspandings.datasources.entities.CategoryEntity
 import com.faigenbloom.famillyspandings.datasources.entities.DateRange
+import com.faigenbloom.famillyspandings.datasources.entities.FamilyEntity
+import com.faigenbloom.famillyspandings.datasources.entities.PersonEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailEntity
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingDetailsCrossRef
 import com.faigenbloom.famillyspandings.datasources.entities.SpendingEntity
@@ -17,6 +19,7 @@ interface BaseDataSource {
         password: String,
     ): Boolean
 
+    suspend fun getFamily(): FamilyEntity?
     suspend fun getAllCategories(): List<CategoryEntity>
     suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity>
     suspend fun addCategory(categoryEntity: CategoryEntity)
@@ -49,4 +52,7 @@ interface BaseDataSource {
     suspend fun changeCategoryHidden(id: String, isHidden: Boolean)
     suspend fun getSpendingsMinMaxDate(planned: Boolean): DateRange
     suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long
+    suspend fun saveFamily(familyEntity: FamilyEntity)
+    suspend fun getFamilyMembers(): List<PersonEntity>
+    suspend fun saveFamilyMembers(members: List<PersonEntity>)
 }

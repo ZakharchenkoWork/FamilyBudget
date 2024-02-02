@@ -8,6 +8,7 @@ import com.faigenbloom.famillyspandings.ui.budget.budgetPageModule
 import com.faigenbloom.famillyspandings.ui.categories.categoriesModule
 import com.faigenbloom.famillyspandings.ui.family.familyPageModule
 import com.faigenbloom.famillyspandings.ui.login.loginPageModule
+import com.faigenbloom.famillyspandings.ui.onboarding.onboardingModule
 import com.faigenbloom.famillyspandings.ui.register.registerPageModule
 import com.faigenbloom.famillyspandings.ui.settings.settingsPageModule
 import com.faigenbloom.famillyspandings.ui.spendings.detail.detailsModule
@@ -40,6 +41,7 @@ open class App : Application() {
                 budgetPageModule,
                 settingsPageModule,
                 familyPageModule,
+                onboardingModule,
             )
         }
     }

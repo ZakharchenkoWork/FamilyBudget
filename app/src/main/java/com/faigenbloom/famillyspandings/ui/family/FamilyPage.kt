@@ -4,17 +4,23 @@ package com.faigenbloom.famillyspandings.ui.family
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,8 +66,8 @@ fun FamilyPage(
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.secondary,
-                                MaterialTheme.colorScheme.secondaryContainer,
+                                colorScheme.secondary,
+                                colorScheme.secondaryContainer,
                             ),
                             center = Offset(1080f, 100f),
                         ),
@@ -68,17 +75,17 @@ fun FamilyPage(
                 contentAlignment = Alignment.BottomStart,
             ) {
                 BaseTextField(
-                    text = "",
+                    text = state.familyName,
+                    textColor = colorScheme.onSecondary,
                     labelId = R.string.family_name,
-                    onTextChange = {
-                    },
+                    onTextChange = state.onFamilyNameChanged,
                 )
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
-                    .background(color = MaterialTheme.colorScheme.primary),
+                    .background(color = colorScheme.primary),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -88,23 +95,47 @@ fun FamilyPage(
                             horizontal = 16.dp,
                         ),
                     text = stringResource(R.string.settings_personal),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleMedium,
+                    color = colorScheme.onPrimary,
+                    style = typography.titleMedium,
                 )
             }
 
             LazyColumn {
                 items(state.familyList.size) {
-                    Text(
+                    Row(
                         modifier = Modifier
+                            .height(50.dp)
+                            .fillMaxWidth()
                             .padding(
                                 vertical = 8.dp,
                                 horizontal = 16.dp,
+                            )
+                            .background(
+                                color = colorScheme.secondary,
+                                shape = shapes.small,
                             ),
-                        text = state.familyList[it],
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp),
+                            text = state.familyList[it],
+                            color = colorScheme.onPrimary,
+                            style = typography.titleMedium,
+                        )
+                        Image(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(horizontal = 8.dp)
+                                .aspectRatio(1f)
+                                .clickable {
+                                    state.onDeleteFamilyMember(it)
+                                },
+                            painter = painterResource(id = R.drawable.icon_delete),
+                            contentDescription = "",
+                        )
+                    }
                 }
             }
         }
@@ -118,8 +149,8 @@ fun FamilyPage(
                 Image(
                     painter = painterQR(
                         text = state.familyId,
-                        backColor = MaterialTheme.colorScheme.primary,
-                        frontColor = MaterialTheme.colorScheme.onBackground,
+                        backColor = colorScheme.primary,
+                        frontColor = colorScheme.onBackground,
                     ),
                     contentDescription = "",
                 )
@@ -136,15 +167,18 @@ fun StatisticsPagePreview() {
             FamilyPage(
                 state = FamilyState(
                     familyId = "asdgfasdg",
-                    name = "Zakharchenko",
+                    familyName = "Zakharchenko",
                     familyList = listOf(
                         "Konstantyn Zakharchenko",
                         "Victoria Zakharchenko",
                         "Natalia Zakharchenko",
                     ),
-                    isQRDialogOpened = true,
+                    isQRDialogOpened = false,
                     onQRVisibilityChanged = {},
                     onQrScanned = {},
+                    onSave = {},
+                    onFamilyNameChanged = {},
+                    onDeleteFamilyMember = {},
                 ),
                 onQRScanRequested = {},
                 onBack = {},
