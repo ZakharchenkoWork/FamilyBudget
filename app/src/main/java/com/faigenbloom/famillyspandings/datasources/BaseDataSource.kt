@@ -54,5 +54,6 @@ interface BaseDataSource {
     suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long
     suspend fun saveFamily(familyEntity: FamilyEntity)
     suspend fun getFamilyMembers(): List<PersonEntity>
-    suspend fun saveFamilyMembers(members: List<PersonEntity>)
+    suspend fun saveFamilyMember(member: PersonEntity)
+    suspend fun deleteFamilyMember(member: PersonEntity)
 }

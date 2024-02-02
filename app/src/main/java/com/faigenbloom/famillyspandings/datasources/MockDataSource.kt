@@ -193,8 +193,12 @@ class MockDataSource : BaseDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveFamilyMembers(members: List<PersonEntity>) {
+    override suspend fun saveFamilyMember(member: PersonEntity) {
+        TODO("Not yet implemented")
+    }
 
+    override suspend fun deleteFamilyMember(member: PersonEntity) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {

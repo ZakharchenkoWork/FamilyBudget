@@ -158,7 +158,11 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return appDatabase.familyDao().getFamilyMembers()
     }
 
-    override suspend fun saveFamilyMembers(members: List<PersonEntity>) {
-        appDatabase.familyDao().saveFamilyMembers(members)
+    override suspend fun saveFamilyMember(member: PersonEntity) {
+        appDatabase.familyDao().saveFamilyMember(member)
+    }
+
+    override suspend fun deleteFamilyMember(member: PersonEntity) {
+        appDatabase.familyDao().hideFamilyMember(member.id, false)
     }
 }

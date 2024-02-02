@@ -19,5 +19,6 @@ interface FamilyDao {
     suspend fun getFamilyMembers(): List<PersonEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveFamilyMembers(members: List<PersonEntity>)
+    suspend fun saveFamilyMember(member: PersonEntity)
+    suspend fun hideFamilyMember(id: String, b: Boolean)
 }

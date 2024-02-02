@@ -18,6 +18,17 @@ class FamilyPageRepository(private val dataSource: BaseDataSource) {
     }
 
     suspend fun saveFamilyMembers(members: List<PersonEntity>) {
-        dataSource.saveFamilyMembers(members)
+        val oldFamilyMembers = getFamilyMembers()
+        members.forEach {
+            if (oldFamilyMembers.contains(it).not()) {
+                dataSource.saveFamilyMember(it)
+            }
+        }
+
+        oldFamilyMembers.forEach {
+            if (members.contains(it).not()) {
+                dataSource.deleteFamilyMember(it)
+            }
+        }
     }
 }

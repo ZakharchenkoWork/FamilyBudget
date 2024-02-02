@@ -3,6 +3,7 @@ package com.faigenbloom.famillyspandings.ui.family
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.famillyspandings.domain.family.GetFamilyUseCase
+import com.faigenbloom.famillyspandings.domain.family.SaveFamilyMembersUseCase
 import com.faigenbloom.famillyspandings.domain.family.SaveFamilyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,10 +13,13 @@ import kotlinx.coroutines.launch
 class FamilyPageViewModel(
     private val getFamilyUseCase: GetFamilyUseCase,
     private val saveFamilyUseCase: SaveFamilyUseCase,
+    private val saveFamilyMembersUseCase: SaveFamilyMembersUseCase,
 ) : ViewModel() {
+
+    private val members: ArrayList<PersonUiData> = ArrayList()
     private fun onQRVisibilityChanged(isVisible: Boolean) {
         _stateFlow.update {
-            it.copy(
+            state.copy(
                 isQRDialogOpened = isVisible,
             )
         }
@@ -26,15 +30,16 @@ class FamilyPageViewModel(
 
     private fun onFamilyNameChanged(name: String) {
         _stateFlow.update {
-            it.copy(
+            state.copy(
                 familyName = name,
             )
         }
     }
 
     private fun onDeleteFamilyMember(index: Int) {
+        members.removeAt(index)
         _stateFlow.update {
-            it.copy(
+            state.copy(
                 familyList = ArrayList(it.familyList).apply { removeAt(index) },
             )
         }
@@ -43,8 +48,11 @@ class FamilyPageViewModel(
     private fun onSave() {
         viewModelScope.launch {
             saveFamilyUseCase(
-                id = _stateFlow.value.familyId,
-                name = _stateFlow.value.familyName,
+                id = state.familyId,
+                name = state.familyName,
+            )
+            saveFamilyMembersUseCase(
+                members = members,
             )
         }
     }
@@ -70,6 +78,8 @@ class FamilyPageViewModel(
             }
         }
     }
+    private val state: FamilyState
+        get() = _stateFlow.value
 }
 
 data class FamilyState(
