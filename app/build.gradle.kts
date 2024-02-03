@@ -3,20 +3,21 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.faigenbloom.famillyspandings"
+    namespace = "com.faigenbloom.familybudget"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.faigenbloom.famillyspandings"
+        applicationId = "com.faigenbloom.familybudget"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.faigenbloom.famillyspandings.MockTestRunner"
+        testInstrumentationRunner = "com.faigenbloom.familybudget.MockTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -60,6 +61,7 @@ android {
 
 dependencies {
     implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     val koinVersion = "3.4.2"
     val roomVersion = "2.6.1"
     val mockkVersion = "1.13.9"
@@ -92,6 +94,9 @@ dependencies {
     implementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("io.mockk:mockk:${mockkVersion}")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
