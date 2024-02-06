@@ -119,16 +119,16 @@ class RegisterPageViewModel(
 }
 
 data class RegisterPageState(
-    val emailText: String = "",
-    val passwordText: String = "",
-    val nameText: String = "",
-    val familyNameText: String = "",
+    val emailText: String = "baskinaerobins@gmail.com",
+    val passwordText: String = "philips2010",
+    val nameText: String = "Konstantyn",
+    val familyNameText: String = "Zakharchenko",
     val registerError: Boolean = false,
     val nameError: Boolean = false,
     val familyNameError: Boolean = false,
     val passwordError: Boolean = false,
     val emailError: Boolean = false,
-    val isRegistrationEnabled: Boolean = false,
+    val isRegistrationEnabled: Boolean = true, // TODO: CHANGE for release
     val onLoginClicked: () -> Unit,
     var onFamilyNameChanged: (String) -> Unit,
     var onEmailChanged: (String) -> Unit,

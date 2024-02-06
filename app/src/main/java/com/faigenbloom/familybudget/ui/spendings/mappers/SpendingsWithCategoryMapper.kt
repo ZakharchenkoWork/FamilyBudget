@@ -1,7 +1,7 @@
 package com.faigenbloom.familybudget.ui.spendings.mappers
 
 import com.faigenbloom.familybudget.common.toLocalDate
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.list.SpendingCategoryUiData
 

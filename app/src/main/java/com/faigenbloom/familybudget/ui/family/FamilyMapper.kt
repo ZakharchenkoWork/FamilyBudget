@@ -1,7 +1,7 @@
 package com.faigenbloom.familybudget.ui.family
 
 import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 
 class FamilyMapper : Mapper<FamilyUiData, FamilyEntity>() {
     override fun forUI(entity: FamilyEntity): FamilyUiData {

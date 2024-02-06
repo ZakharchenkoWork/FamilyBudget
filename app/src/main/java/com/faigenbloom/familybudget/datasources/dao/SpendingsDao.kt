@@ -4,10 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.faigenbloom.familybudget.datasources.entities.DateRange
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.DateRange
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 
 @Dao
 interface SpendingsDao {
@@ -136,5 +136,8 @@ interface SpendingsDao {
                 "AND ${SpendingEntity.COLUMN_DATE} <= :to",
     )
     suspend fun getSpendingsTotalSpent(isPlanned: Boolean, from: Long, to: Long): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveSpendings(spendings: List<SpendingEntity>)
 }
 

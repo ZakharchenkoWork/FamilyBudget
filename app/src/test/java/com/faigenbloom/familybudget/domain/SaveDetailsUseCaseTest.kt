@@ -3,7 +3,7 @@ package com.faigenbloom.familybudget.domain
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
 import com.faigenbloom.familybudget.datasources.MockDataSource
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
@@ -44,7 +44,7 @@ class SaveDetailsUseCaseTest {
     )
     private val dataSource: MockDataSource = mock {
         wheneverBlocking { it.getSpendingDetails(mockSpendingId) }
-            .thenReturn(listOf(mockDetailsList[0].mapToEntity()))
+            .thenReturn(listOf(detailsMapper.forDB(mockDetailsList[0])))
     }
 
     private val idGeneratorUseCase: GenerateIdUseCase = mock {
@@ -55,7 +55,7 @@ class SaveDetailsUseCaseTest {
         wheneverBlocking { it.invoke(mockDetailsList[1].id) }.thenReturn(mockDetailsList[1].id)
     }
     private val detailsRepository: DetailsRepository = DetailsRepository(
-        dataSource = dataSource,
+        dataBaseDataSource = dataSource,
     )
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData> =
         GetSpendingDetailsByIdUseCase(
@@ -103,7 +103,7 @@ class SaveDetailsUseCaseTest {
         )
 
         verify(dataSource).addSpendingDetail(
-            mockDetailsList[0].mapToEntity(),
+            detailsMapper.forDB(mockDetailsList[0]),
         )
         verify(dataSource).addCrossRef(
             SpendingDetailsCrossRef(

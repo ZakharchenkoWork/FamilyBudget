@@ -26,9 +26,7 @@ val spendingShowModule = module {
     }
     single {
         SaveDetailsUseCase(
-            idGeneratorUseCase = get(),
             detailsRepository = get(),
-            getSpendingDetailsUseCase = get(),
             detailsMapper = get<DetailsMapper>(),
         )
     }

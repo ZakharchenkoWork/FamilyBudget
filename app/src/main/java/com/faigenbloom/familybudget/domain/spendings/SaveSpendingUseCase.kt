@@ -2,7 +2,7 @@ package com.faigenbloom.familybudget.domain.spendings
 
 import com.faigenbloom.familybudget.common.Identifiable
 import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.domain.GenerateIdUseCase
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import kotlinx.coroutines.Dispatchers

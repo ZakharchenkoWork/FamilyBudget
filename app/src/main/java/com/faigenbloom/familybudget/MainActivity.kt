@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -64,7 +61,6 @@ import com.faigenbloom.familybudget.ui.register.registerPage
 import com.faigenbloom.familybudget.ui.settings.settingsPage
 import com.faigenbloom.familybudget.ui.spendings.detail.DetailDialogRoute
 import com.faigenbloom.familybudget.ui.spendings.detail.detailDialog
-import com.faigenbloom.familybudget.ui.spendings.edit.MessageTypes
 import com.faigenbloom.familybudget.ui.spendings.edit.SpendingEditRoute
 import com.faigenbloom.familybudget.ui.spendings.edit.spendingEditPage
 import com.faigenbloom.familybudget.ui.spendings.list.SpendingsListPage
@@ -126,12 +122,7 @@ class MainActivity : ComponentActivity() {
             }
             var selectedBottomNavigationIndex by rememberSaveable { mutableStateOf(0) }
             mainNavController = rememberNavController()
-            val snackBarController = SnackBarController(
-                scope = lifecycleScope,
-                snackbarHostState = remember { SnackbarHostState() },
-            )
             FamillySpandingsTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
@@ -147,9 +138,6 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
-                        },
-                        snackbarHost = {
-                            SnackbarHost(hostState = snackBarController.snackbarHostState)
                         },
                         floatingActionButton = {
                             FloatingActionMenu(
@@ -221,17 +209,6 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onBack = ::PopSpendings,
-                                onShowMessage = {
-                                    snackBarController.show(
-                                        getString(
-                                            when (it) {
-                                                MessageTypes.SAVED -> R.string.message_saved
-                                                MessageTypes.HIDEN -> R.string.message_hidden
-                                                MessageTypes.SHOWN -> R.string.message_shown
-                                            },
-                                        ),
-                                    )
-                                },
                                 onPhotoRequest = { spendingId ->
                                     if (requestCameraPermission()) {
                                         mainNavController.navigate(
@@ -484,19 +461,5 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
-    }
-
-    class SnackBarController(
-        val scope: LifecycleCoroutineScope,
-        val snackbarHostState: SnackbarHostState,
-    ) {
-        fun show(message: String) {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    withDismissAction = true,
-                )
-            }
-        }
     }
 }

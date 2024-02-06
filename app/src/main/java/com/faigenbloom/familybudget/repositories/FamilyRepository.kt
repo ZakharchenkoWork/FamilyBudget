@@ -1,23 +1,27 @@
 package com.faigenbloom.familybudget.repositories
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.firebase.FamilyModel
-import com.faigenbloom.familybudget.datasources.firebase.FirestoreNetworkSource
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.models.FamilyModel
+import com.faigenbloom.familybudget.repositories.mappers.FamilySourceMapper
+import com.faigenbloom.familybudget.repositories.mappers.PersonSourceMapper
 
 class FamilyRepository(
     private val dataBaseSource: BaseDataSource,
-    private val networkSource: FirestoreNetworkSource,
+    private val networkSource: FamilyNetworkSource,
+    private val personSourceMapper: PersonSourceMapper,
+    private val familySourceMapper: FamilySourceMapper,
 ) {
-    suspend fun getFamily(personId: String): FamilyEntity {
+    suspend fun loadFamily(personId: String): FamilyEntity {
         val familyId = networkSource.getFamilyId(personId)
         networkSource.getFamily(familyId)?.let {
-            dataBaseSource.saveFamily(FamilyEntity(it.id, it.name))
+            dataBaseSource.saveFamily(familySourceMapper.forDB(it))
             networkSource.getPersons(familyId)?.let {
                 it.forEach {
                     it?.let {
-                        dataBaseSource.saveFamilyMember(it)
+                        dataBaseSource.saveFamilyMember(personSourceMapper.forDB(it))
                     }
                 }
             }
@@ -25,7 +29,7 @@ class FamilyRepository(
         return dataBaseSource.getFamily() ?: FamilyEntity("", "")
     }
 
-    suspend fun getFamily(): FamilyEntity {
+    suspend fun loadFamily(): FamilyEntity {
         return dataBaseSource.getFamily() ?: FamilyEntity("", "")
     }
 

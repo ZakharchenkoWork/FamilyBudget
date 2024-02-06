@@ -1,15 +1,17 @@
 package com.faigenbloom.familybudget.datasources
 
-import com.faigenbloom.familybudget.datasources.entities.BudgetEntity
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity
-import com.faigenbloom.familybudget.datasources.entities.DateRange
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import android.util.Log
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
+import com.faigenbloom.familybudget.datasources.db.entities.DateRange
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import java.util.Currency
 import java.util.Locale
+import java.util.UUID
 
 class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun login(email: String, password: String): Boolean {
@@ -39,6 +41,98 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
         appDatabase.categoriesDao().insert(categoryEntity)
+    }
+
+    override suspend fun saveDetails(spendingId: String, details: List<SpendingDetailEntity>) {
+        val oldSpendingDetails = getSpendingDetails(spendingId)
+        oldSpendingDetails.forEach { oldDetail ->
+            val newDetail = details.firstOrNull { newDetail ->
+                oldDetail.id == newDetail.id
+            }
+
+            val oldDetailCrossRefsList = getDetailCrossRefs(oldDetail.id)
+            newDetail?.let {
+                if (oldDetailCrossRefsList.size == 1) {
+                    //it will replace old one
+                    addSpendingDetail(newDetail)
+                } else {
+                    getSpendingDetailDuplicate(newDetail)
+                        ?.let { duplicateDetail ->
+                            replaceCrossRef(
+                                spendingId,
+                                oldDetail.id,
+                                duplicateDetail.id,
+                            )
+                        } ?: kotlin.run {
+                        val newDetailNewId = UUID.randomUUID().toString()
+                        addSpendingDetail(
+                            newDetail.copy(newDetailNewId),
+                        )
+                        replaceCrossRef(
+                            spendingId,
+                            oldDetail.id,
+                            newDetailNewId,
+                        )
+                    }
+                }
+            } ?: kotlin.run {
+                if (oldDetailCrossRefsList.size == 1) {
+                    deleteSpendingDetail(oldDetail.id)
+                }
+                deleteCrossRef(
+                    SpendingDetailsCrossRef(
+                        spendingId = spendingId,
+                        detailId = oldDetail.id,
+                    ),
+                )
+            }
+        }
+
+
+        details.forEach {
+            Log.d("ID", it.id)
+            val newDetail = it.copy(it.id.ifBlank { UUID.randomUUID().toString() })
+            oldSpendingDetails.firstOrNull { oldDetail ->
+                oldDetail.id == newDetail.id
+            } ?: kotlin.run {
+                addNewDetail(newDetail, spendingId)
+            }
+        }
+    }
+
+    private suspend fun addNewDetail(
+        newDetail: SpendingDetailEntity,
+        spendingId: String,
+    ) {
+        val oldCrossRefs = getDetailCrossRefs(newDetail.id)
+        if (oldCrossRefs.isEmpty()) {
+            addSpendingDetail(newDetail)
+        }
+        addCrossRef(
+            SpendingDetailsCrossRef(
+                spendingId = spendingId,
+                detailId = newDetail.id,
+            ),
+        )
+    }
+
+    private suspend fun replaceCrossRef(
+        spendingId: String,
+        deleteId: String,
+        addId: String,
+    ) {
+        deleteCrossRef(
+            SpendingDetailsCrossRef(
+                spendingId,
+                deleteId,
+            ),
+        )
+        addCrossRef(
+            SpendingDetailsCrossRef(
+                spendingId,
+                addId,
+            ),
+        )
     }
 
     override suspend fun saveSpending(
@@ -81,10 +175,6 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return Currency.getInstance(Locale.getDefault())
     }
 
-    override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
-        appDatabase.categoriesDao().updatePhoto(id, photoUri)
-    }
-
     override suspend fun getCategory(id: String): CategoryEntity {
         return appDatabase.categoriesDao().getCategory(id)
     }
@@ -118,8 +208,11 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         return appDatabase.spendingsDao().getDetailCrossRefs(detailId)
     }
 
-    override suspend fun deleteCrossRef(crossRef: SpendingDetailsCrossRef) {
-        return appDatabase.spendingsDao().deleteCrossRef(crossRef.spendingId, crossRef.detailId)
+    override suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef) {
+        return appDatabase.spendingsDao().deleteCrossRef(
+            spendingDetailsCrossRef.spendingId,
+            spendingDetailsCrossRef.detailId,
+        )
     }
 
     override suspend fun deleteSpendingDetail(id: String) {
@@ -164,5 +257,13 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun deleteFamilyMember(member: PersonEntity) {
         //TODO: Add delete functionality
+    }
+
+    override suspend fun saveSpendings(spendings: List<SpendingEntity>) {
+        appDatabase.spendingsDao().saveSpendings(spendings)
+    }
+
+    override suspend fun saveCategories(categories: List<CategoryEntity>) {
+        appDatabase.categoriesDao().saveCategories(categories)
     }
 }

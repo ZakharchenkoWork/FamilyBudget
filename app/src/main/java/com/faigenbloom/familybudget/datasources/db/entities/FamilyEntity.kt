@@ -1,9 +1,9 @@
-package com.faigenbloom.familybudget.datasources.entities
+package com.faigenbloom.familybudget.datasources.db.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity.Companion.TABLE_NAME
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity.Companion.TABLE_NAME
 
 
 @Entity(tableName = TABLE_NAME)

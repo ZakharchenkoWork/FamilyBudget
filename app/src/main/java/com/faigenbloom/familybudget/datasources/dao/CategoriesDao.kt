@@ -4,11 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity.Companion.COLUMN_HIDDEN
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity.Companion.COLUMN_ID
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity.Companion.COLUMN_PHOTO
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity.Companion.TABLE_NAME
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.COLUMN_HIDDEN
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.COLUMN_ID
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.TABLE_NAME
 
 @Dao
 interface CategoriesDao {
@@ -20,9 +19,6 @@ interface CategoriesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(categoryEntity: CategoryEntity)
-
-    @Query("UPDATE $TABLE_NAME SET $COLUMN_PHOTO = :photoUri WHERE $COLUMN_ID = :id")
-    suspend fun updatePhoto(id: String, photoUri: String)
 
     @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id")
     suspend fun getCategory(id: String): CategoryEntity
@@ -38,4 +34,7 @@ interface CategoriesDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_HIDDEN = :isHidden")
     suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveCategories(categories: List<CategoryEntity>)
 }

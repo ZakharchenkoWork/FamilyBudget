@@ -73,11 +73,13 @@ class SpendingShowViewModel(
                     isHidden = isHidden,
                     isManualTotal = isHidden,
                     isDuplicate = true,
+                    ownerId = "asdfas",
                 ),
             )
             saveDetailsUseCase(
                 spendingId = duplicateSpendingId,
                 details = details,
+                isDuplicate = true,
             )
 
             onEditSpending(duplicateSpendingId)

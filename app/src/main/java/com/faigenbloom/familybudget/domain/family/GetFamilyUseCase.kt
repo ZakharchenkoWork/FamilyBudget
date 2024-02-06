@@ -14,7 +14,7 @@ class GetFamilyUseCase(
 ) {
     suspend operator fun invoke(): FamilyUiData {
         return withContext(Dispatchers.IO) {
-            familyMapper.forUI(repository.getFamily())
+            familyMapper.forUI(repository.loadFamily())
                 .copy(
                     members = repository.getFamilyMembers().map {
                         personMapper.forUI(it)

@@ -65,7 +65,6 @@ dependencies {
     val koinVersion = "3.4.2"
     val roomVersion = "2.6.1"
     val mockkVersion = "1.13.9"
-
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
@@ -99,7 +98,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.robolectric:robolectric:4.4")
     testImplementation("io.mockk:mockk-android:${mockkVersion}")
     testImplementation("io.mockk:mockk-agent:${mockkVersion}")

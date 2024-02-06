@@ -1,13 +1,13 @@
 package com.faigenbloom.familybudget.datasources
 
-import com.faigenbloom.familybudget.datasources.entities.BudgetEntity
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity
-import com.faigenbloom.familybudget.datasources.entities.DateRange
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
+import com.faigenbloom.familybudget.datasources.db.entities.DateRange
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import java.util.Currency
 
 interface BaseDataSource {
@@ -23,7 +23,7 @@ interface BaseDataSource {
     suspend fun getAllCategories(): List<CategoryEntity>
     suspend fun getCategoriesByVisibility(isHidden: Boolean): List<CategoryEntity>
     suspend fun addCategory(categoryEntity: CategoryEntity)
-
+    suspend fun saveDetails(spendingId: String, details: List<SpendingDetailEntity>)
     suspend fun saveSpending(spending: SpendingEntity)
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
     suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
@@ -35,7 +35,6 @@ interface BaseDataSource {
     }
 
     suspend fun getChosenCurrency(): Currency
-    suspend fun updateCategoryPhoto(id: String, photoUri: String)
     suspend fun getCategory(id: String): CategoryEntity
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>
     suspend fun getSpendingDetailDuplicate(entity: SpendingDetailEntity): SpendingDetailEntity?
@@ -56,4 +55,6 @@ interface BaseDataSource {
     suspend fun getFamilyMembers(): List<PersonEntity>
     suspend fun saveFamilyMember(member: PersonEntity)
     suspend fun deleteFamilyMember(member: PersonEntity)
+    suspend fun saveSpendings(spendings: List<SpendingEntity>)
+    suspend fun saveCategories(categories: List<CategoryEntity>)
 }

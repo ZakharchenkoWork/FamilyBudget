@@ -6,7 +6,7 @@ import com.faigenbloom.familybudget.common.addAsMoney
 import com.faigenbloom.familybudget.common.decAsMoney
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableMoney
-import com.faigenbloom.familybudget.datasources.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
 import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetSpentTotalUseCase
 import com.faigenbloom.familybudget.domain.statistics.FilterType

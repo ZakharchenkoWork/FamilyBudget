@@ -1,4 +1,4 @@
-package com.faigenbloom.familybudget.datasources.entities
+package com.faigenbloom.familybudget.datasources.db.entities
 
 import androidx.room.ColumnInfo
 

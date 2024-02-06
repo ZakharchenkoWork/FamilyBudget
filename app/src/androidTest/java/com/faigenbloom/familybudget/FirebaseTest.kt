@@ -2,9 +2,10 @@ package com.faigenbloom.familybudget
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.firebase.FamilyModel
-import com.faigenbloom.familybudget.datasources.firebase.FirestoreNetworkSource
+import com.faigenbloom.familybudget.datasources.IdSource
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.models.FamilyModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -20,12 +21,12 @@ class FirebaseTest : BaseTest() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
     override fun getTestRule() = composeTestRule
-    lateinit var firestore: FirestoreNetworkSource
+    lateinit var firestore: FamilyNetworkSource
 
     @Before
     fun setup() {
         FirebaseApp.initializeApp(composeTestRule.activity)
-        firestore = FirestoreNetworkSource(Firebase.firestore)
+        firestore = FamilyNetworkSource(Firebase.firestore, IdSource())
     }
 
     @Test

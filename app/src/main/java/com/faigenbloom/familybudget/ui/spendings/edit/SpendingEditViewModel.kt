@@ -8,11 +8,14 @@ import com.faigenbloom.familybudget.common.SPENDING_ID_ARG
 import com.faigenbloom.familybudget.common.getCurrentDate
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toNormalizedMoney
+import com.faigenbloom.familybudget.datasources.ID
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.domain.CalculateTotalUseCase
 import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.NormalizeDateUseCase
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
+import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
@@ -31,33 +34,22 @@ class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val normalizeDateUseCase: NormalizeDateUseCase,
     private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData>,
-    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
+    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
     private val getSpendingUseCase: GetSpendingUseCase<SpendingUiData>,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val deleteSpendingUseCase: DeleteSpendingUseCase,
     private val calculateTotalUseCase: CalculateTotalUseCase,
+    private val getPersonNameUseCase: GetPersonNameUseCase,
+    private val idSource: IdSource,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[SPENDING_ID_ARG] ?: ""
-    private var namingText: String = ""
-    private var amountText: String = ""
-    private var dateText: String = ""
-    private var photoUri: Uri? = null
-    private var detailsList: List<DetailUiData> = emptyList()
-    private var isCategoriesOpened: Boolean = true
-    private var isManualTotal: Boolean = false
-    private var isHidden: Boolean = false
-    private var isNameError: Boolean = false
-    private var isAmountError: Boolean = false
-    private var isCategoryError: Boolean = false
-    private var isPlanned: Boolean = false
-    private var isDuplicate: Boolean = false
-    private var canDuplicate: Boolean = false
     private var selectedCategory: CategoryUiData? = null
-    private var currency: Currency = Currency.getInstance(Locale.getDefault())
+    private var ownerId: String = ""
+    private var isManualTotal: Boolean = false
+    private var canDuplicate: Boolean = false
 
     var onNext: (String) -> Unit = {}
-    var onShowMessage: (MessageTypes) -> Unit = {}
     var onCategoryIdLoaded: (categoryId: String) -> Unit = {}
     var onScreenTransition: (isCategoriesOpened: Boolean) -> Unit = {}
     fun onCategorySelected(category: CategoryUiData) {
@@ -65,10 +57,13 @@ class SpendingEditViewModel(
     }
 
     fun updateDetail(detailsUpdate: SpendingDetailListWrapper?) {
-        detailsUpdate?.let {
-            detailsList = it.details
-            updateTotal()
-            updateUI()
+        detailsUpdate?.let { update ->
+            _stateFlow.update {
+                state.copy(
+                    detailsList = update.details,
+                    amountText = updateTotal(update.details),
+                )
+            }
         }
     }
 
@@ -78,62 +73,65 @@ class SpendingEditViewModel(
                 selectedCategory?.id?.let { categoryId ->
                     spendingId = saveSpendingUseCase(
                         SpendingUiData(
-                            id = spendingId,
-                            name = namingText,
-                            amount = amountText,
-                            date = normalizeDateUseCase(dateText),
+                            id = state.spendingId,
+                            name = state.namingText,
+                            amount = state.amountText,
+                            date = normalizeDateUseCase(state.dateText),
                             categoryId = categoryId,
-                            photoUri = photoUri,
+                            photoUri = state.photoUri,
                             isManualTotal = isManualTotal,
-                            isHidden = isHidden,
-                            isPlanned = isPlanned,
+                            isHidden = state.isHidden,
+                            isPlanned = state.isPlanned,
                             isDuplicate = false,
+                            ownerId = ownerId.ifBlank { idSource[ID.USER] },
                         ),
                     )
                     saveDetailsUseCase(
                         spendingId = spendingId,
-                        details = detailsList,
+                        details = state.detailsList,
                     )
 
-                    state.onNext(spendingId)
-                    onShowMessage(MessageTypes.SAVED)
+                    onNext(spendingId)
                 }
             }
         }
     }
 
     private fun checkAllFilled(): Boolean {
-        if (namingText.isBlank() || amountText.isBlank() || selectedCategory == null) {
+        if (state.namingText.isBlank() || state.amountText.isBlank() || selectedCategory == null) {
             return false
         }
         return true
     }
 
     private fun checkAndShowErrors(): Boolean {
-        if (namingText.isBlank()) {
-            isNameError = true
+        _stateFlow.update {
+            state.copy(
+                isNameError = state.namingText.isBlank(),
+
+                isAmountError = state.amountText.isBlank(),
+                isCategoryError = state.namingText.isBlank().not() && state.amountText.isBlank()
+                    .not() && selectedCategory == null,
+            )
         }
-        if (amountText.isBlank()) {
-            isAmountError = true
-        }
-        if (isNameError.not() && isAmountError.not() && selectedCategory == null) {
-            isCategoryError = true
+        if (state.isCategoryError) {
             onPageChanged(true)
         }
-        updateUI()
-
         return checkAllFilled()
     }
 
     private fun onResetErrors() {
-        isNameError = false
-        isAmountError = false
-        isCategoryError = false
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                isNameError = false,
+                isAmountError = false,
+                isCategoryError = false,
+            )
+        }
     }
 
-    private fun updateTotal() {
-        amountText = calculateTotalUseCase(isManualTotal, detailsList, amountText)
+    private fun updateTotal(detailsList: List<DetailUiData>): String {
+        return calculateTotalUseCase(isManualTotal, detailsList, state.amountText)
     }
 
     private fun onDuplicate() {
@@ -144,20 +142,22 @@ class SpendingEditViewModel(
                         spendingId = saveSpendingUseCase(
                             SpendingUiData(
                                 id = "",
-                                name = namingText,
-                                amount = amountText,
-                                date = normalizeDateUseCase(dateText),
+                                name = state.namingText,
+                                amount = state.amountText,
+                                date = normalizeDateUseCase(state.dateText),
                                 categoryId = categoryId,
-                                photoUri = photoUri,
-                                isHidden = isHidden,
-                                isPlanned = isPlanned,
+                                photoUri = state.photoUri,
+                                isHidden = state.isHidden,
+                                isPlanned = state.isPlanned,
                                 isManualTotal = isManualTotal,
                                 isDuplicate = true,
+                                ownerId = ownerId,
                             ),
                         )
                         saveDetailsUseCase(
                             spendingId = spendingId,
-                            details = detailsList,
+                            details = state.detailsList,
+                            isDuplicate = true,
                         )
                         reload()
                     }
@@ -168,15 +168,22 @@ class SpendingEditViewModel(
 
     private fun onDateChanged(date: String) {
         if (date.isNotBlank()) {
-            dateText = date
-            isPlanned = isPlanned || date.toLongDate() > getCurrentDate()
-            updateUI()
+            _stateFlow.update {
+                state.copy(
+                    dateText = date,
+                    isPlanned = state.isPlanned || date.toLongDate() > getCurrentDate(),
+                )
+            }
         }
     }
 
     private fun onPhotoUriChanged(photoUri: Uri?) {
-        this.photoUri = photoUri
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                photoUri = photoUri,
+            )
+        }
+
     }
 
     private fun deleteSpending() {
@@ -187,123 +194,127 @@ class SpendingEditViewModel(
     }
 
     private fun onPageChanged(isCategoriesOpened: Boolean) {
-        this.isCategoriesOpened = isCategoriesOpened
+        _stateFlow.update {
+            state.copy(
+                isCategoriesOpened = isCategoriesOpened,
+            )
+        }
         onScreenTransition(isCategoriesOpened)
-        updateUI()
     }
 
     private fun onPlannedChanged() {
-        isPlanned = !isPlanned
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                isPlanned = !state.isPlanned,
+            )
+        }
     }
 
     private fun onNamingTextChanged(name: String) {
-        namingText = name
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                namingText = name,
+            )
+        }
     }
 
     private fun onAmountTextChanged(amount: String) {
-        amountText = amount.toNormalizedMoney()
+        _stateFlow.update {
+            state.copy(
+                amountText = amount.toNormalizedMoney(),
+            )
+        }
         isManualTotal = amount.isNotBlank()
-        updateUI()
+
     }
 
     private fun onHideChanged() {
-        isHidden = !isHidden
-        onShowMessage(
-            if (isHidden) {
-                MessageTypes.SHOWN
-            } else {
-                MessageTypes.HIDEN
-            },
-        )
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                isHidden = !state.isHidden,
+            )
+        }
     }
 
-    private val state: SpendingEditState
-        get() = SpendingEditState(
-            spendingId = spendingId,
-            isCategoriesOpened = isCategoriesOpened,
-            namingText = namingText,
-            amountText = amountText,
-            canDuplicate = canDuplicate,
-            detailsList = detailsList,
-            dateText = dateText,
-            isNameError = isNameError,
-            isAmountError = isAmountError,
-            isCategoryError = isCategoryError,
-            isOkActive = checkAllFilled(),
-            isHidden = isHidden,
-            isDuplicate = isDuplicate,
-            isPlanned = isPlanned,
-            currency = currency,
+
+    private val _stateFlow = MutableStateFlow(
+        SpendingEditState(
             onResetErrors = ::onResetErrors,
             onHideChanged = ::onHideChanged,
             onPageChanged = ::onPageChanged,
             onNamingTextChanged = ::onNamingTextChanged,
             onAmountTextChanged = ::onAmountTextChanged,
-            photoUri = photoUri,
             deleteSpending = ::deleteSpending,
             onPhotoUriChanged = ::onPhotoUriChanged,
             onSave = ::onSave,
             onPlannedChanged = ::onPlannedChanged,
             onDateChanged = ::onDateChanged,
             onDuplicate = ::onDuplicate,
-            onNext = onNext,
-        )
-
-    private val _stateFlow = MutableStateFlow(state)
+        ),
+    )
     val stateFlow = _stateFlow.asStateFlow()
         .apply {
             reload()
         }
+    private val state: SpendingEditState
+        get() = _stateFlow.value
 
     private fun reload() {
         viewModelScope.launch {
             if (spendingId.isNotBlank()) {
                 val spendingUiData = getSpendingUseCase(spendingId)
-                namingText = spendingUiData.name
-                amountText = spendingUiData.amount
-                dateText = spendingUiData.date
-                photoUri = spendingUiData.photoUri
-                isHidden = spendingUiData.isHidden
-                isPlanned = spendingUiData.isPlanned
                 isManualTotal = spendingUiData.isManualTotal
-                detailsList = getSpendingDetailsUseCase(spendingId)
-                isDuplicate = spendingUiData.isDuplicate
+                ownerId = spendingUiData.ownerId
                 onCategoryIdLoaded(spendingUiData.categoryId)
-                canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not()
-                currency = getChosenCurrencyUseCase()
-                updateTotal()
-                updateUI()
+                _stateFlow.update {
+                    state.copy(
+                        spendingId = spendingId,
+                        namingText = spendingUiData.name,
+                        amountText = spendingUiData.amount,
+                        dateText = spendingUiData.date,
+                        photoUri = spendingUiData.photoUri,
+                        isHidden = spendingUiData.isHidden,
+                        isPlanned = spendingUiData.isPlanned,
+                        detailsList = getSpendingDetailsUseCase(spendingId),
+                        isDuplicate = spendingUiData.isDuplicate,
+                        canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not(),
+                        currency = getChosenCurrencyUseCase(),
+                        ownerName = getPersonNameUseCase(spendingUiData.ownerId),
+                        isThisUser = ownerId == idSource[ID.USER],
+                    )
+                }
+                onCategoryIdLoaded(spendingUiData.categoryId)
+                _stateFlow.update {
+                    state.copy(
+                        isOkActive = checkAllFilled(),
+                        amountText = updateTotal(it.detailsList),
+                    )
+                }
             }
         }
     }
-
-    private fun updateUI() {
-        _stateFlow.update { state }
-    }
-
 }
 
 data class SpendingEditState(
-    val spendingId: String,
-    val canDuplicate: Boolean,
-    val isCategoriesOpened: Boolean,
-    val isDuplicate: Boolean,
+    val spendingId: String = "",
+    val canDuplicate: Boolean = false,
+    val isCategoriesOpened: Boolean = true,
+    val isDuplicate: Boolean = false,
     val onPageChanged: (Boolean) -> Unit,
-    val namingText: String,
-    val amountText: String,
-    val isNameError: Boolean,
-    val isAmountError: Boolean,
-    val isCategoryError: Boolean,
-    val dateText: String,
-    var photoUri: Uri?,
-    val detailsList: List<DetailUiData>,
-    val isOkActive: Boolean,
-    val isPlanned: Boolean,
-    val isHidden: Boolean,
-    val currency: Currency,
+    val namingText: String = "",
+    val amountText: String = "",
+    val ownerName: String = "",
+    val isThisUser: Boolean = false,
+    val isNameError: Boolean = false,
+    val isAmountError: Boolean = false,
+    val isCategoryError: Boolean = false,
+    val dateText: String = "",
+    var photoUri: Uri? = null,
+    val detailsList: List<DetailUiData> = emptyList(),
+    val isOkActive: Boolean = false,
+    val isPlanned: Boolean = false,
+    val isHidden: Boolean = false,
+    val currency: Currency = Currency.getInstance(Locale.getDefault()),
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
@@ -314,12 +325,4 @@ data class SpendingEditState(
     val onHideChanged: () -> Unit,
     val deleteSpending: () -> Unit,
     val onDuplicate: () -> Unit,
-    val onNext: (String) -> Unit,
 )
-
-
-enum class MessageTypes {
-    SAVED,
-    HIDEN,
-    SHOWN,
-}

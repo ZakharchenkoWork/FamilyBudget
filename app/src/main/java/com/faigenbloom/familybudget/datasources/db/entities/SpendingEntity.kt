@@ -1,10 +1,10 @@
-package com.faigenbloom.familybudget.datasources.entities
+package com.faigenbloom.familybudget.datasources.db.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.faigenbloom.familybudget.common.toSortableDate
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity.Companion.TABLE_NAME
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity.Companion.TABLE_NAME
 import com.faigenbloom.familybudget.domain.spendings.Countable
 
 @Entity(tableName = TABLE_NAME)
@@ -12,6 +12,8 @@ data class SpendingEntity(
     @PrimaryKey
     @ColumnInfo(name = COLUMN_ID)
     val id: String,
+    @ColumnInfo(name = COLUMN_OWNER_ID)
+    val ownerId: String,
     @ColumnInfo(name = COLUMN_NAME)
     val name: String,
     @ColumnInfo(name = COLUMN_AMOUNT)
@@ -43,6 +45,7 @@ data class SpendingEntity(
     companion object {
         const val TABLE_NAME = "spendings"
         const val COLUMN_ID = "spending_id"
+        const val COLUMN_OWNER_ID = "owner_id"
         const val COLUMN_NAME = "name"
         const val COLUMN_PHOTO = "photo"
         const val COLUMN_AMOUNT = "amount"

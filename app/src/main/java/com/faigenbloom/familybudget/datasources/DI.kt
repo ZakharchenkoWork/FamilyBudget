@@ -2,6 +2,7 @@ package com.faigenbloom.familybudget.datasources
 
 import androidx.room.Room
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val databaseModule = module {
@@ -19,4 +20,5 @@ val databaseModule = module {
     }
 
     single<BaseDataSource> { DatabaseDataSource(get()) }
+    singleOf(::IdSource)
 }

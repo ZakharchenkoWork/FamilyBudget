@@ -60,19 +60,19 @@ fun SpendingEditPage(
 ) {
     Column {
         TopBar(
-            title = stringResource(
-                id = if (state.spendingId.isBlank()) {
-                    R.string.adding_spending_title
-                } else if (state.isDuplicate) {
-                    R.string.editing_spending_duplicate
-                } else if (state.isPlanned) {
-                    R.string.editing_planned_spending_title
-                } else if (state.isHidden) {
-                    R.string.editing_hidden_spending_title
-                } else {
-                    R.string.editing_spending_title
-                },
-            ),
+            title = if (state.spendingId.isBlank()) {
+                stringResource(R.string.adding_spending_title)
+            } else if (state.isDuplicate) {
+                stringResource(R.string.editing_spending_duplicate)
+            } else if (state.isPlanned) {
+                stringResource(R.string.editing_planned_spending_title)
+            } else if (state.isHidden) {
+                stringResource(R.string.editing_hidden_spending_title)
+            } else if (state.isThisUser.not()) {
+                stringResource(R.string.editing_spending_title)
+            } else {
+                stringResource(R.string.editing_another_user_spending_title, state.ownerName)
+            },
             startIcon = R.drawable.icon_arrow_back,
             onStartIconCLicked = onBack,
         )
@@ -375,7 +375,7 @@ fun SpendingEditPageCategoriesPreview() {
         Surface {
             SpendingEditPage(
                 state = SpendingEditState(
-                    spendingId = "",
+                    spendingId = "asdf",
                     isCategoriesOpened = true,
                     onPageChanged = {},
                     namingText = "",
@@ -387,6 +387,8 @@ fun SpendingEditPageCategoriesPreview() {
                     isHidden = false,
                     isDuplicate = false,
                     isPlanned = false,
+                    isThisUser = false,
+                    ownerName = "Natalia",
                     onResetErrors = {},
                     onNamingTextChanged = {},
                     onAmountTextChanged = {},
@@ -394,7 +396,6 @@ fun SpendingEditPageCategoriesPreview() {
                     onPhotoUriChanged = { _ -> },
                     onSave = { },
                     onDateChanged = { },
-                    onNext = {},
                     isOkActive = false,
                     onHideChanged = {},
                     deleteSpending = { },
@@ -453,12 +454,12 @@ fun SpendingEditPageDetailsPreview() {
                     onAmountTextChanged = {},
                     photoUri = null,
                     isDuplicate = true,
+                    isThisUser = true,
                     isPlanned = true,
                     currency = Currency.getInstance(Locale.getDefault()),
                     onPhotoUriChanged = { _ -> },
                     onSave = {},
                     onDateChanged = { },
-                    onNext = {},
                     isOkActive = true,
                     isHidden = true,
                     onHideChanged = {},

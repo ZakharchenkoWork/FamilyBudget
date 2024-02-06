@@ -2,16 +2,16 @@ package com.faigenbloom.familybudget.datasources
 
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toLongMoney
-import com.faigenbloom.familybudget.datasources.entities.BudgetEntity
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity
-import com.faigenbloom.familybudget.datasources.entities.DateRange
-import com.faigenbloom.familybudget.datasources.entities.DefaultCategories
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
+import com.faigenbloom.familybudget.datasources.db.entities.DateRange
+import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.spendings.detail.mockSuggestions
 import com.faigenbloom.familybudget.ui.spendings.list.mockSpendingsWithCategoryList
 import java.util.Currency
@@ -35,6 +35,7 @@ class MockDataSource : BaseDataSource {
                 isPlanned = false,
                 isManualTotal = true,
                 isHidden = false,
+                ownerId = "asdf",
             )
         },
     )
@@ -105,9 +106,6 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getChosenCurrency(): Currency {
         return Currency.getInstance(Locale.getDefault())
-    }
-
-    override suspend fun updateCategoryPhoto(id: String, photoUri: String) {
     }
 
     override suspend fun getCategory(id: String): CategoryEntity {
@@ -201,7 +199,20 @@ class MockDataSource : BaseDataSource {
         TODO("Not yet implemented")
     }
 
+    override suspend fun saveSpendings(spendings: List<SpendingEntity>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveCategories(categories: List<CategoryEntity>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
         categories.add(categoryEntity)
     }
+
+    override suspend fun saveDetails(spendingId: String, details: List<SpendingDetailEntity>) {
+        TODO("Not yet implemented")
+    }
+
 }

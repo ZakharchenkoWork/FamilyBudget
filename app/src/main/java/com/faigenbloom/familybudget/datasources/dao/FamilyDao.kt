@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
-import com.faigenbloom.familybudget.datasources.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 
 @Dao
 interface FamilyDao {

@@ -6,7 +6,7 @@ import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.toReadableMoney
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 
 class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
@@ -22,6 +22,7 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
             isPlanned = entity.isPlanned,
             isHidden = entity.isHidden,
             isDuplicate = entity.isDuplicate,
+            ownerId = entity.ownerId,
         )
     }
 
@@ -38,6 +39,7 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
             isPlanned = model.isPlanned,
             isHidden = model.isHidden,
             isDuplicate = model.isDuplicate,
+            ownerId = model.ownerId,
         )
     }
 

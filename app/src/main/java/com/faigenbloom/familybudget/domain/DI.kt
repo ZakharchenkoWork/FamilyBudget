@@ -1,10 +1,11 @@
 package com.faigenbloom.familybudget.domain
 
-import com.faigenbloom.familybudget.domain.auth.GetAuthStateUseCase
+import com.faigenbloom.familybudget.domain.auth.LoadAllDataUseCase
 import com.faigenbloom.familybudget.domain.auth.LoginUserUseCase
 import com.faigenbloom.familybudget.domain.auth.RegisterUserUseCase
 import com.faigenbloom.familybudget.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyUseCase
+import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.family.SaveFamilyMembersUseCase
 import com.faigenbloom.familybudget.domain.family.SaveFamilyUseCase
 import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
@@ -24,9 +25,10 @@ val domainModule = module {
     singleOf(::GetFamilyUseCase)
     singleOf(::SaveFamilyUseCase)
     singleOf(::SaveFamilyMembersUseCase)
-    singleOf(::GetAuthStateUseCase)
+    singleOf(::LoadAllDataUseCase)
     singleOf(::RegisterUserUseCase)
     singleOf(::LoginUserUseCase)
+    singleOf(::GetPersonNameUseCase)
 
 }
 

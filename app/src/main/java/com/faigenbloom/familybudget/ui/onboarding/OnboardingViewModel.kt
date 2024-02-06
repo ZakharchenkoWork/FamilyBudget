@@ -2,13 +2,13 @@ package com.faigenbloom.familybudget.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faigenbloom.familybudget.domain.auth.GetAuthStateUseCase
+import com.faigenbloom.familybudget.domain.auth.LoadAllDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
-    private val getAuthStateUseCase: GetAuthStateUseCase,
+    private val getAuthStateUseCase: LoadAllDataUseCase,
 ) : ViewModel() {
 
     var onAuthPassed: () -> Unit = {}
@@ -23,7 +23,6 @@ class OnboardingViewModel(
     )
     val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch {
-            getAuthStateUseCase
             if (getAuthStateUseCase()) {
                 onAuthPassed()
             }

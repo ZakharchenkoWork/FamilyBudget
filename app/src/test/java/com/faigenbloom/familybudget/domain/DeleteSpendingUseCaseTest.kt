@@ -3,7 +3,7 @@ package com.faigenbloom.familybudget.domain
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
 import com.faigenbloom.familybudget.datasources.MockDataSource
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import com.faigenbloom.familybudget.repositories.SpendingsRepository

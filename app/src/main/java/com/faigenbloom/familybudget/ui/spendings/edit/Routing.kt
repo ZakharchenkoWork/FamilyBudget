@@ -35,7 +35,6 @@ fun NavGraphBuilder.spendingEditPage(
         showNavigation: Boolean,
         menuState: FloatingMenuState,
     ) -> Unit,
-    onShowMessage: (MessageTypes) -> Unit,
     onPhotoRequest: (id: String) -> Unit,
     onCategoryPhotoRequest: (id: String?) -> Unit,
     onCalendarOpened: (String) -> Unit,
@@ -69,7 +68,7 @@ fun NavGraphBuilder.spendingEditPage(
             else
                 onBack()
         }
-        spendingsViewModel.onShowMessage = onShowMessage
+
         spendingsViewModel.onScreenTransition = {
             options(
                 false,

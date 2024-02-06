@@ -13,6 +13,7 @@
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
     <string name="editing_spending_title">Editing spending</string>
+    <string name="editing_another_user_spending_title">Editing spending of %2$s</string>
     <string name="editing_planned_spending_title">Editing planned spending</string>
     <string name="editing_hidden_spending_title">Editing hidden spending</string>
     <string name="email">Email</string>

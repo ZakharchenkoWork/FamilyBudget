@@ -4,7 +4,7 @@ import com.faigenbloom.familybudget.common.Mapper
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toNormalizedMoney
 import com.faigenbloom.familybudget.common.toReadableMoney
-import com.faigenbloom.familybudget.datasources.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 
 class DetailsMapper : Mapper<DetailUiData, SpendingDetailEntity>() {

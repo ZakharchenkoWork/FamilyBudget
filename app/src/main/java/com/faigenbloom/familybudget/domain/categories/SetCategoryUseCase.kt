@@ -1,7 +1,7 @@
 package com.faigenbloom.familybudget.domain.categories
 
 import android.net.Uri
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.domain.GenerateIdUseCase
 import com.faigenbloom.familybudget.repositories.CategoriesRepository
 import kotlinx.coroutines.Dispatchers

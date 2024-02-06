@@ -35,6 +35,8 @@ class SaveSpendingUseCaseTest {
         isPlanned = false,
         isManualTotal = false,
         isHidden = false,
+        ownerId = "",
+        isDuplicate = false,
     )
     private val idGeneratorUseCase: GenerateIdUseCase = mock {
         wheneverBlocking { it.invoke("") }.thenReturn(altSpendingId)
@@ -48,7 +50,7 @@ class SaveSpendingUseCaseTest {
         )
     }
     private val spendingsRepository: SpendingsRepository = SpendingsRepository(
-        dataSource = dataSource,
+        dataBaseDataSource = dataSource,
     )
     private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData> =
         SaveSpendingUseCase(

@@ -1,6 +1,6 @@
 package com.faigenbloom.familybudget
 
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.domain.spendings.Countable
 import com.faigenbloom.familybudget.domain.spendings.PlateSizeType
 import com.faigenbloom.familybudget.domain.spendings.SortPlatesUseCase
@@ -185,7 +185,7 @@ class SortingTest {
             }
             val plates = sorter.preparePlatesSizes(testCaseList)
             for (i in 100..1000) {
-                var plateSizeType: PlateSizeType = PlateSizeType.SIZE_ONE_BY_ONE
+                val plateSizeType: PlateSizeType = PlateSizeType.SIZE_ONE_BY_ONE
                 if (i < 200) {
                     PlateSizeType.SIZE_ONE_BY_ONE
                 } else if (i < 300) {

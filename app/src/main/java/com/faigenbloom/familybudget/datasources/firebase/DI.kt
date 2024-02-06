@@ -17,6 +17,9 @@ val networkModule = module {
     single {
         Firebase.auth
     }
-    singleOf(::FirestoreNetworkSource)
+    singleOf(::FamilyNetworkSource)
     singleOf(::AuthNetworkSource)
+    singleOf(::SpendingsNetworkSource)
+    singleOf(::NetworkDataSource)
+    singleOf(::CategoryNetworkSource)
 }

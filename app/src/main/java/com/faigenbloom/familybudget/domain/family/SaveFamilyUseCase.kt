@@ -1,6 +1,6 @@
 package com.faigenbloom.familybudget.domain.family
 
-import com.faigenbloom.familybudget.datasources.entities.FamilyEntity
+import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.domain.GenerateIdUseCase
 import com.faigenbloom.familybudget.repositories.FamilyRepository
 import kotlinx.coroutines.Dispatchers

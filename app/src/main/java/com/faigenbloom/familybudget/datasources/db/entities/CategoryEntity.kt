@@ -1,10 +1,10 @@
-package com.faigenbloom.familybudget.datasources.entities
+package com.faigenbloom.familybudget.datasources.db.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.faigenbloom.familybudget.R
-import com.faigenbloom.familybudget.datasources.entities.CategoryEntity.Companion.TABLE_NAME
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME)
 data class CategoryEntity(

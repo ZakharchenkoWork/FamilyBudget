@@ -2,7 +2,7 @@ package com.faigenbloom.familybudget.domain
 
 import com.faigenbloom.familybudget.MainDispatcherRule
 import com.faigenbloom.familybudget.datasources.MockDataSource
-import com.faigenbloom.familybudget.datasources.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.familybudget.repositories.CategoriesRepository
 import kotlinx.coroutines.test.runTest
@@ -27,6 +27,8 @@ class DeleteCategoryUseCaseTest {
         isPlanned = false,
         isManualTotal = false,
         isHidden = false,
+        ownerId = "",
+        isDuplicate = false,
     )
     private val dataSource: MockDataSource = mock {}
 

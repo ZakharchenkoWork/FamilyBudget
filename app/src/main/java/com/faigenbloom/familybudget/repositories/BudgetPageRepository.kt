@@ -1,7 +1,7 @@
 package com.faigenbloom.familybudget.repositories
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
-import com.faigenbloom.familybudget.datasources.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
 
 class BudgetPageRepository(private val dataSource: BaseDataSource) {
     suspend fun getBudgetData(): BudgetEntity {
