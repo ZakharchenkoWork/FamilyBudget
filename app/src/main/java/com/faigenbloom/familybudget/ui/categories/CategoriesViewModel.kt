@@ -21,104 +21,131 @@ class CategoriesViewModel(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {
 
-    private var categoriesList: List<CategoryUiData> = emptyList()
-    private var selectedIndex = NO_INDEX
-    private var categoryId: String? = null
-    private var newCategoryName: String = ""
-    private var newCategoryPhoto: Uri? = null
-    private var isCategoryError: Boolean = false
-    private var categoryPhotoChooserId: String? = null
-    private var isSaveCategoryVisible: Boolean = false
-    private var isEditCategoryShown: Boolean = false
-
     var onCategorySelected: (CategoryUiData) -> Unit = {}
+    fun onCategoryIdLoaded(categoryId: String) {
+        _stateFlow.update {
+            state.copy(
+                categoryId = categoryId,
+                selectedIndex = if (state.categoriesList.isNotEmpty()) {
+                    state.categoriesList.indexOfFirst { it.id == categoryId }
+                } else NO_INDEX,
+            )
+        }
+        onCategorySelected(state.categoriesList[state.selectedIndex])
+    }
 
     private fun onCategoryPhotoUriChanged(uri: Uri) {
-        newCategoryPhoto = uri
-        isSaveCategoryVisible = true
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                newCategoryPhoto = uri,
+                isSaveCategoryVisible = true,
+            )
+        }
     }
 
     private fun onCategoryError(isError: Boolean) {
-        isCategoryError = isError
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                isCategoryError = isError,
+            )
+        }
     }
 
     private fun onCategoryDialogVisibilityChanged(categoryIndex: Int) {
-        isEditCategoryShown = !isEditCategoryShown
-        if (isEditCategoryShown) {
-            if (categoryIndex >= 0) {
-                val categoryUiData = categoriesList[categoryIndex]
-                categoryId = categoryUiData.id
-                newCategoryName = categoryUiData.name ?: ""
-                newCategoryPhoto = categoryUiData.iconUri?.toUri()
+        if (state.isEditCategoryShown.not()) {
+            if (categoryIndex > NO_INDEX) {
+                val categoryUiData = state.categoriesList[categoryIndex]
+                _stateFlow.update {
+                    state.copy(
+                        categoryId = categoryUiData.id,
+                        newCategoryName = categoryUiData.name ?: "",
+                        newCategoryPhoto = categoryUiData.iconUri?.toUri(),
+                        isEditCategoryShown = true,
+                    )
+                }
             } else {
-                categoryId = null
-                newCategoryName = ""
-                newCategoryPhoto = null
+                _stateFlow.update {
+                    state.copy(
+                        categoryId = null,
+                        newCategoryName = "",
+                        newCategoryPhoto = null,
+                        isEditCategoryShown = true,
+                    )
+                }
             }
         } else {
-            categoryId = null
-            newCategoryName = ""
-            newCategoryPhoto = null
-            isSaveCategoryVisible = false
-            isEditCategoryShown = false
+            _stateFlow.update {
+                state.copy(
+                    categoryId = null,
+                    newCategoryName = "",
+                    newCategoryPhoto = null,
+                    isSaveCategoryVisible = false,
+                    isEditCategoryShown = false,
+                )
+            }
         }
-        updateUI()
     }
 
     private fun onSelectionChanged(selectedIndex: Int) {
-        this.selectedIndex = selectedIndex
-        onCategorySelected(categoriesList[selectedIndex])
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                selectedIndex = selectedIndex,
+            )
+        }
+        onCategorySelected(state.categoriesList[selectedIndex])
     }
 
     private fun onNewCategoryNameChanged(name: String) {
-        this.newCategoryName = name
-        isSaveCategoryVisible = newCategoryName.isNotBlank()
-        updateUI()
+        _stateFlow.update {
+            state.copy(
+                newCategoryName = name,
+                isSaveCategoryVisible = name.isNotBlank(),
+            )
+        }
+
     }
 
     private fun onDeleteCategory() {
-        categoryId?.let { id ->
+        state.categoryId?.let { id ->
             viewModelScope.launch {
                 deleteCategoryUseCase(id)
                 onCategoryDialogVisibilityChanged(NO_INDEX)
-                selectedIndex = NO_INDEX
-                categoriesList = getCategoriesUseCase(false)
-                updateUI()
+                _stateFlow.update {
+                    state.copy(
+                        selectedIndex = NO_INDEX,
+                        categoriesList = getCategoriesUseCase(false),
+                    )
+                }
             }
         }
     }
 
     private fun onNewCategorySaved() {
-        if (newCategoryName.isNotBlank()) {
+        if (state.newCategoryName.isNotBlank()) {
             viewModelScope.launch(Dispatchers.IO) {
                 val categoryId = setCategoryUseCase(
-                    id = categoryId ?: "",
-                    name = newCategoryName,
-                    uri = newCategoryPhoto,
+                    id = state.categoryId ?: "",
+                    name = state.newCategoryName,
+                    uri = state.newCategoryPhoto,
                 )
 
                 onCategoryDialogVisibilityChanged(NO_INDEX)
-                categoriesList = getCategoriesUseCase(false)
-                selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
-                updateUI()
+                val categoriesList = getCategoriesUseCase(false)
+                _stateFlow.update {
+                    state.copy(
+                        categoriesList = categoriesList,
+                        selectedIndex = categoriesList.indexOfFirst { it.id == categoryId },
+                    )
+                }
             }
         }
     }
 
     private val state: CategoriesState
-        get() = CategoriesState(
-            categoriesList = categoriesList,
-            categoryId = categoryId,
-            selectedIndex = selectedIndex,
-            newCategoryName = newCategoryName,
-            newCategoryPhoto = newCategoryPhoto,
-            isSaveCategoryVisible = isSaveCategoryVisible,
-            categoryPhotoChooserId = categoryPhotoChooserId,
-            isEditCategoryShown = isEditCategoryShown,
-            isCategoryError = isCategoryError,
+        get() = _stateFlow.value
+
+    private val _stateFlow = MutableStateFlow(
+        CategoriesState(
             onCategoryError = ::onCategoryError,
             onSelectionChanged = ::onSelectionChanged,
             onNewCategoryNameChanged = ::onNewCategoryNameChanged,
@@ -126,49 +153,37 @@ class CategoriesViewModel(
             onCategoryPhotoUriChanged = ::onCategoryPhotoUriChanged,
             onCategoryDialogVisibilityChanged = ::onCategoryDialogVisibilityChanged,
             onDeleteCategory = ::onDeleteCategory,
-        )
-
-    private val _stateFlow = MutableStateFlow(state)
+        ),
+    )
     val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesList = getCategoriesUseCase(false)
-            categoryId?.let {
-                selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
-                onCategorySelected(categoriesList[selectedIndex])
+            _stateFlow.update {
+                state.copy(
+                    categoriesList = getCategoriesUseCase(false),
+                )
             }
-            updateUI()
+            state.categoryId?.let {
+                onCategoryIdLoaded(it)
+            }
         }
-    }
-
-    fun onCategoryIdLoaded(it: String) {
-        categoryId = it
-        if (categoriesList.isNotEmpty()) {
-            selectedIndex = categoriesList.indexOfFirst { it.id == categoryId }
-            onCategorySelected(categoriesList[selectedIndex])
-            updateUI()
-        }
-    }
-
-    private fun updateUI() {
-        _stateFlow.update { state }
     }
 }
 
 data class CategoriesState(
-    val categoriesList: List<CategoryUiData>,
-    val selectedIndex: Int,
+    val categoriesList: List<CategoryUiData> = emptyList(),
+    val selectedIndex: Int = NO_INDEX,
+    val categoryId: String? = null,
+    val newCategoryName: String = "",
+    val newCategoryPhoto: Uri? = null,
+    val isCategoryError: Boolean = false,
+    val isSaveCategoryVisible: Boolean = false,
+    val isEditCategoryShown: Boolean = false,
+    val categoryPhotoChooserId: String? = null,
     val onSelectionChanged: (Int) -> Unit,
-    val categoryId: String?,
-    val newCategoryName: String,
-    val newCategoryPhoto: Uri?,
     val onNewCategoryNameChanged: (String) -> Unit,
-    val isSaveCategoryVisible: Boolean,
-    val isEditCategoryShown: Boolean,
-    val isCategoryError: Boolean,
     val onNewCategorySaved: () -> Unit,
     val onCategoryError: (Boolean) -> Unit,
     val onDeleteCategory: () -> Unit,
     val onCategoryDialogVisibilityChanged: (Int) -> Unit,
     val onCategoryPhotoUriChanged: (photoUri: Uri) -> Unit,
-    val categoryPhotoChooserId: String?,
 )
