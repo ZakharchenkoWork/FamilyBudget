@@ -34,17 +34,7 @@ class SpendingShowViewModel(
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[ID_ARG] ?: ""
-
-    private var name: String = ""
-    private var amount: String = ""
-    private var date: String = ""
-    private var category: CategoryUiData = CategoryUiData("")
-    private var photoUri: Uri? = null
-    private var details: List<DetailUiData> = emptyList()
-    private var isPlanned: Boolean = false
-    private var isHidden: Boolean = false
     private var isManualTotal: Boolean = false
-    private var currency: Currency = Currency.getInstance(Locale.getDefault())
 
     var onEditSpending: (String) -> Unit = {}
     private fun onEditClicked() {
@@ -54,8 +44,11 @@ class SpendingShowViewModel(
     private fun markPurchased() {
         viewModelScope.launch(Dispatchers.IO) {
             setPurchasedSpendingUseCase(spendingId)
-            isPlanned = false
-            updateUI()
+            _stateFlow.update {
+                state.copy(
+                    isPlanned = false,
+                )
+            }
         }
     }
 
@@ -64,21 +57,21 @@ class SpendingShowViewModel(
             val duplicateSpendingId = saveSpendingUseCase(
                 spending = SpendingUiData(
                     id = "",
-                    name = name,
-                    amount = amount,
-                    date = date,
-                    categoryId = category.id,
-                    photoUri = photoUri,
-                    isPlanned = isPlanned,
-                    isHidden = isHidden,
-                    isManualTotal = isHidden,
+                    name = state.name,
+                    amount = state.amount,
+                    date = state.date,
+                    categoryId = state.category.id,
+                    photoUri = state.photoUri,
+                    isPlanned = state.isPlanned,
+                    isHidden = state.isHidden,
+                    isManualTotal = isManualTotal,
                     isDuplicate = true,
-                    ownerId = "asdfas",
+                    ownerId = "",
                 ),
             )
             saveDetailsUseCase(
                 spendingId = duplicateSpendingId,
-                details = details,
+                details = state.details,
                 isDuplicate = true,
             )
 
@@ -87,57 +80,51 @@ class SpendingShowViewModel(
     }
 
     private val state: SpendingShowState
-        get() = SpendingShowState(
-            id = spendingId,
-            name = name,
-            amount = amount,
-            currency = currency,
-            date = date,
-            category = category,
-            photoUri = photoUri,
-            details = details,
-            isPlanned = isPlanned,
-            isHidden = isHidden,
+        get() = _stateFlow.value
+
+    private val _stateFlow = MutableStateFlow(
+        SpendingShowState(
             onMarkPurchasedClicked = ::markPurchased,
             onDuplicateClicked = ::createDuplicate,
             onEditClicked = ::onEditClicked,
-        )
-    private val _spendingsStateFlow = MutableStateFlow(state)
-    val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
+        ),
+    )
+    val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch {
             if (spendingId.isNotBlank()) {
                 val spending = getSpendingUseCase(spendingId)
-                name = spending.name
-                amount = spending.amount
-                date = spending.date
-                category = getCategoryByIdUseCase(spending.categoryId)
-                photoUri = spending.photoUri
-                details = getSpendingDetailsUseCase(spendingId)
-                isPlanned = spending.isPlanned
-                isHidden = spending.isHidden
+
                 isManualTotal = spending.isManualTotal
-                currency = getChosenCurrencyUseCase()
-                updateUI()
+
+                _stateFlow.update {
+                    state.copy(
+                        name = spending.name,
+                        amount = spending.amount,
+                        date = spending.date,
+                        category = getCategoryByIdUseCase(spending.categoryId),
+                        photoUri = spending.photoUri,
+                        details = getSpendingDetailsUseCase(spendingId),
+                        isPlanned = spending.isPlanned,
+                        isHidden = spending.isHidden,
+                        currency = getChosenCurrencyUseCase(),
+                    )
+                }
             }
         }
     }
 
-    private fun updateUI() {
-        _spendingsStateFlow.update { state }
-    }
 }
 
 data class SpendingShowState(
-    val id: String,
-    val name: String,
-    val amount: String,
-    val currency: Currency,
-    val date: String,
-    val category: CategoryUiData,
-    val photoUri: Uri?,
-    val details: List<DetailUiData>,
-    val isHidden: Boolean,
-    val isPlanned: Boolean,
+    val name: String = "",
+    val amount: String = "",
+    val currency: Currency = Currency.getInstance(Locale.getDefault()),
+    val date: String = "",
+    val category: CategoryUiData = CategoryUiData(""),
+    val photoUri: Uri? = null,
+    val details: List<DetailUiData> = emptyList(),
+    val isHidden: Boolean = false,
+    val isPlanned: Boolean = false,
     val onEditClicked: () -> Unit,
     val onDuplicateClicked: () -> Unit,
     val onMarkPurchasedClicked: () -> Unit,

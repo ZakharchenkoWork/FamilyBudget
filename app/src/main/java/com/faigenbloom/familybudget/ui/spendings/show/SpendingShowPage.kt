@@ -290,7 +290,6 @@ fun SpendingEditPageDetailsPreview() {
         Scaffold { _ ->
             SpendingShowPage(
                 state = SpendingShowState(
-                    id = "asdfasd",
                     name = "Home",
                     amount = "10.00",
                     date = "01.11.2023",

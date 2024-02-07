@@ -36,7 +36,7 @@ fun NavGraphBuilder.spendingShowPage(
         viewModel.onEditSpending = onEditClicked
 
         val state by viewModel
-            .spendingsStateFlow
+            .stateFlow
             .collectAsState()
 
         SpendingShowPage(
