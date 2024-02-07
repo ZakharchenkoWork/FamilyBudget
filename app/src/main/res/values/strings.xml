@@ -13,9 +13,11 @@
     <string name="choose_category">Choose category</string>
     <string name="adding_spending_title">Adding new spending</string>
     <string name="editing_spending_title">Editing spending</string>
-    <string name="editing_another_user_spending_title">Editing spending of %2$s</string>
+    <string name="editing_another_user_spending_title">Editing spending of %1$s</string>
     <string name="editing_planned_spending_title">Editing planned spending</string>
     <string name="editing_hidden_spending_title">Editing hidden spending</string>
+    <string name="spending_showing_title_another_user">Editing spending of %1$s</string>
+    <string name="spending_showing_title_this_user">Your spending</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
@@ -101,6 +103,6 @@
     <string name="detail_dialog_details_hint">Current bill components</string>
     <string name="detail_dialog_suggestions_hint">Suggestions</string>
     <string name="editing_spending_duplicate">Editing Spending Duplicate</string>
-    <string name="spending_show_title">Your spending</string>
+
 
 </resources>

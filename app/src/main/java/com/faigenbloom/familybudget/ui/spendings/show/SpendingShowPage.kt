@@ -48,7 +48,11 @@ fun SpendingShowPage(
 ) {
     Column {
         TopBar(
-            title = stringResource(R.string.spending_show_title),
+            title = if (state.isCurrentUserOwner) {
+                stringResource(R.string.spending_showing_title_this_user)
+            } else {
+                stringResource(R.string.spending_showing_title_another_user, state.ownerName)
+            },
             startIcon = R.drawable.icon_arrow_back,
             onStartIconCLicked = onBack,
         )

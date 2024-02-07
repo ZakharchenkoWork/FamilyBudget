@@ -5,11 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.ID_ARG
+import com.faigenbloom.familybudget.datasources.ID
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.SetPurchasedSpendingUseCase
 import com.faigenbloom.familybudget.domain.categories.GetCategoryByIdUseCase
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
+import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
@@ -32,6 +35,8 @@ class SpendingShowViewModel(
     private val setPurchasedSpendingUseCase: SetPurchasedSpendingUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
+    private val getPersonNameUseCase: GetPersonNameUseCase,
+    private val idSource: IdSource,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[ID_ARG] ?: ""
     private var isManualTotal: Boolean = false
@@ -106,6 +111,8 @@ class SpendingShowViewModel(
                         details = getSpendingDetailsUseCase(spendingId),
                         isPlanned = spending.isPlanned,
                         isHidden = spending.isHidden,
+                        ownerName = getPersonNameUseCase(spending.ownerId),
+                        isCurrentUserOwner = spending.ownerId == idSource[ID.USER],
                         currency = getChosenCurrencyUseCase(),
                     )
                 }
@@ -120,9 +127,11 @@ data class SpendingShowState(
     val amount: String = "",
     val currency: Currency = Currency.getInstance(Locale.getDefault()),
     val date: String = "",
+    val ownerName: String = "",
     val category: CategoryUiData = CategoryUiData(""),
     val photoUri: Uri? = null,
     val details: List<DetailUiData> = emptyList(),
+    val isCurrentUserOwner: Boolean = false,
     val isHidden: Boolean = false,
     val isPlanned: Boolean = false,
     val onEditClicked: () -> Unit,

@@ -68,7 +68,7 @@ fun SpendingEditPage(
                 stringResource(R.string.editing_planned_spending_title)
             } else if (state.isHidden) {
                 stringResource(R.string.editing_hidden_spending_title)
-            } else if (state.isThisUser.not()) {
+            } else if (state.isCurrentUserOwner.not()) {
                 stringResource(R.string.editing_spending_title)
             } else {
                 stringResource(R.string.editing_another_user_spending_title, state.ownerName)
@@ -387,7 +387,7 @@ fun SpendingEditPageCategoriesPreview() {
                     isHidden = false,
                     isDuplicate = false,
                     isPlanned = false,
-                    isThisUser = false,
+                    isCurrentUserOwner = false,
                     ownerName = "Natalia",
                     onResetErrors = {},
                     onNamingTextChanged = {},
@@ -454,7 +454,7 @@ fun SpendingEditPageDetailsPreview() {
                     onAmountTextChanged = {},
                     photoUri = null,
                     isDuplicate = true,
-                    isThisUser = true,
+                    isCurrentUserOwner = true,
                     isPlanned = true,
                     currency = Currency.getInstance(Locale.getDefault()),
                     onPhotoUriChanged = { _ -> },

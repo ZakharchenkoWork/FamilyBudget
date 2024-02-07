@@ -280,7 +280,7 @@ class SpendingEditViewModel(
                         canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not(),
                         currency = getChosenCurrencyUseCase(),
                         ownerName = getPersonNameUseCase(spendingUiData.ownerId),
-                        isThisUser = ownerId == idSource[ID.USER],
+                        isCurrentUserOwner = ownerId == idSource[ID.USER],
                     )
                 }
                 onCategoryIdLoaded(spendingUiData.categoryId)
@@ -304,7 +304,7 @@ data class SpendingEditState(
     val namingText: String = "",
     val amountText: String = "",
     val ownerName: String = "",
-    val isThisUser: Boolean = false,
+    val isCurrentUserOwner: Boolean = false,
     val isNameError: Boolean = false,
     val isAmountError: Boolean = false,
     val isCategoryError: Boolean = false,

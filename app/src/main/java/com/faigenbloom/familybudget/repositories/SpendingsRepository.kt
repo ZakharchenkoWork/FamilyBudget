@@ -1,7 +1,6 @@
 package com.faigenbloom.familybudget.repositories
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
-import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
@@ -17,16 +16,11 @@ class SpendingsRepository(
 ) {
     var lastSpendingDuplicate: SpendingEntity? = null
     suspend fun saveSpending(entity: SpendingEntity) {
-        val spendingEntity = if (entity.ownerId.isBlank())
-            entity.copy(ownerId = idSource[ID.USER])
-        else
-            entity
-
-        if (spendingEntity.isDuplicate) {
-            lastSpendingDuplicate = spendingEntity
+        if (entity.isDuplicate) {
+            lastSpendingDuplicate = entity
         } else {
-            dataBaseDataSource.saveSpending(spendingEntity)
-            networkDataSource.saveSpending(spendingSourceMapper.forServer(spendingEntity))
+            dataBaseDataSource.saveSpending(entity)
+            networkDataSource.saveSpending(spendingSourceMapper.forServer(entity))
         }
     }
 
