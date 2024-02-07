@@ -13,6 +13,7 @@ val databaseModule = module {
             "family_budget_database",
         ).fallbackToDestructiveMigration()
             .build()
+
         val appDatabaseCallback = AppDatabaseCallback(database)
         appDatabaseCallback.onCreate(database.openHelper.writableDatabase)
 

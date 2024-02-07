@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
-    private val getAuthStateUseCase: LoadAllDataUseCase,
+    private val loadAllDataUseCase: LoadAllDataUseCase,
 ) : ViewModel() {
 
     var onAuthPassed: () -> Unit = {}
@@ -23,7 +23,7 @@ class OnboardingViewModel(
     )
     val stateFlow = _stateFlow.asStateFlow().apply {
         viewModelScope.launch {
-            if (getAuthStateUseCase()) {
+            if (loadAllDataUseCase()) {
                 onAuthPassed()
             }
         }

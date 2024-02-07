@@ -14,12 +14,13 @@ class FamilyNetworkSource(
     private val idSource: IdSource,
 ) : BaseNetworkSource(firestore) {
 
-    suspend fun getFamilyId(personId: String): String {
+    suspend fun getFamilyId(personId: String): String? {
         idSource[ID.USER] = personId
-        idSource[ID.FAMILY] = get(ConnectionModel.COLLECTION_NAME, personId)
+        val familyId = get(ConnectionModel.COLLECTION_NAME, personId)
             ?.throughJson<ConnectionModel>()
-            ?.familyId ?: ""
-        return idSource[ID.FAMILY]
+            ?.familyId
+        familyId?.let { idSource[ID.FAMILY] = it }
+        return familyId
     }
 
     suspend fun createFamily(family: FamilyModel) {

@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
         FamilyEntity::class,
         PersonEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

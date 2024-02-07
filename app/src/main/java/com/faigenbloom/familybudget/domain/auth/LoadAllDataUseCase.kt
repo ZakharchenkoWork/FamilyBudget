@@ -20,11 +20,13 @@ class LoadAllDataUseCase(
         return withContext(Dispatchers.IO) {
             val authenticated = repository.isAuthenticated()
             if (authenticated) {
-                familyRepository.loadFamily(idSource[ID.USER])
-                spendingsRepository.loadSpendings()
-                categoriesRepository.loadCategories()
+                familyRepository.loadFamily(idSource[ID.USER])?.let {
+                    spendingsRepository.loadSpendings()
+                    categoriesRepository.loadCategories()
+                    return@withContext true
+                }
             }
-            authenticated
+            return@withContext false
         }
     }
 }

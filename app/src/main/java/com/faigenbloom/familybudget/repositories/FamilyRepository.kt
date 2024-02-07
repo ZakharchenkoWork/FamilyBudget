@@ -14,19 +14,22 @@ class FamilyRepository(
     private val personSourceMapper: PersonSourceMapper,
     private val familySourceMapper: FamilySourceMapper,
 ) {
-    suspend fun loadFamily(personId: String): FamilyEntity {
+    suspend fun loadFamily(personId: String): FamilyEntity? {
         val familyId = networkSource.getFamilyId(personId)
-        networkSource.getFamily(familyId)?.let {
-            dataBaseSource.saveFamily(familySourceMapper.forDB(it))
-            networkSource.getPersons(familyId)?.let {
-                it.forEach {
-                    it?.let {
-                        dataBaseSource.saveFamilyMember(personSourceMapper.forDB(it))
+        familyId?.let {
+            networkSource.getFamily(familyId)?.let {
+                dataBaseSource.saveFamily(familySourceMapper.forDB(it))
+                networkSource.getPersons(familyId)?.let {
+                    it.forEach {
+                        it?.let {
+                            dataBaseSource.saveFamilyMember(personSourceMapper.forDB(it))
+                        }
                     }
                 }
             }
         }
-        return dataBaseSource.getFamily() ?: FamilyEntity("", "")
+
+        return dataBaseSource.getFamily()
     }
 
     suspend fun loadFamily(): FamilyEntity {
