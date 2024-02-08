@@ -3,13 +3,13 @@ package com.faigenbloom.familybudget.datasources
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
-
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.spendings.detail.mockSuggestions
@@ -204,6 +204,10 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun saveCategories(categories: List<CategoryEntity>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getBudgetLines(): List<BudgetLineEntity> {
         TODO("Not yet implemented")
     }
 

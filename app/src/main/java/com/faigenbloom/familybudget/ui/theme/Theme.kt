@@ -43,10 +43,10 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = onSecondaryContainerLight,
     tertiaryContainer = tertiaryContainerLight,
 )
+
 @Composable
 fun FamillySpandingsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {

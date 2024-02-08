@@ -6,7 +6,7 @@ import com.faigenbloom.familybudget.common.getCurrentDate
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.toReadableMoney
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.statistics.FilterType
 import com.faigenbloom.familybudget.domain.statistics.GetCategorySummariesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

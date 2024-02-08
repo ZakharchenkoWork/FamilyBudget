@@ -67,6 +67,9 @@
     <string name="budget_personal">Personal</string>
     <string name="budget_family">Family</string>
     <string name="budget_balance">Balance</string>
+    <string name="budget_balance_long">Balance\nTill end of the month:</string>
+    <string name="budget_pocket">Pocket\nmoney:</string>
+    <string name="budget_savings">Savings:</string>
     <string name="budget_income">Income</string>
     <string name="budget_for_month_label">Till end of the month</string>
     <string name="budget_for_year_label">Till end of the year</string>

@@ -3,6 +3,7 @@ package com.faigenbloom.familybudget.domain
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
 import com.faigenbloom.familybudget.datasources.MockDataSource
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.repositories.CurrencyRepository
 import io.mockk.every
 import io.mockk.mockkStatic

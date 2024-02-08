@@ -1,4 +1,4 @@
-package com.faigenbloom.familybudget.domain
+package com.faigenbloom.familybudget.domain.currency
 
 import com.faigenbloom.familybudget.repositories.CurrencyRepository
 import kotlinx.coroutines.Dispatchers

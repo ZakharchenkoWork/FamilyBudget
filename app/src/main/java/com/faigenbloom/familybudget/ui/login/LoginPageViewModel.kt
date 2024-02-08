@@ -64,8 +64,8 @@ class LoginPageViewModel(
 }
 
 data class LoginPageState(
-    val loginText: String = "",
-    val passwordText: String = "",
+    val loginText: String = "baskinaerobins@gmail.com",
+    val passwordText: String = "philips2010",
     val authError: Boolean = false,
     val onLoginClicked: () -> Unit,
     var onLoginChanged: (String) -> Unit = {},

@@ -5,13 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.addAsMoney
 import com.faigenbloom.familybudget.common.decAsMoney
 import com.faigenbloom.familybudget.common.toLongMoney
-import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
-import com.faigenbloom.familybudget.domain.spendings.GetSpentTotalUseCase
+import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
+import com.faigenbloom.familybudget.domain.budget.SaveBudgetUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.statistics.FilterType
-import com.faigenbloom.familybudget.repositories.BudgetPageRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,99 +19,134 @@ import java.util.Locale
 
 
 class BudgetPageViewModel(
-    private val repository: BudgetPageRepository,
+    private val saveBudgetUseCase: SaveBudgetUseCase,
+    private val getBudgetLinesUseCase: GetBudgetLinesUseCase,
+
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
-    private val getSpentTotalUseCase: GetSpentTotalUseCase,
-) : ViewModel() {
 
-    private var totalBalance = ""
-    private var familyTotal = ""
-    private var currentBalance = ""
-    private var plannedBudgetMonth = ""
-    private var plannedBudgetYear = ""
-    private var spent = ""
-    private var plannedSpendings = ""
-    private var additionalAmount: String = ""
-
-    private var currency: Currency = Currency.getInstance(Locale.getDefault())
-    private var isMyBudgetOpened: Boolean = true
-    private var isBalanceError: Boolean = false
-    private var isSaveVisible: Boolean = false
-
-    private var filter: FilterType = FilterType.Monthly()
-
+    ) : ViewModel() {
     private fun onAdditionalAmountValueChanged(amount: String) {
-        additionalAmount = amount
-        updateUi()
+        _stateFlow.update { state ->
+            state.copy(
+                additionalAmount = amount,
+            )
+        }
     }
 
     private fun onIncomeAddClicked() {
-        totalBalance = totalBalance.addAsMoney(additionalAmount)
-        isSaveVisible = true
-        updateUi()
+        _stateFlow.update { state ->
+            state.copy(
+                totalBalance = state.totalBalance.addAsMoney(state.additionalAmount),
+                isSaveVisible = true,
+            )
+        }
     }
 
     private fun monthlyClicked() {
-        filter = FilterType.Monthly()
+        _stateFlow.update { state ->
+            state.copy(
+                filter = FilterType.Monthly(),
+            )
+        }
         reload()
     }
 
     private fun yearlyClicked() {
-        filter = FilterType.Yearly()
+        _stateFlow.update { state ->
+            state.copy(
+                filter = FilterType.Yearly(),
+            )
+        }
         reload()
     }
 
     private fun onPageChanged(isOpen: Boolean) {
-        isMyBudgetOpened = isOpen
-        updateUi()
+        _stateFlow.update { state ->
+            state.copy(
+                isMyBudgetOpened = isOpen,
+            )
+        }
     }
 
     private fun onPlannedBudgetChanged(amount: String) {
-        if (filter is FilterType.Monthly) {
-            plannedBudgetMonth = amount
-        } else {
-            plannedBudgetYear = amount
+        _stateFlow.update { state ->
+            state.copy(
+                plannedBudget = amount,
+                currentBalance = calculateBalance(),
+                isSaveVisible = true,
+            )
         }
-        currentBalance = calculateBalance()
-        isSaveVisible = true
-        updateUi()
     }
 
     private fun onTotalBalanceChanged(amount: String) {
-        totalBalance = amount
-        isSaveVisible = true
-        updateUi()
+        _stateFlow.update { state ->
+            state.copy(
+                totalBalance = amount,
+                isSaveVisible = true,
+            )
+        }
     }
 
     private fun saveBudget() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.saveBudgetData(
+        viewModelScope.launch {
+            saveBudgetUseCase(
                 BudgetEntity(
                     id = 0L,
-                    familyTotal = familyTotal.toLongMoney(),
-                    personalTotal = totalBalance.toLongMoney(),
-                    plannedBudgetMonth = plannedBudgetMonth.toLongMoney(),
-                    plannedBudgetYear = plannedBudgetYear.toLongMoney(),
+                    familyTotal = state.totalBalance.toLongMoney(),
+                    personalTotal = state.totalBalance.toLongMoney(),
+                    plannedBudgetMonth = state.plannedBudget.toLongMoney(),
+                    plannedBudgetYear = state.plannedBudget.toLongMoney(),
                 ),
             )
-            isSaveVisible = false
-            updateUi()
+            _stateFlow.update { state ->
+                state.copy(
+                    isSaveVisible = false,
+                )
+            }
+        }
+    }
+
+    private fun calculateBalance(): String {
+        return state.plannedBudget.decAsMoney(state.spent)
+    }
+
+    private fun reload() {
+        viewModelScope.launch {
+            val budgetLines = getBudgetLinesUseCase(state.filter.from, state.filter.to)
+            _stateFlow.update { state ->
+                state.copy(
+                    budgetLines = budgetLines,
+                    currency = getChosenCurrencyUseCase(),
+                )
+            }
+            /*  val currentBalance = state.plannedBudget.decAsMoney(state.spent)
+              _stateFlow.update { state ->
+                  state.copy(
+                      totalBalance = budgetData.personalTotal.toReadableMoney(),
+                      plannedBudget = if (state.filter is FilterType.Monthly) {
+                          budgetData.plannedBudgetMonth.toReadableMoney()
+                      } else {
+                          budgetData.plannedBudgetYear.toReadableMoney()
+                      },
+                      spent = getSpentTotalUseCase(false, state.filter.from, state.filter.to),
+                      plannedSpendings = getSpentTotalUseCase(
+                          true,
+                          state.filter.from,
+                          state.filter.to,
+                      ),
+                      currentBalance = currentBalance,
+                      isBalanceError = currentBalance.toLongMoney() < 0L,
+
+                  )
+              }*/
         }
     }
 
     private val state: BudgetState
-        get() = BudgetState(
-            total = currentBalance,
-            totalBalance = totalBalance,
-            plannedBudget = if (filter is FilterType.Monthly) plannedBudgetMonth else plannedBudgetYear,
-            spent = spent,
-            plannedSpendings = plannedSpendings,
-            currency = currency,
-            isBalanceError = isBalanceError,
-            isMyBudgetOpened = isMyBudgetOpened,
-            additionalAmount = additionalAmount,
-            isSaveVisible = isSaveVisible,
-            filter = filter,
+        get() = _stateFlow.value
+
+    private val _stateFlow = MutableStateFlow(
+        BudgetState(
             onAdditionalAmountValueChanged = ::onAdditionalAmountValueChanged,
             onIncomeAddClicked = ::onIncomeAddClicked,
             onPageChanged = ::onPageChanged,
@@ -122,60 +155,28 @@ class BudgetPageViewModel(
             monthlyClicked = ::monthlyClicked,
             yearlyClicked = ::yearlyClicked,
             onSave = ::saveBudget,
-        )
-
-    private val _stateFlow = MutableStateFlow(state)
+        ),
+    )
     val stateFlow = _stateFlow.asStateFlow()
-        .apply {
-            reload()
-        }
 
-    private fun reload() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val budgetData = repository.getBudgetData()
-            totalBalance = budgetData.personalTotal.toReadableMoney()
-            plannedBudgetMonth = budgetData.plannedBudgetMonth.toReadableMoney()
-            familyTotal = budgetData.familyTotal.toReadableMoney()
-            plannedBudgetYear = budgetData.plannedBudgetYear.toReadableMoney()
-
-            spent = getSpentTotalUseCase(false, filter.from, filter.to)
-            plannedSpendings = getSpentTotalUseCase(true, filter.from, filter.to)
-
-            currentBalance = calculateBalance()
-
-            isBalanceError = currentBalance.toLongMoney() < 0L
-            currency = getChosenCurrencyUseCase()
-
-            updateUi()
-        }
-    }
-
-    private fun calculateBalance(): String {
-        val budget: String = if (filter is FilterType.Monthly) {
-            plannedBudgetMonth
-        } else {
-            plannedBudgetYear
-        }
-        return budget.decAsMoney(spent)
-    }
-
-    private fun updateUi() {
-        _stateFlow.update { state }
+    init {
+        reload()
     }
 }
 
 data class BudgetState(
-    val total: String,
-    val totalBalance: String,
-    val plannedBudget: String,
-    val spent: String,
-    val plannedSpendings: String,
-    val currency: Currency,
-    val isBalanceError: Boolean,
-    val isMyBudgetOpened: Boolean,
-    val additionalAmount: String,
-    val isSaveVisible: Boolean,
-    val filter: FilterType,
+    val budgetLines: List<BudgetLineUiData> = emptyList(),
+    val currentBalance: String = "",
+    val totalBalance: String = "",
+    val plannedBudget: String = "",
+    val spent: String = "",
+    val plannedSpendings: String = "",
+    val additionalAmount: String = "",
+    val currency: Currency = Currency.getInstance(Locale.getDefault()),
+    val isMyBudgetOpened: Boolean = true,
+    val isBalanceError: Boolean = false,
+    val isSaveVisible: Boolean = false,
+    val filter: FilterType = FilterType.Monthly(),
     val onAdditionalAmountValueChanged: (String) -> Unit,
     val onIncomeAddClicked: () -> Unit,
     val onPageChanged: (Boolean) -> Unit,

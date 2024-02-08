@@ -39,7 +39,7 @@ class FirebaseTest : BaseTest() {
             )
             firestore.connectFamily("pers1", "fam1")
 
-            val familyId = firestore.getFamilyId("pers1")
+            val familyId = firestore.getFamilyId("pers1") ?: ""
             assert(familyId == "fam1")
             val family = firestore.getFamily(familyId)
             assert(family?.name == "Zakh")

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.toNormalizedMoney
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.details.GetAllSpendingDetailsUseCase
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.SpendingDetailListWrapper

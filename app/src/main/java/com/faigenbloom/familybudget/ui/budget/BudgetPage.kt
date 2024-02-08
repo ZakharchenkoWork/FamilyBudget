@@ -119,7 +119,7 @@ private fun Screen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = state.total,
+                    text = state.currentBalance,
                     style = MaterialTheme.typography.titleLarge,
                     color = if (state.isBalanceError.not()) {
                         MaterialTheme.colorScheme.onPrimary
@@ -320,12 +320,12 @@ private fun TotalDataLine(
 
 @Preview
 @Composable
-fun StatisticsPagePreview() {
+fun BudgetPagePreview() {
     FamillySpandingsTheme {
         Surface {
             BudgetPage(
                 state = BudgetState(
-                    total = "4755",
+                    currentBalance = "4755",
                     totalBalance = "3242",
                     plannedBudget = "20000",
                     spent = "15245",

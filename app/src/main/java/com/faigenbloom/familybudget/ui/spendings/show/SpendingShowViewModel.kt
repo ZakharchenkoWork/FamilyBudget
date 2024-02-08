@@ -7,14 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.ID_ARG
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
-import com.faigenbloom.familybudget.domain.SetPurchasedSpendingUseCase
 import com.faigenbloom.familybudget.domain.categories.GetCategoryByIdUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
+import com.faigenbloom.familybudget.domain.spendings.SetPurchasedSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData

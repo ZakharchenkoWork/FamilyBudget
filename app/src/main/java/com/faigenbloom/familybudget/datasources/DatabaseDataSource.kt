@@ -2,6 +2,7 @@ package com.faigenbloom.familybudget.datasources
 
 import android.util.Log
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
@@ -265,5 +266,9 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun saveCategories(categories: List<CategoryEntity>) {
         appDatabase.categoriesDao().saveCategories(categories)
+    }
+
+    override suspend fun getBudgetLines(): List<BudgetLineEntity> {
+        return appDatabase.budgetDao().getBudgetLines()
     }
 }

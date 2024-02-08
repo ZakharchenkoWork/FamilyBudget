@@ -4,12 +4,12 @@ import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetSpentTotalUseCase(
+class SetPurchasedSpendingUseCase(
     private val spendingsRepository: SpendingsRepository,
 ) {
-    suspend operator fun invoke(isPlanned: Boolean, from: Long, to: Long): Long {
-        return withContext(Dispatchers.IO) {
-            spendingsRepository.getSpendingsTotalSpent(isPlanned, from, to)
+    suspend operator fun invoke(spendingId: String) {
+        withContext(Dispatchers.IO) {
+            spendingsRepository.markSpendingPurchased(spendingId)
         }
     }
 }

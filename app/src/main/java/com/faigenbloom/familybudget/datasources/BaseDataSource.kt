@@ -1,6 +1,7 @@
 package com.faigenbloom.familybudget.datasources
 
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
@@ -57,4 +58,5 @@ interface BaseDataSource {
     suspend fun deleteFamilyMember(member: PersonEntity)
     suspend fun saveSpendings(spendings: List<SpendingEntity>)
     suspend fun saveCategories(categories: List<CategoryEntity>)
+    suspend fun getBudgetLines(): List<BudgetLineEntity>
 }

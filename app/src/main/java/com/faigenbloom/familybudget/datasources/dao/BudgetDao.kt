@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 
 @Dao
 interface BudgetDao {
@@ -14,4 +15,7 @@ interface BudgetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun update(budgetEntity: BudgetEntity)
+
+    @Query("SELECT * FROM ${BudgetLineEntity.TABLE_NAME}")
+    fun getBudgetLines(): List<BudgetLineEntity>
 }

@@ -25,7 +25,7 @@ fun NavGraphBuilder.budgetPage(
         bottomNavigationOptions(true, 1)
         val state by koinViewModel<BudgetPageViewModel>().stateFlow.collectAsState()
         options(getBudgetMenuState(state))
-        BudgetPage(
+        AlternativeBudgetPage(
             state = state,
         )
     }

@@ -2,14 +2,21 @@ package com.faigenbloom.familybudget.domain
 
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.MockDataSource
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
+import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
+import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
 import com.faigenbloom.familybudget.ui.spendings.mappers.DetailsMapper
+import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest
@@ -30,7 +37,7 @@ class SaveDetailsUseCaseTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
     private val detailsMapper = DetailsMapper()
-
+    private val firestore: FirebaseFirestore = mock {}
     val mockEditedDetail = detailsMapper.forDB(
         mockDetailsList[0].copy(
             name = altDetailName,
@@ -56,6 +63,22 @@ class SaveDetailsUseCaseTest {
     }
     private val detailsRepository: DetailsRepository = DetailsRepository(
         dataBaseDataSource = dataSource,
+        networkDataSource = NetworkDataSource(
+            familyNetworkSource = FamilyNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            spendingsNetworkSource = SpendingsNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            categoryNetworkSource = CategoryNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            idSource = IdSource(),
+        ),
+        spendingDetailsSourceMapper = SpendingDetailsSourceMapper(),
     )
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData> =
         GetSpendingDetailsByIdUseCase(
@@ -65,9 +88,7 @@ class SaveDetailsUseCaseTest {
 
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData> =
         SaveDetailsUseCase(
-            idGeneratorUseCase = idGeneratorUseCase,
             detailsRepository = detailsRepository,
-            getSpendingDetailsUseCase = getSpendingDetailsUseCase,
             detailsMapper = detailsMapper,
         )
 

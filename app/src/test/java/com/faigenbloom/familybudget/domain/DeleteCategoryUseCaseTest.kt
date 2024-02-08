@@ -3,8 +3,10 @@ package com.faigenbloom.familybudget.domain
 import com.faigenbloom.familybudget.MainDispatcherRule
 import com.faigenbloom.familybudget.datasources.MockDataSource
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
+import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
 import com.faigenbloom.familybudget.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.familybudget.repositories.CategoriesRepository
+import com.faigenbloom.familybudget.repositories.mappers.CategorySourceMapper
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -31,10 +33,16 @@ class DeleteCategoryUseCaseTest {
         isDuplicate = false,
     )
     private val dataSource: MockDataSource = mock {}
+    private val networkDataSource: NetworkDataSource = mock {}
+    private val categorySourceMapper: CategorySourceMapper = mock {}
 
     private val deleteCategoryUseCase: DeleteCategoryUseCase =
         DeleteCategoryUseCase(
-            categoriesRepository = CategoriesRepository(dataSource),
+            categoriesRepository = CategoriesRepository(
+                dataSource,
+                networkDataSource,
+                categorySourceMapper,
+            ),
         )
 
     @Test

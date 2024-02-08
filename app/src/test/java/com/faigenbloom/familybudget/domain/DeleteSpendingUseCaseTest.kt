@@ -2,14 +2,22 @@ package com.faigenbloom.familybudget.domain
 
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.MockDataSource
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
+import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
+import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
 import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
+import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
+import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
 import com.faigenbloom.familybudget.ui.spendings.mappers.DetailsMapper
+import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest
@@ -36,16 +44,45 @@ class DeleteSpendingUseCaseTest {
         isPlanned = false,
         isManualTotal = false,
         isHidden = false,
+        ownerId = "",
+        isDuplicate = false,
     )
 
     private val mockDetail = DetailsMapper().forDB(mockDetailsList[0])
     private val dataSource: MockDataSource = mock {}
+    private val networkDataSource: NetworkDataSource = mock {}
+    private val firestore: FirebaseFirestore = mock {}
 
     private val deleteSpendingUseCase: DeleteSpendingUseCase =
         DeleteSpendingUseCase(
-            spendingsRepository = SpendingsRepository(dataSource),
-            detailsRepository = DetailsRepository(dataSource),
-        )
+            spendingsRepository = SpendingsRepository(
+                networkDataSource = networkDataSource,
+                dataBaseDataSource = dataSource,
+                spendingSourceMapper = SpendingSourceMapper(),
+                detailsSourceMapper = SpendingDetailsSourceMapper(),
+                idSource = IdSource(),
+            ),
+            detailsRepository = DetailsRepository(
+                dataSource,
+                networkDataSource = NetworkDataSource(
+                    familyNetworkSource = FamilyNetworkSource(
+                        firestore = firestore,
+                        idSource = IdSource(),
+                    ),
+                    spendingsNetworkSource = SpendingsNetworkSource(
+                        firestore = firestore,
+                        idSource = IdSource(),
+                    ),
+                    categoryNetworkSource = CategoryNetworkSource(
+                        firestore = firestore,
+                        idSource = IdSource(),
+                    ),
+                    idSource = IdSource(),
+                ),
+                spendingDetailsSourceMapper = SpendingDetailsSourceMapper(),
+            ),
+
+            )
 
     @Before
     fun setUp() {

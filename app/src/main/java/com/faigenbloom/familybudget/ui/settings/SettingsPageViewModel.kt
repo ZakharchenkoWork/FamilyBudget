@@ -2,7 +2,7 @@ package com.faigenbloom.familybudget.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

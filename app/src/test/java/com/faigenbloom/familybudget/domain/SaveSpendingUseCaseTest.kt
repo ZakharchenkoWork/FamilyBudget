@@ -2,11 +2,19 @@ package com.faigenbloom.familybudget.domain
 
 import android.util.Log
 import com.faigenbloom.familybudget.MainDispatcherRule
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.MockDataSource
+import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
+import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
+import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
+import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
+import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.faigenbloom.familybudget.ui.spendings.mappers.SpendingsMapper
+import com.google.firebase.firestore.FirebaseFirestore
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -21,7 +29,7 @@ import org.mockito.kotlin.wheneverBlocking
 class SaveSpendingUseCaseTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
-
+    private val firestore: FirebaseFirestore = mock {}
     private val spendingsMapper: SpendingsMapper = SpendingsMapper()
     private val altSpendingId = "2"
 
@@ -51,6 +59,24 @@ class SaveSpendingUseCaseTest {
     }
     private val spendingsRepository: SpendingsRepository = SpendingsRepository(
         dataBaseDataSource = dataSource,
+        networkDataSource = NetworkDataSource(
+            familyNetworkSource = FamilyNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            spendingsNetworkSource = SpendingsNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            categoryNetworkSource = CategoryNetworkSource(
+                firestore = firestore,
+                idSource = IdSource(),
+            ),
+            idSource = IdSource(),
+        ),
+        spendingSourceMapper = SpendingSourceMapper(),
+        detailsSourceMapper = SpendingDetailsSourceMapper(),
+        idSource = IdSource(),
     )
     private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData> =
         SaveSpendingUseCase(

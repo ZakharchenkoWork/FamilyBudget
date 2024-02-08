@@ -11,8 +11,8 @@ import com.faigenbloom.familybudget.common.toNormalizedMoney
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.domain.CalculateTotalUseCase
-import com.faigenbloom.familybudget.domain.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.NormalizeDateUseCase
+import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
