@@ -207,7 +207,14 @@ class MockDataSource : BaseDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getBudgetLines(): List<BudgetLineEntity> {
+    override suspend fun getBudgetLines(
+        isForMonth: Boolean,
+        isForFamily: Boolean,
+    ): List<BudgetLineEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveBudgetLines(defaultBudgetEntities: List<BudgetLineEntity>) {
         TODO("Not yet implemented")
     }
 

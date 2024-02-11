@@ -10,6 +10,7 @@ class BudgetLineMapper {
             id = entity.id,
             name = entity.name,
             amount = entity.amount.toReadableMoney(),
+            isDefault = entity.isDefault,
         )
     }
 

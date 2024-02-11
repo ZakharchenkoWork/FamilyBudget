@@ -21,6 +21,8 @@ data class BudgetLineEntity(
     val isForMonth: Boolean,
     @ColumnInfo(name = COLUMN_IS_FOR_FAMILY)
     val isForFamily: Boolean,
+    @ColumnInfo(name = COLUMN_IS_DEFAULT)
+    val isDefault: Boolean = false,
 ) {
     companion object {
         const val TABLE_NAME = "budget_lines"
@@ -30,5 +32,7 @@ data class BudgetLineEntity(
         const val COLUMN_DATE = "date"
         const val COLUMN_IS_FOR_MONTH = "is_for_month"
         const val COLUMN_IS_FOR_FAMILY = "is_for_family"
+        const val COLUMN_IS_DEFAULT = "is_default"
     }
 }
+

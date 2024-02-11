@@ -3,6 +3,9 @@ package com.faigenbloom.familybudget.domain
 import com.faigenbloom.familybudget.domain.auth.LoadAllDataUseCase
 import com.faigenbloom.familybudget.domain.auth.LoginUserUseCase
 import com.faigenbloom.familybudget.domain.auth.RegisterUserUseCase
+import com.faigenbloom.familybudget.domain.budget.BudgetLineMapper
+import com.faigenbloom.familybudget.domain.budget.CalculateMoneyUseCase
+import com.faigenbloom.familybudget.domain.budget.GenerateDefaultBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetUseCase
 import com.faigenbloom.familybudget.domain.budget.SaveBudgetUseCase
@@ -37,6 +40,8 @@ val domainModule = module {
     singleOf(::SaveBudgetUseCase)
     singleOf(::GetBudgetUseCase)
     singleOf(::GetBudgetLinesUseCase)
-
+    singleOf(::GenerateDefaultBudgetLinesUseCase)
+    singleOf(::BudgetLineMapper)
+    singleOf(::CalculateMoneyUseCase)
 }
 

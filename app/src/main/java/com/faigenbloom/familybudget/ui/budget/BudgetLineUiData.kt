@@ -6,4 +6,5 @@ data class BudgetLineUiData(
     override val id: String,
     val name: String,
     val amount: String,
+    val isDefault: Boolean,
 ) : Identifiable

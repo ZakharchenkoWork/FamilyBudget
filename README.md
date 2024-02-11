@@ -11,7 +11,12 @@ Pet project using Clean Architecture + MVVM + Jetpack Compose + Android Architec
 
 ### Current tasks are logged in <a href="https://trello.com/b/FmJ6gOiQ/familly-budget">Trello</a>
 ### Outdated design reference is stored in <a href="https://www.figma.com/file/4Cw2uln0NidMxZ05QjmumA/FamillySpandings?type=design&node-id=0-1&mode=design&t=XiyCtvm1NepIhYcm-0">Figma</a>
-
+<div>
+  <img src="screenshots/spendings.jpg" width="20%"/>
+  <img src="screenshots/add.jpg" width="20%"/>
+  <img src="screenshots/statistics.jpg" width="20%"/>
+  <img src="screenshots/statistics2.jpg" width="20%"/>
+</div>
 ## Architecture
 
 Uses concepts of the notorious Uncle Bob's architecture called [Clean Architecture].</br>

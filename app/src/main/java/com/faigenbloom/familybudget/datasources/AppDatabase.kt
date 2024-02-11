@@ -8,6 +8,7 @@ import com.faigenbloom.familybudget.datasources.dao.CategoriesDao
 import com.faigenbloom.familybudget.datasources.dao.FamilyDao
 import com.faigenbloom.familybudget.datasources.dao.SpendingsDao
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
+import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 @Database(
     entities = [
         BudgetEntity::class,
+        BudgetLineEntity::class,
         CategoryEntity::class,
         SpendingEntity::class,
         SpendingDetailEntity::class,
@@ -29,7 +31,7 @@ import kotlinx.coroutines.launch
         FamilyEntity::class,
         PersonEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

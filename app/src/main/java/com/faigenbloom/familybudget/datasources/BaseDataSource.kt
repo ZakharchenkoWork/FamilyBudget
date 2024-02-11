@@ -58,5 +58,6 @@ interface BaseDataSource {
     suspend fun deleteFamilyMember(member: PersonEntity)
     suspend fun saveSpendings(spendings: List<SpendingEntity>)
     suspend fun saveCategories(categories: List<CategoryEntity>)
-    suspend fun getBudgetLines(): List<BudgetLineEntity>
+    suspend fun getBudgetLines(isForMonth: Boolean, isForFamily: Boolean): List<BudgetLineEntity>
+    suspend fun saveBudgetLines(defaultBudgetEntities: List<BudgetLineEntity>)
 }

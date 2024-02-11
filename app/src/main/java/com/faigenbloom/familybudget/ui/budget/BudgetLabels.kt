@@ -5,9 +5,9 @@ import com.faigenbloom.familybudget.R
 
 enum class BudgetLabels(@StringRes val nameId: Int) {
     PLANNED_BUDGET(R.string.budget_planned_budget),
-    SPENT(R.string.budget_spent),
-    PLANNED_SPENDINGS(R.string.budget_planned_spendings),
     BALANCE(R.string.budget_balance_long),
+    PLANNED_SPENDINGS(R.string.budget_planned_spendings),
+    SPENT(R.string.budget_spent),
     POCKET(R.string.budget_pocket),
     SAVINGS(R.string.budget_savings);
 

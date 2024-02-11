@@ -1,43 +1,49 @@
 package com.faigenbloom.familybudget.ui.budget
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.faigenbloom.familybudget.R
-import com.faigenbloom.familybudget.common.SimpleTextField
+import com.faigenbloom.familybudget.common.BaseTextField
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
+import com.faigenbloom.familybudget.common.isMoneyBlank
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
-import com.faigenbloom.familybudget.common.ui.MoneyTextTransformation
 import com.faigenbloom.familybudget.domain.statistics.FilterType
+import com.faigenbloom.familybudget.ui.spendings.detail.OK_BUTTON
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import java.util.Currency
 import java.util.Locale
@@ -67,256 +73,309 @@ fun BudgetPage(
                 )
             }
         }
-
+    }
+    if (state.budgetChangeState.isShown) {
+        BudgetLineChangeDialog(state.budgetChangeState)
     }
 }
+
+
 @Composable
 private fun Screen(
     state: BudgetState,
 ) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 40.dp)
-                    .weight(1f),
-            ) {
-                Text(
-                    text = stringResource(R.string.budget_balance),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    text = stringResource(
-                        if (state.filter is FilterType.Monthly) {
-                            R.string.budget_for_month_label
-                        } else {
-                            R.string.budget_for_year_label
-                        },
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        items(state.budgetLines) {
+            DataPlate(
+                modifier = Modifier.padding(16.dp),
+                title = getPlateTitle(it),
+                amount = it.amount,
+                currencyCode = state.currency.currencyCode,
+                canEdit = it.id != BudgetLabels.BALANCE.name,
+                onEditClicked = { state.onEditClicked(it) },
+            )
+        }
+    }
+}
 
-            Column(
+
+@Composable
+private fun DataPlate(
+    modifier: Modifier = Modifier,
+    title: String,
+    amount: String,
+    currencyCode: String,
+    canEdit: Boolean,
+    onEditClicked: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clickable {
+                if (canEdit) {
+                    onEditClicked()
+                }
+            }
+            .background(
+                color = colorScheme.primary,
+                shape = shapes.medium,
+            ),
+        contentAlignment = Alignment.BottomEnd,
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+
+            Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(CircleShape)
-                    .aspectRatio(1f)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
+                    .weight(0.33f),
+                text = title,
+                maxLines = 2,
+                textAlign = TextAlign.Center,
+                style = typography.bodySmall,
+                color = colorScheme.onBackground,
+            )
+            if (canEdit.not() || amount.isMoneyBlank().not()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.33f),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = amount,
+                        textAlign = TextAlign.Center,
+                        style = typography.titleLarge,
+                        maxLines = 1,
+                        color = colorScheme.onPrimary,
                     )
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
+                }
                 Text(
-                    text = state.currentBalance,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = if (state.isBalanceError.not()) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onError
-                    },
-                )
-                Text(
-                    text = state.currency.currencyCode,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .weight(0.33f),
+                    text = currencyCode,
+                    textAlign = TextAlign.Center,
+                    style = typography.titleLarge,
+                    color = colorScheme.onPrimary,
                 )
             }
         }
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            color = MaterialTheme.colorScheme.secondary,
-            thickness = 1.dp,
-        )
-        TotalDataLine(
-            amount = state.totalBalance,
-            currency = state.currency,
-            onValueChanged = state.onTotalBalanceChanged,
-            additionalAmount = state.additionalAmount,
-            onAdditionalAmountValueChanged = state.onAdditionalAmountValueChanged,
-            onIncomeAddClicked = state.onIncomeAddClicked,
-        )
-        DataLine(
-            label = stringResource(id = R.string.budget_planned_budget),
-            amount = state.plannedBudget,
-            currency = state.currency,
-            onValueChanged = state.onPlannedBudgetChanged,
-        )
-        DataLine(
-            label = stringResource(R.string.budget_spent),
-            amount = state.spent,
-            currency = state.currency,
-        )
-        DataLine(
-            label = stringResource(R.string.budget_planned_spendings),
-            amount = state.plannedSpendings,
-            currency = state.currency,
-        )
+        if (canEdit) {
+            if (amount.isMoneyBlank()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .aspectRatio(1f),
+                        painter = painterResource(id = R.drawable.icon_edit),
+                        contentDescription = "",
+                    )
+                }
+            } else {
+                Image(
+                    modifier = Modifier
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.icon_edit),
+                    contentDescription = "",
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun DataLine(
-    label: String,
-    amount: String,
-    currency: Currency,
-    onValueChanged: ((String) -> Unit)? = null,
-) {
-    Text(
-        modifier = Modifier
-            .padding(top = 16.dp, bottom = 8.dp)
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-            ),
-        text = label,
-        color = MaterialTheme.colorScheme.onBackground,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+fun BudgetLineChangeDialog(state: BudgetLineChangeDialogState) {
+    Dialog(
+        onDismissRequest = { state.onCloseDialogClicked() },
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .background(
+                    color = colorScheme.background,
+                ),
+        ) {
+            if (state.budgetLine.isDefault) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    text = getPlateTitle(state.budgetLine),
+                    color = colorScheme.primary,
+                )
+            } else {
+                BaseTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    text = state.budgetLine.name,
+                    labelId = R.string.name,
+                    onTextChange = state.onBudgetLineNameChanged,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BaseTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f),
+                    text = state.budgetLine.amount,
+                    textFieldType = TextFieldType.Money(state.currency),
+                    labelId = R.string.spending_details_amount,
+                    onTextChange = state.onAmountValueChanged,
+                )
+                Image(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            state.onOperationChanged()
+                        },
+                    painter = painterResource(
+                        id = when (state.operation) {
+                            Operation.NONE -> R.drawable.icon_calculator
+                            Operation.Addition -> R.drawable.icon_plus
+                            Operation.Subtraction -> R.drawable.icon_minus
+                            Operation.Multiplication -> R.drawable.icon_multiply
+                            Operation.Division -> R.drawable.icon_divide
+                        },
+                    ),
+                    contentDescription = "",
+                )
+            }
 
+            if (state.operation != Operation.NONE) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BaseTextField(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f),
+                        text = state.additionalAmount,
+                        labelId = R.string.budget_income,
+                        onTextChange = state.onAdditionalAmountValueChanged,
+                    )
+                    Image(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                state.onOperationApplyClicked()
+                            },
+                        painter = painterResource(R.drawable.icon_ok),
+                        contentDescription = "",
+                    )
+                }
+            }
+            BottomButtons(
+                onDismiss = state.onCloseDialogClicked,
+                onOkClicked = state.onOkDialogClicked,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomButtons(
+    onDismiss: () -> Unit,
+    onOkClicked: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .background(color = MaterialTheme.colorScheme.primary),
+            .height(64.dp)
+            .background(color = colorScheme.background),
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        onValueChanged?.let {
-            SimpleTextField(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .padding(start = 16.dp),
-                text = amount,
-                label = stringResource(R.string.spending_name),
-                textFieldType = TextFieldType.Money(currency),
-                onValueChange = onValueChanged,
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        } ?: kotlin.run {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .padding(start = 16.dp)
-                    .weight(1f)
-                    .fillMaxWidth(),
-                text = MoneyTextTransformation(currency.currencyCode)
-                    .filter(amount),
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
+        Text(
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .clickable {
+                    onDismiss()
+                },
+            text = stringResource(id = R.string.button_cancel),
+            color = colorScheme.onBackground,
+        )
+        Text(
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .semantics { contentDescription = OK_BUTTON }
+                .clickable { onOkClicked() },
+            text = stringResource(id = R.string.button_ok),
+            color = colorScheme.onBackground,
+        )
     }
 }
-
 
 @Composable
-private fun TotalDataLine(
-    amount: String,
-    additionalAmount: String,
-    currency: Currency,
-    onValueChanged: (String) -> Unit,
-    onAdditionalAmountValueChanged: (String) -> Unit,
-    onIncomeAddClicked: () -> Unit,
-) {
-    var isMoneyInputFieldVisibile by rememberSaveable { mutableStateOf(false) }
+private fun getPlateTitle(budgetLineUiData: BudgetLineUiData): String {
+    return if (BudgetLabels.contains(budgetLineUiData.id)) {
+        stringResource(id = BudgetLabels.valueOf(budgetLineUiData.id).nameId)
+    } else {
+        budgetLineUiData.name
+    }
+}
 
-    Text(
-        modifier = Modifier
-            .padding(top = 16.dp, bottom = 8.dp)
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-            ),
-        text = stringResource(R.string.budget_total_balance),
-        color = MaterialTheme.colorScheme.onBackground,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = MaterialTheme.colorScheme.primary),
-        contentAlignment = Alignment.Center,
-    ) {
-
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround,
-        ) {
-
-            SimpleTextField(
-                modifier = Modifier
-                    .weight(0.4f)
-                    .padding(vertical = 4.dp),
-                text = amount,
-                label = stringResource(R.string.budget_balance),
-                textFieldType = TextFieldType.Money(currency),
-                onValueChange = onValueChanged,
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-            if (isMoneyInputFieldVisibile) {
-                Image(
-                    modifier = Modifier
-                        .weight(0.1f)
-                        .size(50.dp),
-                    painter = painterResource(R.drawable.icon_plus),
-                    contentDescription = "",
-                )
-                SimpleTextField(
-                    modifier = Modifier
-                        .weight(0.4f)
-                        .padding(vertical = 4.dp),
-                    text = additionalAmount,
-                    label = stringResource(R.string.budget_income),
-                    textFieldType = TextFieldType.Money(currency),
-                    onValueChange = onAdditionalAmountValueChanged,
-                    textStyle = MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.onPrimary,
+@Preview
+@Composable
+fun AlternativeBudgetPagePreview() {
+    FamillySpandingsTheme {
+        Surface {
+            BudgetPage(
+                state = BudgetState(
+                    budgetLines = mockBudgetLines,
+                    currency = Currency.getInstance(Locale.getDefault()),
+                    isBalanceError = false,
+                    isMyBudgetOpened = true,
+                    isSaveVisible = false,
+                    filter = FilterType.Yearly(),
+                    onPageChanged = {},
+                    monthlyClicked = {},
+                    yearlyClicked = {},
+                    onSave = {},
+                    onEditClicked = {},
+                    budgetChangeState = BudgetLineChangeDialogState(
+                        onAmountValueChanged = {},
+                        onAdditionalAmountValueChanged = {},
+                        additionalAmount = "",
+                        budgetLine = mockBudgetLines[0],
+                        isShown = true,
+                        onCloseDialogClicked = {},
+                        onBudgetLineNameChanged = {},
+                        onOkDialogClicked = {},
+                        operation = Operation.NONE,
+                        onOperationChanged = {},
+                        onOperationApplyClicked = {},
                     ),
-                )
-            }
-            Image(
-                modifier = Modifier
-                    .weight(0.1f)
-                    .size(50.dp)
-                    .padding(start = 8.dp)
-                    .clickable {
-                        if (isMoneyInputFieldVisibile) {
-                            onIncomeAddClicked()
-                        }
-                        isMoneyInputFieldVisibile = isMoneyInputFieldVisibile.not()
-                    },
-                painter = painterResource(
-                    id = if (isMoneyInputFieldVisibile) {
-                        R.drawable.icon_ok
-                    } else {
-                        R.drawable.icon_plus
-                    },
                 ),
-                contentDescription = "",
             )
         }
     }
 }
+
 
 @Preview
 @Composable
@@ -325,25 +384,35 @@ fun BudgetPagePreview() {
         Surface {
             BudgetPage(
                 state = BudgetState(
-                    currentBalance = "4755",
-                    totalBalance = "3242",
-                    plannedBudget = "20000",
-                    spent = "15245",
-                    plannedSpendings = "3100",
+                    budgetLines = mockBudgetLines,
                     currency = Currency.getInstance(Locale.getDefault()),
                     isBalanceError = false,
                     isMyBudgetOpened = true,
-                    additionalAmount = "44044",
                     isSaveVisible = false,
-                    onAdditionalAmountValueChanged = {},
-                    onIncomeAddClicked = {},
+                    filter = FilterType.Yearly(),
                     onPageChanged = {},
-                    onTotalBalanceChanged = {},
-                    onPlannedBudgetChanged = {},
                     monthlyClicked = {},
                     yearlyClicked = {},
                     onSave = {},
-                    filter = FilterType.Yearly(),
+                    onEditClicked = {},
+                    budgetChangeState = BudgetLineChangeDialogState(
+                        onAmountValueChanged = {},
+                        onAdditionalAmountValueChanged = {},
+                        additionalAmount = "",
+                        budgetLine = BudgetLineUiData(
+                            id = "",
+                            name = "",
+                            amount = "",
+                            isDefault = false,
+                        ),
+                        isShown = false,
+                        onCloseDialogClicked = {},
+                        onBudgetLineNameChanged = {},
+                        onOkDialogClicked = {},
+                        operation = Operation.NONE,
+                        onOperationChanged = {},
+                        onOperationApplyClicked = {},
+                    ),
                 ),
             )
         }
