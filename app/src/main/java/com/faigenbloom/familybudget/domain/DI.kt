@@ -8,7 +8,7 @@ import com.faigenbloom.familybudget.domain.budget.CalculateMoneyUseCase
 import com.faigenbloom.familybudget.domain.budget.GenerateDefaultBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetUseCase
-import com.faigenbloom.familybudget.domain.budget.SaveBudgetUseCase
+import com.faigenbloom.familybudget.domain.budget.SaveBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.categories.DeleteCategoryUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyUseCase
@@ -37,7 +37,7 @@ val domainModule = module {
     singleOf(::RegisterUserUseCase)
     singleOf(::LoginUserUseCase)
     singleOf(::GetPersonNameUseCase)
-    singleOf(::SaveBudgetUseCase)
+    singleOf(::SaveBudgetLinesUseCase)
     singleOf(::GetBudgetUseCase)
     singleOf(::GetBudgetLinesUseCase)
     singleOf(::GenerateDefaultBudgetLinesUseCase)

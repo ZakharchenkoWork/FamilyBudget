@@ -9,10 +9,6 @@ class BudgetPageRepository(private val dataSource: BaseDataSource) {
         return dataSource.getBudgetData()
     }
 
-    suspend fun saveBudgetData(budget: BudgetEntity) {
-        dataSource.saveBudgetData(budget)
-    }
-
     suspend fun getBudgetLines(
         isForMonth: Boolean,
         isForFamily: Boolean,
@@ -20,8 +16,8 @@ class BudgetPageRepository(private val dataSource: BaseDataSource) {
         return dataSource.getBudgetLines(isForMonth, isForFamily)
     }
 
-    suspend fun saveBudgetLines(defaultBudgetEntities: List<BudgetLineEntity>) {
-        dataSource.saveBudgetLines(defaultBudgetEntities)
+    suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>) {
+        dataSource.saveBudgetLines(budgetEntities)
     }
 }
 

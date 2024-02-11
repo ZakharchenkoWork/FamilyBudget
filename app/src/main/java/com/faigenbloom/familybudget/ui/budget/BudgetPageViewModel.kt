@@ -6,7 +6,7 @@ import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.domain.budget.CalculateMoneyUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
-import com.faigenbloom.familybudget.domain.budget.SaveBudgetUseCase
+import com.faigenbloom.familybudget.domain.budget.SaveBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.statistics.FilterType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import java.util.Locale
 
 
 class BudgetPageViewModel(
-    private val saveBudgetUseCase: SaveBudgetUseCase,
+    private val saveBudgetUseCase: SaveBudgetLinesUseCase,
     private val getBudgetLinesUseCase: GetBudgetLinesUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val calculateMoneyUseCase: CalculateMoneyUseCase,
@@ -42,18 +42,20 @@ class BudgetPageViewModel(
         }
     }
 
-    private fun onEditClicked(clickedBudgetLine: BudgetLineUiData) {
-        _stateFlow.update { state ->
-            state.copy(
-                budgetChangeState = state.budgetChangeState.copy(
-                    budgetLine = clickedBudgetLine.copy(),
-                    operation = Operation.NONE,
-                    additionalAmount = 0L.toReadableMoney(),
-                    currency = state.currency,
-                    isShown = true,
-                ),
-            )
-        }
+    private fun onEditClicked(clickedBudgetLine: BudgetLineUiData?) {
+        clickedBudgetLine?.let {
+            _stateFlow.update { state ->
+                state.copy(
+                    budgetChangeState = state.budgetChangeState.copy(
+                        budgetLine = clickedBudgetLine.copy(),
+                        operation = Operation.NONE,
+                        additionalAmount = 0L.toReadableMoney(),
+                        currency = state.currency,
+                        isShown = true,
+                    ),
+                )
+            }
+        } ?: onNewClicked()
     }
 
     private fun onBudgetLineNameChanged(name: String) {
@@ -127,6 +129,7 @@ class BudgetPageViewModel(
                 budgetChangeState = state.budgetChangeState.copy(
                     isShown = false,
                 ),
+                isSaveVisible = true,
             )
         }
     }
@@ -191,16 +194,13 @@ class BudgetPageViewModel(
 
     private fun saveBudget() {
         viewModelScope.launch {
-            /*   saveBudgetUseCase(
-                   BudgetEntity(
-                       id = 0L,
-                   ),
-               )*/
-            _stateFlow.update { state ->
-                state.copy(
-                    isSaveVisible = false,
-                )
-            }
+            saveBudgetUseCase(
+                budget = state.budgetLines,
+                date = state.filter.from,
+                isForMonth = state.filter is FilterType.Monthly,
+                isForFamily = state.isMyBudgetOpened.not(),
+            )
+            reload()
         }
     }
 
@@ -217,6 +217,7 @@ class BudgetPageViewModel(
                 state.copy(
                     budgetLines = budgetLines,
                     currency = getChosenCurrencyUseCase(),
+                    isSaveVisible = false,
                 )
             }
         }
@@ -262,7 +263,7 @@ data class BudgetState(
     val onPageChanged: (Boolean) -> Unit,
     val monthlyClicked: () -> Unit,
     val yearlyClicked: () -> Unit,
-    val onEditClicked: (BudgetLineUiData) -> Unit,
+    val onEditClicked: (BudgetLineUiData?) -> Unit,
     val onSave: () -> Unit,
 )
 
@@ -286,10 +287,4 @@ data class BudgetLineChangeDialogState(
     val onOperationChanged: () -> Unit,
 )
 
-enum class Operation {
-    NONE,
-    Addition,
-    Subtraction,
-    Multiplication,
-    Division,
-}
+

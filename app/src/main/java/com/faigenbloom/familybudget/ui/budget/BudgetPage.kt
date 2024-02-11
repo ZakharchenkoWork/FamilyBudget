@@ -91,12 +91,16 @@ private fun Screen(
     ) {
         items(state.budgetLines) {
             DataPlate(
-                modifier = Modifier.padding(16.dp),
                 title = getPlateTitle(it),
                 amount = it.amount,
                 currencyCode = state.currency.currencyCode,
                 canEdit = it.id != BudgetLabels.BALANCE.name,
                 onEditClicked = { state.onEditClicked(it) },
+            )
+        }
+        item {
+            NewDataPlate(
+                onEditClicked = { state.onEditClicked(null) },
             )
         }
     }
@@ -105,7 +109,6 @@ private fun Screen(
 
 @Composable
 private fun DataPlate(
-    modifier: Modifier = Modifier,
     title: String,
     amount: String,
     currencyCode: String,
@@ -113,8 +116,9 @@ private fun DataPlate(
     onEditClicked: () -> Unit,
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
+            .padding(16.dp)
             .aspectRatio(1f)
             .clickable {
                 if (canEdit) {
@@ -198,6 +202,34 @@ private fun DataPlate(
 }
 
 @Composable
+private fun NewDataPlate(
+    onEditClicked: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .aspectRatio(1f)
+            .clickable {
+                onEditClicked()
+            }
+            .background(
+                color = colorScheme.onSecondaryContainer,
+                shape = shapes.medium,
+            ),
+        contentAlignment = Alignment.BottomEnd,
+    ) {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            painter = painterResource(id = R.drawable.icon_plus),
+            contentDescription = "",
+        )
+    }
+}
+
+@Composable
 fun BudgetLineChangeDialog(state: BudgetLineChangeDialogState) {
     Dialog(
         onDismissRequest = { state.onCloseDialogClicked() },
@@ -217,7 +249,7 @@ fun BudgetLineChangeDialog(state: BudgetLineChangeDialogState) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     text = getPlateTitle(state.budgetLine),
-                    color = colorScheme.primary,
+                    color = colorScheme.onBackground,
                 )
             } else {
                 BaseTextField(

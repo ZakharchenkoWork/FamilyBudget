@@ -22,6 +22,6 @@ interface BudgetDao {
     )
     fun getBudgetLines(isForMonth: Boolean, isForFamily: Boolean): List<BudgetLineEntity>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addBudgetLines(defaultBudgetEntities: List<BudgetLineEntity>)
 }
