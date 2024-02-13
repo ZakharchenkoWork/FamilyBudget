@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.ui.categories.EDIT_CATEGORY_BUTTON
 import com.faigenbloom.familybudget.ui.categories.FIRST_CATEGORY
 import com.faigenbloom.familybudget.ui.categories.NEW_CATEGORY_NAME_INPUT
@@ -30,7 +31,7 @@ class CategoriesTest : BaseTest() {
         waitForIdle()
         openNewSpending()
         composeTestRule.onNodeWithContentDescription(FIRST_CATEGORY)
-            .assert(hasText(getString(mockCategoriesList[0].nameId!!)))
+            .assert(hasText(getString(DefaultCategories.getOrNull(mockCategoriesList[0].id)?.nameId!!)))
         composeTestRule.onNodeWithContentDescription(FIRST_CATEGORY)
             .assert(backgroundColor(Color(0xFFFFFFFF)))
         chooseFirstCategory()

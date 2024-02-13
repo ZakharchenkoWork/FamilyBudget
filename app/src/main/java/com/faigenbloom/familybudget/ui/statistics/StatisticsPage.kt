@@ -2,8 +2,6 @@ package com.faigenbloom.familybudget.ui.statistics
 
 import BarChart
 import BarData
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,9 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.palette.graphics.Palette
-import coil.compose.rememberImagePainter
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TopBar
@@ -330,56 +321,6 @@ fun NoDataToShow() {
             color = MaterialTheme.colorScheme.secondaryContainer,
         )
     }
-
-}
-
-
-@Composable
-fun asColor(categorySummary: CategorySummaryUi): Color {
-    return categorySummary.iconUri?.let {
-        asColor(iconUri = it.toUri())
-    } ?: categorySummary.iconId?.let {
-        asColor(icon = it)
-    } ?: asColor(
-        categorySummary.name ?: categorySummary.nameId?.let { stringResource(id = it) } ?: "",
-    )
-}
-
-@Composable
-fun asColor(name: String): Color {
-    return Color(name.hashCode() and 0xFFFFFF)
-}
-
-@Composable
-fun asColor(icon: Int): Color {
-    return Color(
-        Palette.from(
-            BitmapFactory.decodeResource(
-                LocalContext.current.resources,
-                icon,
-            ),
-        ).generate().dominantSwatch?.rgb ?: Color.White.toArgb(),
-    )
-}
-
-@Composable
-fun asColor(iconUri: Uri): Color {
-    return Color(
-        Palette.from(
-            BitmapFactory.decodeStream(
-                LocalContext.current.contentResolver.openInputStream(iconUri),
-            ),
-        ).generate().dominantSwatch?.rgb ?: Color.White.toArgb(),
-    )
-}
-
-@Composable
-fun CategorySummaryUi.getImage(): Painter {
-    return this.iconUri?.let {
-        rememberImagePainter(it)
-    } ?: this.iconId?.let {
-        painterResource(id = it)
-    } ?: painterResource(id = R.drawable.icon_photo)
 }
 
 @Preview

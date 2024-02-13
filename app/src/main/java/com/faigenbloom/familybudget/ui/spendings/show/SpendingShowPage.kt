@@ -34,6 +34,8 @@ import coil.transform.CircleCropTransformation
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.ui.MoneyTextTransformation
+import com.faigenbloom.familybudget.ui.categories.getCategoryIcon
+import com.faigenbloom.familybudget.ui.categories.getCategoryName
 import com.faigenbloom.familybudget.ui.categories.mockCategoriesList
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
@@ -194,13 +196,7 @@ fun Information(
                             rememberImagePainter(it) {
                                 transformations(CircleCropTransformation())
                             }
-                        } ?: state.category.iconId?.let {
-                            painterResource(state.category.iconId)
-                        } ?: state.category.iconUri?.let {
-                            rememberImagePainter(it) {
-                                transformations(CircleCropTransformation())
-                            }
-                        } ?: painterResource(id = R.drawable.icon_photo),
+                        } ?: state.category.getCategoryIcon(isCircle = true),
                         contentDescription = "",
                     )
                 }
@@ -212,12 +208,8 @@ fun Information(
                         text = stringResource(id = R.string.category),
                         color = MaterialTheme.colorScheme.secondary,
                     )
-                    val categoryName = state.category.nameId?.let {
-                        stringResource(id = it)
-                    } ?: state.category.name ?: ""
-
                     Text(
-                        text = categoryName,
+                        text = state.category.getCategoryName(),
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
                     )

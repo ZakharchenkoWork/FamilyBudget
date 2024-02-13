@@ -98,26 +98,19 @@ fun Category(
                     .size(64.dp)
                     .aspectRatio(1f)
                     .clickable {
-                        if (item.iconId == null) {
+                        if (item.isDefault.not()) {
                             onCategoryPhotoRequest(item.id)
                         }
                     },
                 contentScale = ContentScale.Crop,
-                painter =
-                item.iconUri?.let {
-                    rememberImagePainter(it)
-                } ?: item.iconId?.let {
-                    painterResource(id = it)
-                } ?: painterResource(id = R.drawable.icon_photo),
+                painter = item.getCategoryIcon(),
                 contentDescription = null,
             )
             Text(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .weight(1f),
-                text = item.nameId?.let {
-                    stringResource(id = it)
-                } ?: item.name ?: "",
+                text = item.getCategoryName(),
                 color = MaterialTheme.colorScheme.secondary,
             )
 

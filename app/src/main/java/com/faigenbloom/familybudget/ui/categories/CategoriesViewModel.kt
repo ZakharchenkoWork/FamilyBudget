@@ -59,7 +59,7 @@ class CategoriesViewModel(
                     state.copy(
                         categoryId = categoryUiData.id,
                         newCategoryName = categoryUiData.name ?: "",
-                        newCategoryPhoto = categoryUiData.iconUri?.toUri(),
+                        newCategoryPhoto = categoryUiData.icon?.toUri(),
                         isEditCategoryShown = true,
                     )
                 }

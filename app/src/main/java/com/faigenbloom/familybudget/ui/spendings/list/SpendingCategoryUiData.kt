@@ -13,6 +13,7 @@ data class SpendingCategoryUiData(
     val category: CategoryUiData,
     val amount: Long,
     val date: LocalDate,
+    val photoUri: String? = null,
     val isHidden: Boolean = false,
     val isPlanned: Boolean = false,
 ) : Identifiable, Countable {

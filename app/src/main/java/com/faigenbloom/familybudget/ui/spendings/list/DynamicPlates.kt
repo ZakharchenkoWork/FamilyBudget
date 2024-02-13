@@ -23,7 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +41,7 @@ import com.faigenbloom.familybudget.domain.spendings.DatedList
 import com.faigenbloom.familybudget.domain.spendings.FilterType
 import com.faigenbloom.familybudget.domain.spendings.Pattern
 import com.faigenbloom.familybudget.domain.spendings.PlateSizeType
+import com.faigenbloom.familybudget.ui.categories.getCategoryIcon
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.hint
 import com.faigenbloom.familybudget.ui.theme.transparent
@@ -302,6 +303,7 @@ fun Plate_3x3(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(ONE),
+        isSmall = false,
         item = spendingData,
         onSpendingClicked = onSpendingClicked,
     )
@@ -317,6 +319,7 @@ fun Plate_3x2_3x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(TWO_THIRDS),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -324,6 +327,7 @@ fun Plate_3x2_3x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -340,6 +344,7 @@ fun Plate_3x2_2x1_1x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(TWO_THIRDS),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -352,6 +357,7 @@ fun Plate_3x2_2x1_1x1(
                 modifier = Modifier
                     .weight(TWO_THIRDS)
                     .aspectRatio(HALF),
+                isSmall = false,
                 item = spendingData[1],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -359,6 +365,7 @@ fun Plate_3x2_2x1_1x1(
                 modifier = Modifier
                     .weight(ONE_THIRD)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -386,6 +393,7 @@ fun Plate_2x2_3x1_2x1(
                 modifier = Modifier
                     .weight(TWO_THIRDS)
                     .aspectRatio(ONE),
+                isSmall = false,
                 item = spendingData[0],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -393,6 +401,7 @@ fun Plate_2x2_3x1_2x1(
                 modifier = Modifier
                     .weight(ONE_THIRD)
                     .aspectRatio(TWO),
+                isSmall = false,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -402,6 +411,7 @@ fun Plate_2x2_3x1_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -428,6 +438,7 @@ fun Plate_2x2_3x1_1x1_1x1(
                 modifier = Modifier
                     .weight(TWO_THIRDS)
                     .aspectRatio(ONE),
+                isSmall = false,
                 item = spendingData[0],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -438,6 +449,7 @@ fun Plate_2x2_3x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(ONE),
+                    isSmall = true,
                     item = spendingData[2],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -445,6 +457,7 @@ fun Plate_2x2_3x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(ONE),
+                    isSmall = true,
                     item = spendingData[3],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -455,6 +468,7 @@ fun Plate_2x2_3x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -471,6 +485,7 @@ fun Plate_2x2_1x1_1x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(ONE),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -485,6 +500,7 @@ fun Plate_2x2_1x1_1x1(
                 modifier = Modifier
                     .weight(HALF)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[1],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -492,6 +508,7 @@ fun Plate_2x2_1x1_1x1(
                 modifier = Modifier
                     .weight(HALF)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -509,6 +526,7 @@ fun Plate_2x2_1x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(ONE),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -516,6 +534,7 @@ fun Plate_2x2_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -532,6 +551,7 @@ fun Plate_2x2_2x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(ONE),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -540,6 +560,7 @@ fun Plate_2x2_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -556,6 +577,7 @@ fun Plate_3x1_3x1_3x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -563,6 +585,7 @@ fun Plate_3x1_3x1_3x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -571,6 +594,7 @@ fun Plate_3x1_3x1_3x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[2],
             onSpendingClicked = onSpendingClicked,
         )
@@ -587,6 +611,7 @@ fun Plate_3x1_3x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -594,6 +619,7 @@ fun Plate_3x1_3x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -606,6 +632,7 @@ fun Plate_3x1_3x1_2x1_1x1(
                 modifier = Modifier
                     .weight(TWO_THIRDS)
                     .aspectRatio(HALF),
+                isSmall = false,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -613,6 +640,7 @@ fun Plate_3x1_3x1_2x1_1x1(
                 modifier = Modifier
                     .weight(ONE_THIRD)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[3],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -630,6 +658,7 @@ fun Plate_3x1_2x1_2x1_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -647,6 +676,7 @@ fun Plate_3x1_2x1_2x1_2x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[1],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -654,6 +684,7 @@ fun Plate_3x1_2x1_2x1_2x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[2],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -662,6 +693,7 @@ fun Plate_3x1_2x1_2x1_2x1(
                 modifier = Modifier
                     .weight(ONE_THIRD)
                     .aspectRatio(TWO),
+                isSmall = false,
                 item = spendingData[3],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -679,6 +711,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -696,6 +729,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[1],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -703,6 +737,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[2],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -716,6 +751,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(ONE),
+                    isSmall = true,
                     item = spendingData[3],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -723,6 +759,7 @@ fun Plate_3x1_2x1_2x1_1x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(ONE),
+                    isSmall = true,
                     item = spendingData[4],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -741,6 +778,7 @@ fun Plate_3x1_2x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE_THIRD),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -758,6 +796,7 @@ fun Plate_3x1_2x1_2x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[1],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -765,6 +804,7 @@ fun Plate_3x1_2x1_2x1_1x1(
                     modifier = Modifier
                         .weight(HALF)
                         .aspectRatio(HALF),
+                    isSmall = false,
                     item = spendingData[2],
                     onSpendingClicked = onSpendingClicked,
                 )
@@ -780,6 +820,7 @@ fun Plate_3x1_2x1_2x1_1x1(
                         .weight(HALF)
                         .aspectRatio(ONE),
                     item = spendingData[3],
+                    isSmall = true,
                     onSpendingClicked = onSpendingClicked,
                 )
                 Spacer(
@@ -800,6 +841,7 @@ fun Plate_2x1_2x1_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -807,6 +849,7 @@ fun Plate_2x1_2x1_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -815,6 +858,7 @@ fun Plate_2x1_2x1_2x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[2],
             onSpendingClicked = onSpendingClicked,
         )
@@ -831,6 +875,7 @@ fun Plate_2x1_2x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -838,6 +883,7 @@ fun Plate_2x1_2x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -850,6 +896,7 @@ fun Plate_2x1_2x1_1x1_1x1(
                 modifier = Modifier
                     .weight(HALF)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -857,6 +904,7 @@ fun Plate_2x1_2x1_1x1_1x1(
                 modifier = Modifier
                     .weight(HALF)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[3],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -874,6 +922,7 @@ fun Plate_2x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -881,6 +930,7 @@ fun Plate_2x1_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(HALF),
+            isSmall = false,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -893,6 +943,7 @@ fun Plate_2x1_2x1_1x1(
                 modifier = Modifier
                     .weight(HALF)
                     .aspectRatio(ONE),
+                isSmall = true,
                 item = spendingData[2],
                 onSpendingClicked = onSpendingClicked,
             )
@@ -915,6 +966,7 @@ fun Plate_2x1_1x1(
             modifier = Modifier
                 .weight(TWO_THIRDS)
                 .aspectRatio(TWO),
+            isSmall = false,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -922,6 +974,7 @@ fun Plate_2x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -938,6 +991,7 @@ fun Plate_1x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -945,6 +999,7 @@ fun Plate_1x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -952,6 +1007,7 @@ fun Plate_1x1_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[2],
             onSpendingClicked = onSpendingClicked,
         )
@@ -968,6 +1024,7 @@ fun Plate_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[0],
             onSpendingClicked = onSpendingClicked,
         )
@@ -975,6 +1032,7 @@ fun Plate_1x1_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData[1],
             onSpendingClicked = onSpendingClicked,
         )
@@ -996,6 +1054,7 @@ fun Plate_1x1(
             modifier = Modifier
                 .weight(ONE_THIRD)
                 .aspectRatio(ONE),
+            isSmall = true,
             item = spendingData,
             onSpendingClicked = onSpendingClicked,
         )
@@ -1022,6 +1081,7 @@ fun Plate_3x1(
             .fillMaxWidth()
             .aspectRatio(THREE),
         item = spendingData,
+        isSmall = false,
         onSpendingClicked = onSpendingClicked,
     )
 }
@@ -1041,6 +1101,7 @@ fun Plate_2x1(
                 .weight(TWO_THIRDS)
                 .aspectRatio(TWO),
             item = spendingData,
+            isSmall = false,
             onSpendingClicked = onSpendingClicked,
         )
         Spacer(
@@ -1059,6 +1120,7 @@ fun Plate_3x2(
             .fillMaxWidth()
             .aspectRatio(ONE_AND_ONE_THIRDS),
         item = spendingData,
+        isSmall = false,
         onSpendingClicked = onSpendingClicked,
     )
 }
@@ -1067,6 +1129,7 @@ fun Plate_3x2(
 fun SpendingItem(
     modifier: Modifier = Modifier,
     item: SpendingCategoryUiData,
+    isSmall: Boolean,
     onSpendingClicked: (String) -> Unit,
 ) {
     Box(
@@ -1078,14 +1141,10 @@ fun SpendingItem(
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            painter = item.category.iconUri?.let {
+            contentScale = Crop,
+            painter = item.photoUri?.let {
                 rememberImagePainter(it)
-            } ?: item.category.iconId?.let {
-                painterResource(
-                    id = it,
-                )
-            } ?: painterResource(R.drawable.icon),
+            } ?: item.category.getCategoryIcon(isSmall),
             contentDescription = null,
         )
 

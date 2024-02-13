@@ -10,15 +10,13 @@ class CategoriesMapper : Mapper<CategoryUiData, CategoryEntity>() {
             val defaultCategory = DefaultCategories.valueOf(entity.id)
             CategoryUiData(
                 id = defaultCategory.name,
-                nameId = defaultCategory.nameId,
-                iconId = defaultCategory.iconId,
                 isDefault = true,
             )
         } else {
             CategoryUiData(
                 id = entity.id,
                 name = entity.name,
-                iconUri = entity.photoUri,
+                icon = entity.photoUri,
                 isDefault = false,
             )
         }
@@ -29,7 +27,7 @@ class CategoriesMapper : Mapper<CategoryUiData, CategoryEntity>() {
             id = model.id,
             isDefault = false,
             name = model.name,
-            photoUri = model.iconUri,
+            photoUri = model.icon,
         )
     }
 

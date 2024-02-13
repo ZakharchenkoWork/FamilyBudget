@@ -35,10 +35,8 @@ class GetCategorySummariesUseCase(
                     summaries.add(
                         CategorySummaryUi(
                             id = spending.categoryId,
-                            nameId = category.nameId,
                             name = category.name,
-                            iconId = category.iconId,
-                            iconUri = category.iconUri,
+                            iconUri = category.icon,
                             amount = spending.amount.toLongMoney(),
                         ),
                     )

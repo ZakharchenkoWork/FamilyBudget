@@ -26,50 +26,68 @@ data class CategoryEntity(
     }
 }
 
-enum class DefaultCategories(val nameId: Int, val iconId: Int) {
+enum class DefaultCategories(val nameId: Int, val iconId: Int, val iconBigId: Int) {
     BEAUTY(
-
         nameId = R.string.category_beauty,
-        iconId = R.drawable.beauty,
+        iconId = R.drawable.icon_beauty_small,
+        iconBigId = R.drawable.icon_beauty_big,
     ),
     EDUCATION(
         nameId = R.string.category_education,
-        iconId = R.drawable.education,
+        iconId = R.drawable.icon_education_small,
+        iconBigId = R.drawable.icon_education_big,
     ),
     ENTERTAIMENT(
         nameId = R.string.category_entertaiment,
-        iconId = R.drawable.entertaiment,
+        iconId = R.drawable.icon_entertaiment_small,
+        iconBigId = R.drawable.icon_entertaiment_big,
     ),
     FOOD(
         nameId = R.string.category_food,
-        iconId = R.drawable.food,
+        iconId = R.drawable.icon_food_small,
+        iconBigId = R.drawable.icon_food_big,
     ),
     HEALTH(
         nameId = R.string.category_health,
-        iconId = R.drawable.health,
+        iconId = R.drawable.icon_health_small,
+        iconBigId = R.drawable.icon_health_big,
     ),
     HOME(
         nameId = R.string.category_home,
-        iconId = R.drawable.home,
+        iconId = R.drawable.icon_home_small,
+        iconBigId = R.drawable.icon_home_big,
     ),
     PETS(
         nameId = R.string.category_pets,
-        iconId = R.drawable.pets,
+        iconId = R.drawable.icon_pets_small,
+        iconBigId = R.drawable.icon_pets_big,
     ),
     SHOPPING(
         nameId = R.string.category_shopping,
-        iconId = R.drawable.shopping,
+        iconId = R.drawable.icon_shopping_small,
+        iconBigId = R.drawable.icon_shopping_big,
     ),
     SPORT(
         nameId = R.string.category_sport,
-        iconId = R.drawable.sport,
+        iconId = R.drawable.icon_sport_small,
+        iconBigId = R.drawable.icon_sport_big,
     ),
     TRANSPORT(
         nameId = R.string.category_transport,
-        iconId = R.drawable.transport,
+        iconId = R.drawable.icon_transport_small,
+        iconBigId = R.drawable.icon_transport_big,
     ),
     TRAVEL(
         nameId = R.string.category_travel,
-        iconId = R.drawable.travel,
-    ),
+        iconId = R.drawable.icon_travel_small,
+        iconBigId = R.drawable.icon_travel_big,
+    );
+
+    companion object {
+        fun getOrNull(key: String): DefaultCategories? {
+            return DefaultCategories.values().firstOrNull {
+                it.name == key
+            }
+        }
+    }
 }

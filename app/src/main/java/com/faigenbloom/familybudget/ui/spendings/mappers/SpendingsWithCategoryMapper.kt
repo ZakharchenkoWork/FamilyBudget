@@ -11,6 +11,7 @@ class SpendingsWithCategoryMapper {
             id = entity.id,
             name = entity.name,
             category = category,
+            photoUri = entity.photoUri,
             amount = entity.amount,
             date = entity.date.toLocalDate(),
             isHidden = entity.isHidden,
