@@ -21,5 +21,6 @@ val repositoryModule = module {
     singleOf(::FamilySourceMapper)
     singleOf(::PersonSourceMapper)
     singleOf(::CategorySourceMapper)
+    singleOf(::SettingsRepository)
 }
 

@@ -2,6 +2,7 @@ package com.faigenbloom.familybudget.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faigenbloom.familybudget.domain.currency.GetAllCurrenciesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,73 +12,83 @@ import java.util.Currency
 import java.util.Locale
 
 class SettingsPageViewModel(
-    repository: SettingsPageRepository,
+    private val getAllCurrenciesUseCase: GetAllCurrenciesUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
-    private var name: String = ""
-    private var surname: String = ""
-    private var chosenCurrency: Currency = Currency.getInstance(Locale.getDefault())
-    private var isNotificationsEnabled: Boolean = true
-    private val currenciesList: List<Currency> = repository.getAllCurrencies()
-    private var isCurrenciesDropdownVisible: Boolean = false
 
-    private val onNameChanged: (String) -> Unit = {
-        name = it
-        updateUi()
-    }
-
-    private val onSurnameChanged: (String) -> Unit = {
-        surname = it
-        updateUi()
-    }
-    private val onNotificationsCheckChanged: ((Boolean) -> Unit) = {
-        isNotificationsEnabled = it
-        updateUi()
-    }
-    private val onCurrenciesDropdownVisibilityChanged: (Boolean) -> Unit = {
-        isCurrenciesDropdownVisible = it
-        updateUi()
-    }
-    private val onCurrencyChanged: (currency: Currency) -> Unit = {
-        chosenCurrency = it
-        updateUi()
-    }
-    private val state: SettingsState
-        get() = SettingsState(
-            name = name,
-            surname = surname,
-            onNameChanged = onNameChanged,
-            onSurnameChanged = onSurnameChanged,
-            chosenCurrency = chosenCurrency,
-            isNotificationsEnabled = isNotificationsEnabled,
-            currenciesList = currenciesList,
-            isCurrenciesDropdownVisible = isCurrenciesDropdownVisible,
-            onCurrenciesDropdownVisibilityChanged = onCurrenciesDropdownVisibilityChanged,
-            onNotificationsCheckChanged = onNotificationsCheckChanged,
-            onCurrencyChanged = onCurrencyChanged,
-        )
-
-    private val _stateFlow = MutableStateFlow(state)
-    val stateFlow = _stateFlow.asStateFlow().apply {
-        viewModelScope.launch {
-            chosenCurrency = getChosenCurrencyUseCase()
-            updateUi()
+    private fun onNameChanged(name: String) {
+        _stateFlow.update { state ->
+            state.copy(
+                name = name,
+            )
         }
     }
 
-    private fun updateUi() = _stateFlow.update { state }
+    private fun onSurnameChanged(surname: String) {
+        _stateFlow.update { state ->
+            state.copy(
+                surname = surname,
+            )
+        }
+    }
+
+    private fun onNotificationsCheckChanged(isEnabled: Boolean) {
+        _stateFlow.update { state ->
+            state.copy(
+                isNotificationsEnabled = isEnabled,
+            )
+        }
+    }
+
+    private fun onCurrenciesDialogVisibilityChanged(isVisible: Boolean) {
+        _stateFlow.update { state ->
+            state.copy(
+                isCurrenciesDialogVisible = isVisible,
+            )
+        }
+    }
+
+    private fun onCurrencyChanged(currency: Currency) {
+        _stateFlow.update { state ->
+            state.copy(
+                chosenCurrency = currency,
+            )
+        }
+    }
+
+    private val _stateFlow = MutableStateFlow(
+        SettingsState(
+            onNameChanged = ::onNameChanged,
+            onSurnameChanged = ::onSurnameChanged,
+            onCurrenciesDropdownVisibilityChanged = ::onCurrenciesDialogVisibilityChanged,
+            onNotificationsCheckChanged = ::onNotificationsCheckChanged,
+            onCurrencyChanged = ::onCurrencyChanged,
+        ),
+    )
+    val stateFlow = _stateFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _stateFlow.update { state ->
+                state.copy(
+                    chosenCurrency = getChosenCurrencyUseCase(),
+                    currenciesList = getAllCurrenciesUseCase(),
+                )
+            }
+        }
+    }
 }
 
 data class SettingsState(
-    val name: String,
-    val surname: String,
-    val currenciesList: List<Currency>,
-    val chosenCurrency: Currency,
+    val currenciesList: List<Currency> = emptyList(),
+    val name: String = "",
+    val surname: String = "",
+    val isNotificationsEnabled: Boolean = true,
+    val isCurrenciesDialogVisible: Boolean = false,
+    val chosenCurrency: Currency = Currency.getInstance(Locale.getDefault()),
     val onNameChanged: (String) -> Unit,
     val onSurnameChanged: (String) -> Unit,
-    val isCurrenciesDropdownVisible: Boolean,
     val onCurrenciesDropdownVisibilityChanged: ((Boolean) -> Unit),
-    val isNotificationsEnabled: Boolean,
     val onNotificationsCheckChanged: ((Boolean) -> Unit),
     val onCurrencyChanged: (currency: Currency) -> Unit,
 )

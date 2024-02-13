@@ -169,7 +169,7 @@ fun SettingsPage(
 @Composable
 fun CurrencyChooseDropDown(state: SettingsState) {
     DropdownMenu(
-        expanded = state.isCurrenciesDropdownVisible,
+        expanded = state.isCurrenciesDialogVisible,
         onDismissRequest = { state.onCurrenciesDropdownVisibilityChanged(false) },
         offset = DpOffset(16.dp, 0.dp),
         content = {
@@ -208,7 +208,7 @@ fun StatisticsPagePreview() {
                     currenciesList = Currency.getAvailableCurrencies().toList(),
                     isNotificationsEnabled = true,
                     onNotificationsCheckChanged = { },
-                    isCurrenciesDropdownVisible = true,
+                    isCurrenciesDialogVisible = true,
                     onCurrenciesDropdownVisibilityChanged = {},
                     chosenCurrency = Currency.getInstance(Locale.getDefault()),
                     onCurrencyChanged = { },

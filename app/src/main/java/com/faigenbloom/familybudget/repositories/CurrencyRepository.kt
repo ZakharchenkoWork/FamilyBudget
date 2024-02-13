@@ -7,4 +7,8 @@ class CurrencyRepository(private val dataSource: BaseDataSource) {
     suspend fun getChosenCurrency(): Currency {
         return dataSource.getChosenCurrency()
     }
+
+    suspend fun getAllCurrencies(): List<Currency> {
+        return dataSource.getAllCurrencies()
+    }
 }

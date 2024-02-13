@@ -11,6 +11,7 @@ import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.budget.ReCalculateFormulasUseCase
 import com.faigenbloom.familybudget.domain.budget.SaveBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.categories.DeleteCategoryUseCase
+import com.faigenbloom.familybudget.domain.currency.GetAllCurrenciesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
@@ -30,6 +31,7 @@ val domainModule = module {
     singleOf(::DeleteSpendingUseCase)
     singleOf(::DeleteCategoryUseCase)
     singleOf(::GetChosenCurrencyUseCase)
+    singleOf(::GetAllCurrenciesUseCase)
     singleOf(::GetSpentTotalUseCase)
     singleOf(::GetFamilyUseCase)
     singleOf(::SaveFamilyUseCase)
