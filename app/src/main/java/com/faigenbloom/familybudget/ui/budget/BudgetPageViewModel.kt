@@ -6,6 +6,7 @@ import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.domain.budget.CalculateMoneyUseCase
 import com.faigenbloom.familybudget.domain.budget.GetBudgetLinesUseCase
+import com.faigenbloom.familybudget.domain.budget.ReCalculateFormulasUseCase
 import com.faigenbloom.familybudget.domain.budget.SaveBudgetLinesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.statistics.FilterType
@@ -21,14 +22,19 @@ class BudgetPageViewModel(
     private val saveBudgetUseCase: SaveBudgetLinesUseCase,
     private val getBudgetLinesUseCase: GetBudgetLinesUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
+    private val reCalculateFormulasUseCase: ReCalculateFormulasUseCase,
     private val calculateMoneyUseCase: CalculateMoneyUseCase,
 ) : ViewModel() {
+
+    var toSpendings: (from: Long, to: Long) -> Unit = { _, _ -> }
+
     private fun onNewClicked() {
         _stateFlow.update { state ->
             state.copy(
                 budgetChangeState = state.budgetChangeState.copy(
                     budgetLine = BudgetLineUiData(
                         id = "",
+                        repeatableId = "",
                         name = "",
                         amount = "",
                         isDefault = false,
@@ -110,27 +116,29 @@ class BudgetPageViewModel(
     }
 
     private fun onOkDialogClicked() {
-        val budgetLines = ArrayList(state.budgetLines).apply {
-            val budgetLine = state.budgetChangeState.budgetLine
-            if (budgetLine.id.isBlank()) {
-                add(budgetLine)
-            } else {
-                replaceAll {
-                    if (it.id == budgetLine.id) {
-                        budgetLine
-                    } else it
+        viewModelScope.launch {
+            val budgetLines = ArrayList(state.budgetLines).apply {
+                val budgetLine = state.budgetChangeState.budgetLine
+                if (budgetLine.id.isBlank()) {
+                    add(budgetLine)
+                } else {
+                    replaceAll {
+                        if (it.id == budgetLine.id) {
+                            budgetLine
+                        } else it
+                    }
                 }
             }
-        }
 
-        _stateFlow.update { state ->
-            state.copy(
-                budgetLines = budgetLines,
-                budgetChangeState = state.budgetChangeState.copy(
-                    isShown = false,
-                ),
-                isSaveVisible = true,
-            )
+            _stateFlow.update { state ->
+                state.copy(
+                    budgetLines = reCalculateFormulasUseCase(budgetLines),
+                    budgetChangeState = state.budgetChangeState.copy(
+                        isShown = false,
+                    ),
+                    isSaveVisible = true,
+                )
+            }
         }
     }
 
@@ -168,7 +176,7 @@ class BudgetPageViewModel(
     private fun monthlyClicked() {
         _stateFlow.update { state ->
             state.copy(
-                filter = FilterType.Monthly(),
+                filterType = FilterType.Monthly(),
             )
         }
         reload()
@@ -177,10 +185,23 @@ class BudgetPageViewModel(
     private fun yearlyClicked() {
         _stateFlow.update { state ->
             state.copy(
-                filter = FilterType.Yearly(),
+                filterType = FilterType.Yearly(),
             )
         }
         reload()
+    }
+
+    private fun onDateMoved(isRight: Boolean) {
+        _stateFlow.update { state ->
+            state.copy(
+                filterType = state.filterType.move(isRight),
+            )
+        }
+        reload()
+    }
+
+    private fun onToSpendings() {
+        toSpendings(state.filterType.from, state.filterType.to)
     }
 
     private fun onPageChanged(isOpen: Boolean) {
@@ -196,8 +217,8 @@ class BudgetPageViewModel(
         viewModelScope.launch {
             saveBudgetUseCase(
                 budget = state.budgetLines,
-                date = state.filter.from,
-                isForMonth = state.filter is FilterType.Monthly,
+                date = state.filterType.from,
+                isForMonth = state.filterType is FilterType.Monthly,
                 isForFamily = state.isMyBudgetOpened.not(),
             )
             reload()
@@ -207,10 +228,10 @@ class BudgetPageViewModel(
     private fun reload() {
         viewModelScope.launch {
             val budgetLines = getBudgetLinesUseCase(
-                isForMonth = state.filter is FilterType.Monthly,
+                isForMonth = state.filterType is FilterType.Monthly,
                 isForFamily = state.isMyBudgetOpened.not(),
-                from = state.filter.from,
-                to = state.filter.to,
+                from = state.filterType.from,
+                to = state.filterType.to,
             )
 
             _stateFlow.update { state ->
@@ -242,6 +263,8 @@ class BudgetPageViewModel(
             yearlyClicked = ::yearlyClicked,
             onEditClicked = ::onEditClicked,
             onSave = ::saveBudget,
+            onToSpendings = ::onToSpendings,
+            onDateMoved = ::onDateMoved,
         ),
     )
     val stateFlow = _stateFlow.asStateFlow()
@@ -259,11 +282,13 @@ data class BudgetState(
     val isMyBudgetOpened: Boolean = true,
     val isBalanceError: Boolean = false,
     val isSaveVisible: Boolean = false,
-    val filter: FilterType = FilterType.Monthly(),
+    val filterType: FilterType = FilterType.Monthly(),
     val onPageChanged: (Boolean) -> Unit,
+    val onDateMoved: (isRight: Boolean) -> Unit,
     val monthlyClicked: () -> Unit,
     val yearlyClicked: () -> Unit,
     val onEditClicked: (BudgetLineUiData?) -> Unit,
+    val onToSpendings: () -> Unit,
     val onSave: () -> Unit,
 )
 
@@ -271,6 +296,7 @@ data class BudgetLineChangeDialogState(
     val additionalAmount: String = "",
     val budgetLine: BudgetLineUiData = BudgetLineUiData(
         id = "",
+        repeatableId = "",
         name = "",
         amount = "",
         isDefault = false,

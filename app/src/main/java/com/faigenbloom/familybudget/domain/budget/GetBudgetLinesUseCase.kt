@@ -12,6 +12,7 @@ class GetBudgetLinesUseCase(
     private val budgetPageRepository: BudgetPageRepository,
     private val generateDefaultBudgetLinesUseCase: GenerateDefaultBudgetLinesUseCase,
     private val getSpentTotalUseCase: GetSpentTotalUseCase,
+    private val calculateFormulasUseCase: CalculateFormulasUseCase,
     private val budgetLineMapper: BudgetLineMapper,
 ) {
     suspend operator fun invoke(
@@ -21,13 +22,20 @@ class GetBudgetLinesUseCase(
         to: Long,
     ): List<BudgetLineUiData> {
         return withContext(Dispatchers.IO) {
-            budgetPageRepository.getBudgetLines(isForMonth, isForFamily).let {
-                return@let if (it.isEmpty()) {
-                    ArrayList(generateDefaultBudgetLinesUseCase(isForMonth, isForFamily))
-                } else {
-                    ArrayList(it)
-                }
-            }.recalculateValues(from, to)
+            val budgetLineEntities =
+                budgetPageRepository.getBudgetLines(
+                    isForMonth, isForFamily,
+                    from,
+                    to,
+                ).let {
+                    return@let if (it.isEmpty()) {
+                        ArrayList(generateDefaultBudgetLinesUseCase(isForMonth, isForFamily))
+                    } else {
+                        ArrayList(it)
+                    }
+                }.recalculateValues(from, to)
+
+            calculateFormulasUseCase(budgetLineEntities)
                 .map { budgetLineMapper.forUI(it) }
         }
     }
@@ -36,12 +44,8 @@ class GetBudgetLinesUseCase(
         from: Long,
         to: Long,
     ): ArrayList<BudgetLineEntity> {
-        val plannedBudget = first {
-            it.id == BudgetLabels.PLANNED_BUDGET.name
-        }.amount
         val spent = getSpentTotalUseCase(false, from, to)
         val plannedSpendings = getSpentTotalUseCase(true, from, to)
-        val balance = (plannedBudget - spent - plannedSpendings)
 
         setAmount(
             BudgetLabels.PLANNED_SPENDINGS,
@@ -51,10 +55,6 @@ class GetBudgetLinesUseCase(
             BudgetLabels.SPENT,
             spent,
         )
-        setAmount(
-            BudgetLabels.BALANCE,
-            balance,
-        )
         return this
     }
 
@@ -63,7 +63,7 @@ class GetBudgetLinesUseCase(
         value: Long,
     ) {
         val index = indexOfFirst {
-            it.id == key.name
+            it.repeatableId == key.name
         }
         set(
             index,

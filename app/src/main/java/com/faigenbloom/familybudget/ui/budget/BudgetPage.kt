@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +42,9 @@ import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.isMoneyBlank
+import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
+import com.faigenbloom.familybudget.common.ui.DateSwitcherBar
 import com.faigenbloom.familybudget.domain.statistics.FilterType
 import com.faigenbloom.familybudget.ui.spendings.detail.OK_BUTTON
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
@@ -62,6 +65,15 @@ fun BudgetPage(
             isLeftSelected = state.isMyBudgetOpened,
             onSelectionChanged = state.onPageChanged,
         )
+        DateSwitcherBar(
+            title = stringResource(
+                id = R.string.statistics_small_title_range,
+                state.filterType.from.toReadableDate(),
+                state.filterType.to.toReadableDate(),
+            ),
+            onDateMoved = state.onDateMoved,
+        )
+
         AnimateTabs(isLeftTab = state.isMyBudgetOpened) { isMyBudgetOpened ->
             if (isMyBudgetOpened) {
                 Screen(
@@ -94,8 +106,16 @@ private fun Screen(
                 title = getPlateTitle(it),
                 amount = it.amount,
                 currencyCode = state.currency.currencyCode,
-                canEdit = it.id != BudgetLabels.BALANCE.name,
-                onEditClicked = { state.onEditClicked(it) },
+                canEdit = it.repeatableId != BudgetLabels.BALANCE.name,
+                onEditClicked = {
+                    if (it.repeatableId == BudgetLabels.SPENT.name ||
+                        it.repeatableId == BudgetLabels.PLANNED_SPENDINGS.name
+                    ) {
+                        state.onToSpendings()
+                    } else {
+                        state.onEditClicked(it)
+                    }
+                },
             )
         }
         item {
@@ -129,7 +149,6 @@ private fun DataPlate(
                 color = colorScheme.primary,
                 shape = shapes.medium,
             ),
-        contentAlignment = Alignment.BottomEnd,
     ) {
 
         Column(
@@ -142,57 +161,69 @@ private fun DataPlate(
 
             Text(
                 modifier = Modifier
-                    .weight(0.33f),
+                    .weight(0.4f),
                 text = title,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
-                style = typography.bodySmall,
+                style = typography.titleSmall,
                 color = colorScheme.onBackground,
             )
             if (canEdit.not() || amount.isMoneyBlank().not()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(0.33f),
+                        .weight(0.3f),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = amount,
                         textAlign = TextAlign.Center,
-                        style = typography.titleLarge,
+                        style = typography.titleMedium,
                         maxLines = 1,
                         color = colorScheme.onPrimary,
                     )
                 }
                 Text(
                     modifier = Modifier
-                        .weight(0.33f),
+                        .weight(0.3f),
                     text = currencyCode,
                     textAlign = TextAlign.Center,
-                    style = typography.titleLarge,
+                    style = typography.titleMedium,
                     color = colorScheme.onPrimary,
                 )
-            }
-        }
-        if (canEdit) {
-            if (amount.isMoneyBlank()) {
+            } else if (canEdit && amount.isMoneyBlank()) {
+
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxSize()
+                        .weight(0.6f),
                     contentAlignment = Alignment.Center,
                 ) {
                     Image(
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .aspectRatio(1f),
-                        painter = painterResource(id = R.drawable.icon_edit),
+                        painter = painterResource(id = R.drawable.icon_plus),
                         contentDescription = "",
                     )
                 }
-            } else {
+
+            }
+        }
+        if (canEdit && amount.isMoneyBlank().not()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.End,
+            ) {
+                Spacer(
+                    modifier = Modifier.weight(0.6f),
+                )
                 Image(
                     modifier = Modifier
-                        .size(24.dp),
+                        .weight(0.4f)
+                        .padding(16.dp)
+                        .aspectRatio(1f),
                     painter = painterResource(id = R.drawable.icon_edit),
                     contentDescription = "",
                 )
@@ -247,7 +278,7 @@ fun BudgetLineChangeDialog(state: BudgetLineChangeDialogState) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(16.dp),
                     text = getPlateTitle(state.budgetLine),
                     color = colorScheme.onBackground,
                 )
@@ -364,8 +395,8 @@ private fun BottomButtons(
 
 @Composable
 private fun getPlateTitle(budgetLineUiData: BudgetLineUiData): String {
-    return if (BudgetLabels.contains(budgetLineUiData.id)) {
-        stringResource(id = BudgetLabels.valueOf(budgetLineUiData.id).nameId)
+    return if (BudgetLabels.contains(budgetLineUiData.repeatableId)) {
+        stringResource(id = BudgetLabels.valueOf(budgetLineUiData.repeatableId).nameId)
     } else {
         budgetLineUiData.name
     }
@@ -383,12 +414,14 @@ fun AlternativeBudgetPagePreview() {
                     isBalanceError = false,
                     isMyBudgetOpened = true,
                     isSaveVisible = false,
-                    filter = FilterType.Yearly(),
+                    filterType = FilterType.Yearly(),
                     onPageChanged = {},
                     monthlyClicked = {},
                     yearlyClicked = {},
                     onSave = {},
                     onEditClicked = {},
+                    onDateMoved = {},
+                    onToSpendings = {},
                     budgetChangeState = BudgetLineChangeDialogState(
                         onAmountValueChanged = {},
                         onAdditionalAmountValueChanged = {},
@@ -417,26 +450,22 @@ fun BudgetPagePreview() {
             BudgetPage(
                 state = BudgetState(
                     budgetLines = mockBudgetLines,
-                    currency = Currency.getInstance(Locale.getDefault()),
                     isBalanceError = false,
                     isMyBudgetOpened = true,
                     isSaveVisible = false,
-                    filter = FilterType.Yearly(),
+                    filterType = FilterType.Yearly(),
                     onPageChanged = {},
                     monthlyClicked = {},
                     yearlyClicked = {},
                     onSave = {},
                     onEditClicked = {},
+                    onDateMoved = {},
+                    onToSpendings = {},
                     budgetChangeState = BudgetLineChangeDialogState(
                         onAmountValueChanged = {},
                         onAdditionalAmountValueChanged = {},
                         additionalAmount = "",
-                        budgetLine = BudgetLineUiData(
-                            id = "",
-                            name = "",
-                            amount = "",
-                            isDefault = false,
-                        ),
+                        budgetLine = mockBudgetLines[0],
                         isShown = false,
                         onCloseDialogClicked = {},
                         onBudgetLineNameChanged = {},
@@ -444,8 +473,10 @@ fun BudgetPagePreview() {
                         operation = Operation.NONE,
                         onOperationChanged = {},
                         onOperationApplyClicked = {},
+
+                        ),
+
                     ),
-                ),
             )
         }
     }

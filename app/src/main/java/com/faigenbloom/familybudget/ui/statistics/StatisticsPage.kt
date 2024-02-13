@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +50,7 @@ import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
+import com.faigenbloom.familybudget.common.ui.DateSwitcherBar
 import com.faigenbloom.familybudget.common.ui.MoneyTextTransformation
 import com.faigenbloom.familybudget.common.ui.PieChart
 import com.faigenbloom.familybudget.common.ui.PieChartData
@@ -88,7 +88,10 @@ private fun BarChartContent(state: StatisicsState) {
     val barLeftPadding = 16.dp
     val rememberScrollState: LazyListState = rememberLazyListState()
     Column {
-        TopText(state)
+        DateSwitcherBar(
+            title = GetDateSwitcherTitle(state),
+            onDateMoved = state.onDateMoved,
+        )
         if (state.isNoDataToShow) {
             NoDataToShow()
         } else {
@@ -193,63 +196,30 @@ private fun BarChartContent(state: StatisicsState) {
 }
 
 @Composable
-fun TopText(state: StatisicsState) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+private fun GetDateSwitcherTitle(state: StatisicsState) =
+    if (state.filterType is FilterType.Daily ||
+        (state.filterType is FilterType.Range &&
+                state.filterType.from == state.filterType.to)
     ) {
-        Image(
-            modifier = Modifier
-                .size(32.dp)
-                .aspectRatio(1f)
-                .clickable {
-                    state.onDateMoved(false)
-                },
-            painter = painterResource(id = R.drawable.icon_arrow_back),
-            contentDescription = null,
+        stringResource(
+            id = R.string.statistics_small_title_day,
+            state.filterType.from.toReadableDate(),
         )
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            text = if (state.filterType is FilterType.Daily ||
-                (state.filterType is FilterType.Range &&
-                        state.filterType.from == state.filterType.to)
-            ) {
-                stringResource(
-                    id = R.string.statistics_small_title_day,
-                    state.filterType.from.toReadableDate(),
-                )
-            } else {
-                stringResource(
-                    id = R.string.statistics_small_title_range,
-                    state.filterType.from.toReadableDate(),
-                    state.filterType.to.toReadableDate(),
-                )
-            },
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.secondaryContainer,
-        )
-        Image(
-            modifier = Modifier
-                .size(32.dp)
-                .aspectRatio(1f)
-                .clickable {
-                    state.onDateMoved(true)
-                },
-            painter = painterResource(id = R.drawable.icon_arrow_next),
-            contentDescription = null,
+    } else {
+        stringResource(
+            id = R.string.statistics_small_title_range,
+            state.filterType.from.toReadableDate(),
+            state.filterType.to.toReadableDate(),
         )
     }
-}
 
 @Composable
 private fun PieChartContent(state: StatisicsState) {
     Column {
-        TopText(state = state)
+        DateSwitcherBar(
+            title = GetDateSwitcherTitle(state),
+            onDateMoved = state.onDateMoved,
+        )
         if (state.isNoDataToShow) {
             NoDataToShow()
         } else {

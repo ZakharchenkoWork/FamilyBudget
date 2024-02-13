@@ -9,9 +9,11 @@ class BudgetLineMapper {
     fun forUI(entity: BudgetLineEntity): BudgetLineUiData {
         return BudgetLineUiData(
             id = entity.id,
+            repeatableId = entity.repeatableId,
             name = entity.name,
             amount = entity.amount.toReadableMoney(),
             isDefault = entity.isDefault,
+            formula = entity.formula,
         )
     }
 
@@ -23,12 +25,14 @@ class BudgetLineMapper {
     ): BudgetLineEntity {
         return BudgetLineEntity(
             id = model.id,
+            repeatableId = model.repeatableId,
             name = model.name,
             amount = model.amount.toLongMoney(),
             sortableDate = date,
             isForMonth = isForMonth,
             isForFamily = isForFamily,
             isDefault = model.isDefault,
+            formula = model.formula,
         )
     }
 }

@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.common
 
+const val NO_ANSWER = Long.MIN_VALUE
+
 fun Long.toReadableMoney(): String {
     var result = ((this.toDouble()) / 100).toString()
     if (result.contains(".")) {

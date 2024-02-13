@@ -18,12 +18,15 @@ fun NavGraphBuilder.budgetPage(
     options: (
         menuState: FloatingMenuState,
     ) -> Unit,
+    toSpendings: (from: Long, to: Long) -> Unit,
 ) {
     composable(
         route = BudgetRoute(),
     ) {
         bottomNavigationOptions(true, 1)
-        val state by koinViewModel<BudgetPageViewModel>().stateFlow.collectAsState()
+        val viewModel = koinViewModel<BudgetPageViewModel>()
+        viewModel.toSpendings = toSpendings
+        val state by viewModel.stateFlow.collectAsState()
         options(getBudgetMenuState(state))
         BudgetPage(
             state = state,

@@ -271,8 +271,15 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun getBudgetLines(
         isForMonth: Boolean,
         isForFamily: Boolean,
+        from: Long,
+        to: Long,
     ): List<BudgetLineEntity> {
-        return appDatabase.budgetDao().getBudgetLines(isForMonth, isForFamily)
+        return appDatabase.budgetDao().getBudgetLines(
+            isForMonth,
+            isForFamily,
+            from,
+            to,
+        )
     }
 
     override suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>) {

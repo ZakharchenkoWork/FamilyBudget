@@ -280,6 +280,10 @@ class MainActivity : ComponentActivity() {
                                 options = { menuState ->
                                     floatingMenuState = menuState
                                 },
+                                toSpendings = { from, to ->
+                                    //TODO: MAYBE add this date
+                                    mainNavController.navigate(SpendingEditRoute())
+                                },
                             )
                             settingsPage(
                                 bottomNavigationOptions = {
