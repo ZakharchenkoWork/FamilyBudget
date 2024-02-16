@@ -6,6 +6,7 @@ import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
@@ -34,8 +35,6 @@ interface BaseDataSource {
     fun getAllCurrencies(): List<Currency> {
         return Currency.getAvailableCurrencies().toList()
     }
-
-    suspend fun getChosenCurrency(): Currency
     suspend fun getCategory(id: String): CategoryEntity
     suspend fun getSpendingDetails(spendingId: String): List<SpendingDetailEntity>
     suspend fun getSpendingDetailDuplicate(entity: SpendingDetailEntity): SpendingDetailEntity?
@@ -66,4 +65,6 @@ interface BaseDataSource {
     ): List<BudgetLineEntity>
 
     suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>)
+    suspend fun saveSettings(settingsEntity: SettingsEntity)
+    suspend fun getSettings(): SettingsEntity?
 }

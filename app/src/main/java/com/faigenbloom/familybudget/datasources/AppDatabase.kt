@@ -6,6 +6,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.faigenbloom.familybudget.datasources.dao.BudgetDao
 import com.faigenbloom.familybudget.datasources.dao.CategoriesDao
 import com.faigenbloom.familybudget.datasources.dao.FamilyDao
+import com.faigenbloom.familybudget.datasources.dao.SettingsDao
 import com.faigenbloom.familybudget.datasources.dao.SpendingsDao
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
@@ -13,6 +14,7 @@ import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [
+        SettingsEntity::class,
         BudgetEntity::class,
         BudgetLineEntity::class,
         CategoryEntity::class,
@@ -35,6 +38,7 @@ import kotlinx.coroutines.launch
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun settingsDao(): SettingsDao
     abstract fun budgetDao(): BudgetDao
     abstract fun categoriesDao(): CategoriesDao
     abstract fun spendingsDao(): SpendingsDao

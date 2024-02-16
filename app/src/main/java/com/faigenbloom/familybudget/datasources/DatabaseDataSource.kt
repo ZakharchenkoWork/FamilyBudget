@@ -7,11 +7,10 @@ import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
-import java.util.Currency
-import java.util.Locale
 import java.util.UUID
 
 class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
@@ -172,10 +171,6 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         appDatabase.budgetDao().update(budget)
     }
 
-    override suspend fun getChosenCurrency(): Currency {
-        return Currency.getInstance(Locale.getDefault())
-    }
-
     override suspend fun getCategory(id: String): CategoryEntity {
         return appDatabase.categoriesDao().getCategory(id)
     }
@@ -284,5 +279,13 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>) {
         appDatabase.budgetDao().addBudgetLines(budgetEntities)
+    }
+
+    override suspend fun saveSettings(settingsEntity: SettingsEntity) {
+        appDatabase.settingsDao().update(settingsEntity)
+    }
+
+    override suspend fun getSettings(): SettingsEntity? {
+        return appDatabase.settingsDao().getSettings()
     }
 }

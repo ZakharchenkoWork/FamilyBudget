@@ -12,7 +12,6 @@ val repositoryModule = module {
     singleOf(::DetailsRepository)
     singleOf(::SpendingsRepository)
     singleOf(::CategoriesRepository)
-    singleOf(::CurrencyRepository)
     singleOf(::BudgetPageRepository)
     singleOf(::FamilyRepository)
     singleOf(::AuthRepository)

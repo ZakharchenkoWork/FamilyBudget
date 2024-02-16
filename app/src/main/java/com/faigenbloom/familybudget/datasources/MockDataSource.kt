@@ -9,13 +9,12 @@ import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.spendings.detail.mockSuggestions
 import com.faigenbloom.familybudget.ui.spendings.list.mockSpendingsWithCategoryList
-import java.util.Currency
-import java.util.Locale
 
 class MockDataSource : BaseDataSource {
     val categories: ArrayList<CategoryEntity> = ArrayList(
@@ -102,10 +101,6 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun saveBudgetData(budget: BudgetEntity) {
-    }
-
-    override suspend fun getChosenCurrency(): Currency {
-        return Currency.getInstance(Locale.getDefault())
     }
 
     override suspend fun getCategory(id: String): CategoryEntity {
@@ -217,6 +212,14 @@ class MockDataSource : BaseDataSource {
     }
 
     override suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveSettings(settingsEntity: SettingsEntity) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSettings(): SettingsEntity? {
         TODO("Not yet implemented")
     }
 

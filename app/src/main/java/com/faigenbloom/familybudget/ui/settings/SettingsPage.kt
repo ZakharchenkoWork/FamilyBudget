@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -24,12 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.BaseTextField
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TopBar
+import com.faigenbloom.familybudget.common.ui.CurrencyPicker
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.hint
 import java.util.Currency
@@ -89,7 +86,7 @@ fun SettingsPage(
                 modifier = Modifier
                     .padding(top = 32.dp)
                     .fillMaxWidth()
-                    .clickable { state.onCurrenciesDropdownVisibilityChanged(true) },
+                    .clickable { state.onShowCurrencyDialog() },
             ) {
                 Text(
                     modifier = Modifier
@@ -102,12 +99,12 @@ fun SettingsPage(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
                     text = "(" + state.chosenCurrency.symbol + ") " +
-                        state.chosenCurrency.getDisplayName(Locale.getDefault()),
+                            state.chosenCurrency.getDisplayName(Locale.getDefault()),
                     color = MaterialTheme.colorScheme.hint(),
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
-            CurrencyChooseDropDown(state = state)
+            CurrencyChooseDialog(state = state)
         }
         Row(
             modifier = Modifier
@@ -143,8 +140,8 @@ fun SettingsPage(
                 style = MaterialTheme.typography.titleMedium,
             )
             Switch(
-                checked = state.isNotificationsEnabled,
-                onCheckedChange = state.onNotificationsCheckChanged,
+                checked = state.isPasswordEnabled,
+                onCheckedChange = state.onPasswordCheckChanged,
             )
         }
         Column(
@@ -167,31 +164,14 @@ fun SettingsPage(
 }
 
 @Composable
-fun CurrencyChooseDropDown(state: SettingsState) {
-    DropdownMenu(
-        expanded = state.isCurrenciesDialogVisible,
-        onDismissRequest = { state.onCurrenciesDropdownVisibilityChanged(false) },
-        offset = DpOffset(16.dp, 0.dp),
-        content = {
-            Box(modifier = Modifier.size(width = 300.dp, height = 300.dp)) {
-                LazyColumn {
-                    items(state.currenciesList.size) { index ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = "(" + state.currenciesList[index].symbol + ") " +
-                                        state.currenciesList[index].getDisplayName(Locale.getDefault()),
-                                )
-                            },
-                            onClick = {
-                                state.onCurrencyChanged(state.currenciesList[index])
-                            },
-                        )
-                    }
-                }
-            }
-        },
-    )
+fun CurrencyChooseDialog(state: SettingsState) {
+    if (state.isCurrenciesDialogVisible) {
+        CurrencyPicker(
+            currencies = state.currenciesList,
+            chosenCurrency = state.chosenCurrency,
+            onCurrencyPicked = state.onCurrencyChanged,
+        )
+    }
 }
 
 @Preview
@@ -209,9 +189,13 @@ fun StatisticsPagePreview() {
                     isNotificationsEnabled = true,
                     onNotificationsCheckChanged = { },
                     isCurrenciesDialogVisible = true,
-                    onCurrenciesDropdownVisibilityChanged = {},
+                    onShowCurrencyDialog = {},
                     chosenCurrency = Currency.getInstance(Locale.getDefault()),
-                    onCurrencyChanged = { },
+                    onCurrencyChanged = {},
+                    onSave = {},
+                    canSave = false,
+                    isPasswordEnabled = false,
+                    onPasswordCheckChanged = {},
                 ),
                 onFamilyPageClicked = {},
             )

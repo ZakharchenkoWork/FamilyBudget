@@ -15,9 +15,7 @@ fun NavGraphBuilder.familyPage(
     bottomNavigationOptions: (
         showNavigation: Boolean,
     ) -> Unit,
-    options: (
-        menuState: FloatingMenuState,
-    ) -> Unit,
+    options: (menuState: FloatingMenuState) -> Unit,
     onQRScanRequested: () -> Unit,
     onBack: () -> Unit,
 ) {

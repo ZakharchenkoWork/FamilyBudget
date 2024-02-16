@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
@@ -26,7 +25,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -113,11 +111,9 @@ fun DateRangePickerComposable(
                 shape = RoundedCornerShape(5),
             ),
         state = state,
-        dateFormatter = remember {
-            DatePickerFormatter(
-                selectedDateSkeleton = "dd.MM.YYYY",
-            )
-        },
+        /*  dateFormatter =  DatePickerFormatter(
+              selectedDateSkeleton = "dd.MM.YYYY",
+          ),*/
         colors = getDatePickerColors(),
     )
 }

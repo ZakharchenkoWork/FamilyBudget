@@ -294,6 +294,7 @@ class MainActivity : ComponentActivity() {
                                     selectedBottomNavigationIndex = index
                                     floatingMenuState = null
                                 },
+                                options = { floatingMenuState = it },
                                 onFamilyPageClicked = {
                                     mainNavController.navigate(FamilyRoute())
                                 },
@@ -305,9 +306,7 @@ class MainActivity : ComponentActivity() {
                                     withBottomNavigation = showNavigation
                                     floatingMenuState = null
                                 },
-                                options = { menuState ->
-                                    floatingMenuState = menuState
-                                },
+                                options = { floatingMenuState = it },
                                 onQRScanRequested = {
                                     scanQrCodeLauncher.launch(null)
                                 },

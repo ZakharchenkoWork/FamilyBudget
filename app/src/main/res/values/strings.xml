@@ -60,6 +60,7 @@
     <string name="statistics_bar">Bar Chart</string>
     <string name="statistics_small_title_range">From: %1$s till: %2$s</string>
     <string name="statistics_small_title_day">Statistics for: %1$s</string>
+    <string name="currency_dialog_title">Choose currency:</string>
     <string name="this_year_spending_s_title">This year spending\'s</string>
     <string name="this_month_spending_s_title">This month spending\'s</string>
     <string name="this_day_spending_s_title">This day spending\'s</string>
