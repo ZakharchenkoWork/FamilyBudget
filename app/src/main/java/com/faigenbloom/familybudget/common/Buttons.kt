@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +25,6 @@ fun BaseButton(
 ) {
     Button(
         modifier = modifier
-            .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.primary),
         shape = RectangleShape,

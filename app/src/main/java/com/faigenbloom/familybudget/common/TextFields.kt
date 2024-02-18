@@ -5,7 +5,6 @@
 package com.faigenbloom.familybudget.common
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -51,7 +50,7 @@ fun BaseTextField(
     @StringRes labelId: Int,
     @StringRes errorTextId: Int = R.string.empty,
     isError: Boolean = false,
-    textColor: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     textFieldType: TextFieldType = TextFieldType.Normal,
     onTextChange: (String) -> Unit,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -59,9 +58,7 @@ fun BaseTextField(
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val containerColor = MaterialTheme.colorScheme.transparent()
     TextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier = modifier,
         colors = TextFieldDefaults.colors(
             focusedTextColor = textColor,
             unfocusedTextColor = textColor,

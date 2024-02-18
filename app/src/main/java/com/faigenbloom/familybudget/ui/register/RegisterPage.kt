@@ -1,13 +1,14 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package com.faigenbloom.familybudget.ui.register
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,8 +36,37 @@ fun RegisterPage(
             onStartIconCLicked = onBack,
         )
         StripeBar(textId = R.string.registration)
+        Spacer(modifier = Modifier.size(80.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+        ) {
+            FamilyNameFields(state = state)
+            CommonFields(state = state)
+            PrivacyPolicy(onClick = state.onPrivacyPolicyClicked)
+            BaseButton(
+                modifier = Modifier.padding(top = 16.dp),
+                textRes = R.string.registration,
+                isEnabled = state.isRegistrationEnabled,
+                onClick = state.onRegisterClicked,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FamilyNameFields(state: RegisterPageState) {
+    if (state.isForFamily) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = stringResource(id = R.string.joining_family, state.familyNameText),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+        )
+    } else {
         BaseTextField(
-            modifier = Modifier.padding(top = 100.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
             labelId = R.string.family_name,
             text = state.familyNameText,
             errorTextId = R.string.family_name_error,
@@ -44,42 +74,52 @@ fun RegisterPage(
             textFieldType = TextFieldType.Normal,
             onTextChange = state.onFamilyNameChanged,
         )
-        BaseTextField(
-            labelId = R.string.name,
-            text = state.nameText,
-            errorTextId = R.string.name_error,
-            isError = state.nameError,
-            textFieldType = TextFieldType.Normal,
-            onTextChange = state.onNameChanged,
-        )
-        BaseTextField(
-            labelId = R.string.email,
-            text = state.emailText,
-            errorTextId = R.string.email_error,
-            isError = state.emailError,
-            textFieldType = TextFieldType.Email,
-            onTextChange = state.onEmailChanged,
-        )
-        BaseTextField(
-            labelId = R.string.password,
-            text = state.passwordText,
-            errorTextId = R.string.password_error,
-            isError = state.passwordError,
-            textFieldType = TextFieldType.Password,
-            onTextChange = state.onPasswordChanged,
-        )
-        PrivacyPolicy(onClick = state.onPrivacyPolicyClicked)
-        BaseButton(
-            modifier = Modifier.padding(top = 16.dp),
-            textRes = R.string.registration,
-            isEnabled = state.isRegistrationEnabled,
-            onClick = state.onLoginClicked,
-        )
     }
+    BaseTextField(
+        modifier = Modifier.fillMaxWidth(),
+        labelId = R.string.surname,
+        text = state.surNameText,
+        textFieldType = TextFieldType.Normal,
+        onTextChange = state.onSurNameChanged,
+    )
 }
 
 @Composable
-fun PrivacyPolicy(
+private fun CommonFields(state: RegisterPageState) {
+    BaseTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        labelId = R.string.name,
+        text = state.nameText,
+        errorTextId = R.string.name_error,
+        isError = state.nameError,
+        textFieldType = TextFieldType.Normal,
+        onTextChange = state.onNameChanged,
+    )
+    BaseTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        labelId = R.string.email,
+        text = state.emailText,
+        errorTextId = R.string.email_error,
+        isError = state.emailError,
+        textFieldType = TextFieldType.Email,
+        onTextChange = state.onEmailChanged,
+    )
+    BaseTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        labelId = R.string.password,
+        text = state.passwordText,
+        errorTextId = R.string.password_error,
+        isError = state.passwordError,
+        textFieldType = TextFieldType.Password,
+        onTextChange = state.onPasswordChanged,
+    )
+}
+
+@Composable
+private fun PrivacyPolicy(
     onClick: () -> Unit,
 ) {
     val annotatedString = buildAnnotatedString {
@@ -95,19 +135,20 @@ fun PrivacyPolicy(
     }
 
     ClickableText(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         text = annotatedString,
         style = MaterialTheme.typography.bodyMedium,
         onClick = { onClick() },
     )
 }
 
-@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview(showBackground = true)
 @Composable
-fun RegisterPagePreview() {
+private fun RegisterPagePreview() {
     FamillySpandingsTheme {
-        Scaffold { _ ->
+        Surface {
             RegisterPage(
                 state = RegisterPageState(
                     emailText = Mock.loginText,
@@ -120,12 +161,17 @@ fun RegisterPagePreview() {
                     passwordError = false,
                     emailError = false,
                     isRegistrationEnabled = false,
-                    onLoginClicked = {},
+                    isSameFamilyName = true,
                     onEmailChanged = {},
                     onPasswordChanged = {},
-                    onPrivacyPolicyClicked = {},
                     onNameChanged = {},
                     onFamilyNameChanged = {},
+                    onSameFamilyNameSwitched = {},
+                    onPrivacyPolicyClicked = {},
+                    onRegisterClicked = {},
+                    isForFamily = false,
+                    surNameText = "",
+                    onSurNameChanged = {},
                 ),
                 onBack = {},
             )

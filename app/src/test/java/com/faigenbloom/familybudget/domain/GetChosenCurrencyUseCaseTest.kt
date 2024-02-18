@@ -24,7 +24,14 @@ class GetChosenCurrencyUseCaseTest {
 
     private val dataSource: MockDataSource = mock {
         wheneverBlocking { it.getSettings() }
-            .thenReturn(SettingsEntity(currency = Currency.getInstance(Locale.getDefault()).currencyCode))
+            .thenReturn(
+                SettingsEntity(
+                    currency = Currency.getInstance(Locale.getDefault()).currencyCode,
+                    id = 0L,
+                    isNotificationsEnabled = false,
+                    isPasswordEnabled = false,
+                ),
+            )
     }
     val getChosenCurrencyUseCase: GetChosenCurrencyUseCase =
         GetChosenCurrencyUseCase(SettingsRepository(dataSource))

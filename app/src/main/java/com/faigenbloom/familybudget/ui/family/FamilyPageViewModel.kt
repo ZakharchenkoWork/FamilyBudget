@@ -15,7 +15,6 @@ class FamilyPageViewModel(
     private val saveFamilyUseCase: SaveFamilyUseCase,
     private val saveFamilyMembersUseCase: SaveFamilyMembersUseCase,
 ) : ViewModel() {
-
     private val members: ArrayList<PersonUiData> = ArrayList()
     private fun onQRVisibilityChanged(isVisible: Boolean) {
         _stateFlow.update {
@@ -66,7 +65,9 @@ class FamilyPageViewModel(
             onDeleteFamilyMember = ::onDeleteFamilyMember,
         ),
     )
-    val stateFlow = _stateFlow.asStateFlow().apply {
+    val stateFlow = _stateFlow.asStateFlow()
+
+    init {
         viewModelScope.launch {
             val familyData = getFamilyUseCase()
             _stateFlow.update {
@@ -78,6 +79,7 @@ class FamilyPageViewModel(
             }
         }
     }
+
     private val state: FamilyState
         get() = _stateFlow.value
 }

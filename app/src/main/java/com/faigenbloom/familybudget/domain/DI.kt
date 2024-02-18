@@ -15,6 +15,7 @@ import com.faigenbloom.familybudget.domain.currency.GetAllCurrenciesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.currency.GetSettingsUseCase
 import com.faigenbloom.familybudget.domain.currency.SaveSettingsUseCase
+import com.faigenbloom.familybudget.domain.family.GetFamilyNameUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.family.GetThisPersonUseCase
@@ -39,6 +40,7 @@ val domainModule = module {
     singleOf(::GetAllCurrenciesUseCase)
     singleOf(::GetSpentTotalUseCase)
     singleOf(::GetFamilyUseCase)
+    singleOf(::GetFamilyNameUseCase)
     singleOf(::SaveFamilyUseCase)
     singleOf(::SaveFamilyMembersUseCase)
     singleOf(::LoadAllDataUseCase)

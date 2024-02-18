@@ -11,17 +11,21 @@ fun NavGraphBuilder.onboardingPage(
     onLogin: () -> Unit,
     onRegister: () -> Unit,
     onLoggedIn: () -> Unit,
+    onQrScan: () -> Unit,
 ) {
     composable(
         route = OnboardingRoute(),
     ) {
         val viewModel = koinViewModel<OnboardingViewModel>()
         viewModel.onAuthPassed = onLoggedIn
+
         val state by viewModel.stateFlow.collectAsState()
 
         OnboardingPage(
+            state = state,
             onLogin = onLogin,
             onRegister = onRegister,
+            onQrScan = onQrScan,
         )
     }
 }

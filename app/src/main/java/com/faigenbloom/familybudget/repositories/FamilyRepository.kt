@@ -1,6 +1,8 @@
 package com.faigenbloom.familybudget.repositories
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
+import com.faigenbloom.familybudget.datasources.ID
+import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
@@ -13,23 +15,32 @@ class FamilyRepository(
     private val networkSource: FamilyNetworkSource,
     private val personSourceMapper: PersonSourceMapper,
     private val familySourceMapper: FamilySourceMapper,
+    private val idSource: IdSource,
 ) {
+    suspend fun getFamilyName(familyId: String): String {
+        return networkSource.getFamily(familyId)?.name ?: ""
+    }
+
     suspend fun loadFamily(personId: String): FamilyEntity? {
         val familyId = networkSource.getFamilyId(personId)
         familyId?.let {
             networkSource.getFamily(familyId)?.let {
                 dataBaseSource.saveFamily(familySourceMapper.forDB(it))
-                networkSource.getPersons(familyId)?.let {
-                    it.forEach {
-                        it?.let {
-                            dataBaseSource.saveFamilyMember(personSourceMapper.forDB(it))
-                        }
-                    }
-                }
+                updateFamilyMembers(familyId)
             }
         }
 
         return dataBaseSource.getFamily()
+    }
+
+    private suspend fun updateFamilyMembers(familyId: String) {
+        networkSource.getFamilyMembers(familyId)?.let {
+            it.forEach {
+                it?.let {
+                    dataBaseSource.saveFamilyMember(personSourceMapper.forDB(it))
+                }
+            }
+        }
     }
 
     suspend fun loadFamily(): FamilyEntity {
@@ -42,14 +53,16 @@ class FamilyRepository(
                 id = familyEntity.id,
                 name = familyEntity.name,
                 members = listOf(),
-
                 ),
         )
         dataBaseSource.saveFamily(familyEntity)
     }
 
     suspend fun getFamilyMembers(): List<PersonEntity> {
-        return dataBaseSource.getFamilyMembers()
+        return dataBaseSource.getFamilyMembers().ifEmpty {
+            updateFamilyMembers(idSource[ID.FAMILY])
+            dataBaseSource.getFamilyMembers()
+        }
     }
 
     suspend fun saveFamilyMember(member: PersonEntity) {

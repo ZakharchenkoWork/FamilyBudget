@@ -52,7 +52,7 @@ class FirebaseTest : BaseTest() {
     @Test
     fun can_read_persons_collection() {
         runBlocking {
-            val persons = firestore.getPersons("fam1")
+            val persons = firestore.getFamilyMembers("fam1")
             persons?.let {
                 assert(it[0]?.name == "kos")
             } ?: kotlin.run { assert(false) }

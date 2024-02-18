@@ -45,7 +45,7 @@ class FamilyNetworkSource(
         )
     }
 
-    suspend fun getPersons(familyId: String): List<PersonModel?>? {
+    suspend fun getFamilyMembers(familyId: String): List<PersonModel?>? {
         val family = getFamily(familyId)
         return family?.members?.map {
             getPerson(familyId, it)

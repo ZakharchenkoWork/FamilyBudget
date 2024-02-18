@@ -186,3 +186,31 @@ fun StatisticsPagePreview() {
         }
     }
 }
+
+@Preview
+@Composable
+fun StatisticsPageQRPreview() {
+    FamillySpandingsTheme {
+        Surface {
+            FamilyPage(
+                state = FamilyState(
+                    familyId = "asdgfasdg",
+                    familyName = "Zakharchenko",
+                    familyList = listOf(
+                        "Konstantyn Zakharchenko",
+                        "Victoria Zakharchenko",
+                        "Natalia Zakharchenko",
+                    ),
+                    isQRDialogOpened = true,
+                    onQRVisibilityChanged = {},
+                    onQrScanned = {},
+                    onSave = {},
+                    onFamilyNameChanged = {},
+                    onDeleteFamilyMember = {},
+                ),
+                onQRScanRequested = {},
+                onBack = {},
+            )
+        }
+    }
+}

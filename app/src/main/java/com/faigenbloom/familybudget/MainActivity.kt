@@ -40,7 +40,6 @@ import com.faigenbloom.familybudget.common.GalleryRequest
 import com.faigenbloom.familybudget.common.ID_ARG
 import com.faigenbloom.familybudget.common.PHOTO_KEY
 import com.faigenbloom.familybudget.common.PHOTO_REASON_ARG
-import com.faigenbloom.familybudget.common.QR_KEY
 import com.faigenbloom.familybudget.common.SPENDING_PHOTO
 import com.faigenbloom.familybudget.common.toJson
 import com.faigenbloom.familybudget.ui.budget.budgetPage
@@ -158,6 +157,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onLoggedIn = {
                                     mainNavController.navigate(SpendingsListPage())
+                                },
+                                onQrScan = {
+                                    scanQrCodeLauncher.launch(null)
                                 },
                             )
                             loginPage(
@@ -417,13 +419,9 @@ class MainActivity : ComponentActivity() {
         return false
     }
 
-    private fun handleQRCapture(text: String, mainNavController: NavController) {
+    private fun handleQRCapture(qrText: String, mainNavController: NavController) {
         lifecycleScope.launch {
-            mainNavController.popBack(
-                hashMapOf(
-                    QR_KEY to text,
-                ),
-            )
+            mainNavController.navigate(RegisterRoute(qrText))
         }
     }
 

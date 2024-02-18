@@ -1,14 +1,12 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package com.faigenbloom.familybudget.ui.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,14 +25,21 @@ import com.faigenbloom.familybudget.ui.theme.circle
 
 @Composable
 fun OnboardingPage(
+    state: OnboardingState,
     onLogin: () -> Unit,
     onRegister: () -> Unit,
+    onQrScan: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.secondary),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = if (state.isLoading.not()) {
+            Arrangement.Center
+        } else {
+            Arrangement.Top
+        },
     ) {
         Box(
             modifier = Modifier
@@ -56,16 +61,23 @@ fun OnboardingPage(
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
         )
-        BaseButton(
-            modifier = Modifier.padding(top = 24.dp),
-            textRes = R.string.login,
-            onClick = onLogin,
-        )
-        BaseButton(
-            modifier = Modifier.padding(top = 24.dp),
-            textRes = R.string.registration,
-            onClick = onRegister,
-        )
+        if (state.isLoading.not()) {
+            BaseButton(
+                modifier = Modifier.padding(top = 24.dp),
+                textRes = R.string.login,
+                onClick = onLogin,
+            )
+            BaseButton(
+                modifier = Modifier.padding(top = 24.dp),
+                textRes = R.string.registration,
+                onClick = onRegister,
+            )
+            BaseButton(
+                modifier = Modifier.padding(top = 24.dp),
+                textRes = R.string.join,
+                onClick = onQrScan,
+            )
+        }
     }
 }
 
@@ -76,8 +88,10 @@ fun OnboardingPagePreview() {
     FamillySpandingsTheme {
         Scaffold { _ ->
             OnboardingPage(
+                state = OnboardingState(),
                 onLogin = {},
                 onRegister = {},
+                onQrScan = {},
             )
         }
     }

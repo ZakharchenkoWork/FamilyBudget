@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Family Spending</string>
+    <string name="app_name">Family Budget</string>
     <string name="login">Sign in</string>
     <string name="registration">Registration</string>
+    <string name="join">Join family</string>
     <string name="authorization">Authorization</string>
     <string name="spendings_previous_title">Previous spendings</string>
     <string name="spendings_planned_title">Planned spendings</string>
@@ -21,7 +22,9 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="family_name">Family Name</string>
-    <string name="surname">Surname</string>
+    <string name="same_family_name_switch">Your Surname matches Family Name</string>
+    <string name="joining_family">You are joining family %1$s</string>
+    <string name="surname">Your Lastname</string>
     <string name="name">Name</string>
     <string name="email_error">Please provide correct email</string>
     <string name="name_error">Name should not be empty</string>

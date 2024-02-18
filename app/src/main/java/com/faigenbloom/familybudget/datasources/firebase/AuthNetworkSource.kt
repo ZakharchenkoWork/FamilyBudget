@@ -4,6 +4,7 @@ import com.faigenbloom.familybudget.common.executeSuspendable
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -12,7 +13,6 @@ class AuthNetworkSource(
     private val auth: FirebaseAuth = Firebase.auth,
     private val idSource: IdSource,
 ) {
-
     fun isLoggedIn(): Boolean {
         return auth.currentUser?.let {
             idSource[ID.USER] = it.uid
@@ -24,8 +24,12 @@ class AuthNetworkSource(
         return executeSuspendable { callback ->
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    idSource[ID.USER] = it.result?.user?.uid ?: ""
-                    callback(it.result.user)
+                    if (it.isSuccessful) {
+                        idSource[ID.USER] = it.result?.user?.uid ?: ""
+                        callback(it.result.user)
+                    } else if (it.exception is FirebaseAuthUserCollisionException) {
+                        callback(null)
+                    }
                 }
         }
     }

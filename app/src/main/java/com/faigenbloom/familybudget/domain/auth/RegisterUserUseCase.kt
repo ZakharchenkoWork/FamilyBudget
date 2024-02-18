@@ -13,31 +13,43 @@ class RegisterUserUseCase(
     private val repository: AuthRepository,
     private val saveFamilyUseCase: SaveFamilyUseCase,
     private val saveFamilyMembersUseCase: SaveFamilyMembersUseCase,
+    private val loginUserUseCase: LoginUserUseCase,
+    private val loadAllDataUseCase: LoadAllDataUseCase,
     private val idSource: IdSource,
 ) {
     suspend operator fun invoke(
+        familyId: String,
         name: String,
         familyName: String,
+        surname: String,
         email: String,
         password: String,
     ): Boolean {
         return withContext(Dispatchers.IO) {
             repository.register(email, password)?.let { firebaseUser ->
-                val familyId = saveFamilyUseCase(name = familyName)
-                idSource[ID.FAMILY] = familyId
+                idSource[ID.FAMILY] = familyId.ifBlank {
+                    saveFamilyUseCase(
+                        id = "",
+                        name = familyName,
+                    )
+                }
+
                 saveFamilyMembersUseCase(
                     listOf(
                         PersonUiData(
                             id = firebaseUser.uid,
-                            familyName = familyName,
-                            familyId = familyId,
+                            familyName = surname,
+                            familyId = idSource[ID.FAMILY],
                             name = name,
                             isThisUser = true,
                         ),
                     ),
                 )
+                loadAllDataUseCase()
                 true
-            } ?: false
+            } ?: kotlin.run {
+                loginUserUseCase(email, password)
+            }
         }
     }
 }
