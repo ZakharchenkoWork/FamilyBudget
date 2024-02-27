@@ -4,6 +4,7 @@ package com.faigenbloom.familybudget.ui.login
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +38,10 @@ fun LoginPage(
         )
         StripeBar(textId = R.string.authorization)
         BaseTextField(
-            modifier = Modifier.padding(top = 100.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 100.dp)
+                .padding(horizontal = 16.dp),
             labelId = R.string.email,
             text = state.loginText,
             isError = state.authError,
@@ -44,6 +49,9 @@ fun LoginPage(
             onTextChange = state.onLoginChanged,
         )
         BaseTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             labelId = R.string.password,
             text = state.passwordText,
             isError = state.authError,
@@ -66,7 +74,9 @@ fun LoginPage(
 fun AuthError() {
     Text(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        textAlign = TextAlign.Center,
         text = stringResource(id = R.string.wrong_password),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.error,
