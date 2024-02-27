@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.login
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.domain.auth.LoginUserUseCase
@@ -11,12 +13,11 @@ import kotlinx.coroutines.launch
 class LoginPageViewModel(
     private val loginUserUseCase: LoginUserUseCase,
 ) : ViewModel() {
-
     var onLoggedIn: () -> Unit = {}
 
     private fun onLoginClicked() {
         viewModelScope.launch {
-            if (loginUserUseCase(state.loginText, state.passwordText)) {
+            if (loginUserUseCase(state.loginState.value, state.passwordState.value)) {
                 onLoggedIn()
             } else {
                 _stateFlow.update {
@@ -28,19 +29,9 @@ class LoginPageViewModel(
         }
     }
 
-    private fun onLoginChanged(login: String) {
+    private fun onDropError() {
         _stateFlow.update {
             state.copy(
-                loginText = login,
-                authError = false,
-            )
-        }
-    }
-
-    private fun onPasswordChanged(password: String) {
-        _stateFlow.update {
-            state.copy(
-                passwordText = password,
                 authError = false,
             )
         }
@@ -51,9 +42,8 @@ class LoginPageViewModel(
 
     private val _stateFlow = MutableStateFlow(
         LoginPageState(
+            onDropError = ::onDropError,
             onLoginClicked = ::onLoginClicked,
-            onLoginChanged = ::onLoginChanged,
-            onPasswordChanged = ::onPasswordChanged,
             onForgotPasswordClicked = ::onForgotPasswordClicked,
         ),
     )
@@ -64,11 +54,10 @@ class LoginPageViewModel(
 }
 
 data class LoginPageState(
-    val loginText: String = "baskinaerobins@gmail.com",
-    val passwordText: String = "philips2010",
+    val loginState: MutableState<String> = mutableStateOf("baskinaerobins@gmail.com"),
+    val passwordState: MutableState<String> = mutableStateOf("philips2010"),
     val authError: Boolean = false,
+    val onDropError: () -> Unit,
     val onLoginClicked: () -> Unit,
-    var onLoginChanged: (String) -> Unit = {},
-    var onPasswordChanged: (String) -> Unit = {},
     val onForgotPasswordClicked: () -> Unit,
 )

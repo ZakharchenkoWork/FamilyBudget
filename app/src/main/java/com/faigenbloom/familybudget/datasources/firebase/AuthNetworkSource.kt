@@ -38,8 +38,12 @@ class AuthNetworkSource(
         return executeSuspendable { callback ->
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    idSource[ID.USER] = it.result?.user?.uid ?: ""
-                    callback(it.result.user)
+                    if (it.isSuccessful) {
+                        idSource[ID.USER] = it.result?.user?.uid ?: ""
+                        callback(it.result.user)
+                    } else {
+                        callback(null)
+                    }
                 }
         }
     }

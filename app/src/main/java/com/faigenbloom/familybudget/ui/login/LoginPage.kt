@@ -11,6 +11,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -37,26 +41,34 @@ fun LoginPage(
             onStartIconCLicked = onBack,
         )
         StripeBar(textId = R.string.authorization)
+        var loginState by remember { state.loginState }
         BaseTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 100.dp)
                 .padding(horizontal = 16.dp),
             labelId = R.string.email,
-            text = state.loginText,
+            text = loginState,
             isError = state.authError,
             textFieldType = TextFieldType.Email,
-            onTextChange = state.onLoginChanged,
+            onTextChange = {
+                loginState = it
+                state.onDropError()
+            },
         )
+        var passwordState by remember { state.passwordState }
         BaseTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             labelId = R.string.password,
-            text = state.passwordText,
+            text = passwordState,
             isError = state.authError,
             textFieldType = TextFieldType.Password,
-            onTextChange = state.onPasswordChanged,
+            onTextChange = {
+                passwordState = it
+                state.onDropError()
+            },
         )
         ForgotPassword(onClick = state.onForgotPasswordClicked)
         if (state.authError) {
@@ -105,13 +117,12 @@ fun LoginPagePreview() {
         Scaffold { _ ->
             LoginPage(
                 state = LoginPageState(
-                    loginText = Mock.loginText,
-                    passwordText = Mock.passwordText,
+                    loginState = mutableStateOf(Mock.loginText),
+                    passwordState = mutableStateOf(Mock.passwordText),
                     authError = true,
                     onLoginClicked = {},
-                    onLoginChanged = {},
-                    onPasswordChanged = {},
                     onForgotPasswordClicked = {},
+                    onDropError = {},
                 ),
                 onBack = {},
             )
