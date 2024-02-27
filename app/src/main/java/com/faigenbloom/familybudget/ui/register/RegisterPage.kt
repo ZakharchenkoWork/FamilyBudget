@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.faigenbloom.familybudget.ui.register
 
 import androidx.compose.foundation.layout.Column
@@ -6,9 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +26,7 @@ import com.faigenbloom.familybudget.common.BaseTextField
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
+import com.faigenbloom.familybudget.common.ui.dialogs.FailureDialog
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -51,6 +55,11 @@ fun RegisterPage(
             )
         }
     }
+    FailureDialog(
+        isShown = state.migrationErrorDialogState.isShown,
+        text = stringResource(R.string.settings_family_migration_family_not_found),
+        onHideDialog = state.migrationErrorDialogState.onHideDialog,
+    )
 }
 
 @Composable

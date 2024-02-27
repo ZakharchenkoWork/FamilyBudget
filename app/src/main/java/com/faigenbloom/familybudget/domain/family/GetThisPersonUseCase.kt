@@ -1,21 +1,18 @@
 package com.faigenbloom.familybudget.domain.family
 
-import com.faigenbloom.familybudget.datasources.ID
-import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 import com.faigenbloom.familybudget.repositories.FamilyRepository
+import com.faigenbloom.familybudget.ui.family.PersonMapper
+import com.faigenbloom.familybudget.ui.family.PersonUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetThisPersonUseCase(
     private val familyRepository: FamilyRepository,
-    private val idSource: IdSource,
+    private val personMapper: PersonMapper,
 ) {
-    suspend operator fun invoke(): PersonEntity {
+    suspend operator fun invoke(): PersonUiData {
         return withContext(Dispatchers.IO) {
-            val personId = idSource[ID.USER]
-            familyRepository.getFamilyMembers()
-                .first { it.id == personId }
+            personMapper.forUI(familyRepository.getCurrentFamilyMember())
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.faigenbloom.familybudget.ui.register
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faigenbloom.familybudget.common.OPTIONAL_ID_ARG
 import com.faigenbloom.familybudget.domain.auth.RegisterUserUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyNameUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 class RegisterPageViewModel(
+    savedStateHandle: SavedStateHandle,
     private val registerUserUseCase: RegisterUserUseCase,
     private val getFamilyNameUseCase: GetFamilyNameUseCase,
 ) : ViewModel() {
@@ -22,12 +25,22 @@ class RegisterPageViewModel(
                 familyId = id
                 viewModelScope.launch {
                     val familyName = getFamilyNameUseCase(id)
-                    _stateFlow.update {
-                        it.copy(
-                            isForFamily = id.isNotBlank(),
-                            familyNameText = familyName,
-                            surNameText = familyName,
-                        )
+                    if (familyName.isNotBlank()) {
+                        _stateFlow.update {
+                            it.copy(
+                                isForFamily = id.isNotBlank(),
+                                familyNameText = familyName,
+                                surNameText = familyName,
+                            )
+                        }
+                    } else {
+                        _stateFlow.update {
+                            it.copy(
+                                migrationErrorDialogState = state.migrationErrorDialogState.copy(
+                                    isShown = true,
+                                ),
+                            )
+                        }
                     }
                 }
             }
@@ -139,10 +152,24 @@ class RegisterPageViewModel(
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
+    private fun onHideMigrationErrorDialog() {
+        _stateFlow.update { state ->
+            state.copy(
+                migrationErrorDialogState = state.migrationErrorDialogState.copy(
+                    isShown = false,
+                ),
+            )
+        }
+    }
+
     private val state: RegisterPageState
         get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
         RegisterPageState(
+            migrationErrorDialogState = MigrationErrorDialogState(
+                isShown = false,
+                onHideDialog = ::onHideMigrationErrorDialog,
+            ),
             onEmailChanged = ::onEmailChanged,
             onPasswordChanged = ::onPasswordChanged,
             onFamilyNameChanged = ::onFamilyNameChanged,
@@ -156,6 +183,12 @@ class RegisterPageViewModel(
     val stateFlow = _stateFlow.asStateFlow()
 
     init {
+        val value: String? = savedStateHandle[OPTIONAL_ID_ARG]
+        value?.let {
+            if (it.isNotBlank()) {
+                forFamily(it)
+            }
+        }
         _stateFlow.update {
             it.copy(
                 emailText = "baskinaaaerobins@gmail.com",
@@ -168,6 +201,10 @@ class RegisterPageViewModel(
 }
 
 data class RegisterPageState(
+    val migrationErrorDialogState: MigrationErrorDialogState = MigrationErrorDialogState(
+        isShown = false,
+        onHideDialog = {},
+    ),
     val isForFamily: Boolean = false,
     val emailText: String = "",
     val passwordText: String = "",
@@ -189,4 +226,9 @@ data class RegisterPageState(
     val onNameChanged: (String) -> Unit,
     val onPasswordChanged: (String) -> Unit,
     val onPrivacyPolicyClicked: () -> Unit,
+)
+
+data class MigrationErrorDialogState(
+    val isShown: Boolean = false,
+    val onHideDialog: () -> Unit = {},
 )

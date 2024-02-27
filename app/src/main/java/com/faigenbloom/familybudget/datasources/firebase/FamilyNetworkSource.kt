@@ -3,7 +3,6 @@ package com.faigenbloom.familybudget.datasources.firebase
 import com.faigenbloom.familybudget.common.throughJson
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 import com.faigenbloom.familybudget.datasources.firebase.models.ConnectionModel
 import com.faigenbloom.familybudget.datasources.firebase.models.FamilyModel
 import com.faigenbloom.familybudget.datasources.firebase.models.PersonModel
@@ -13,7 +12,6 @@ class FamilyNetworkSource(
     firestore: FirebaseFirestore,
     private val idSource: IdSource,
 ) : BaseNetworkSource(firestore) {
-
     suspend fun getFamilyId(personId: String): String? {
         idSource[ID.USER] = personId
         val familyId = get(ConnectionModel.COLLECTION_NAME, personId)
@@ -31,12 +29,21 @@ class FamilyNetworkSource(
         )
     }
 
-    suspend fun createFamilyMember(person: PersonEntity, familyMembers: ArrayList<PersonEntity>) {
+    suspend fun createFamilyMember(person: PersonModel, familyMembers: List<PersonModel>) {
         connectFamily(person.id, person.familyId)
-        familyMembers.add(person)
+
         getFamily(person.familyId)?.let {
-            createFamily(it.copy(members = familyMembers.map { it.id }))
+            createFamily(it.copy(members = (familyMembers + person).map { it.id }))
         }
+        set(
+            collectionId = person.familyId,
+            document = PersonModel.COLLECTION_NAME,
+            innerId = person.id,
+            data = person,
+        )
+    }
+
+    suspend fun updateFamilyMember(person: PersonModel) {
         set(
             collectionId = person.familyId,
             document = PersonModel.COLLECTION_NAME,
@@ -61,6 +68,9 @@ class FamilyNetworkSource(
     }
 
     suspend fun getFamily(familyId: String): FamilyModel? {
+        if (familyId.contains("//")) {
+            return null
+        }
         return get(
             familyId,
             FamilyModel.COLLECTION_NAME,

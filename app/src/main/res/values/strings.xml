@@ -88,6 +88,12 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_password_protection">Ask password</string>
     <string name="settings_family">Family Settings</string>
+    <string name="settings_family_migration_title">Migration Setup</string>
+    <string name="error_title">Oops, something went wrong</string>
+    <string name="settings_family_spendings">Make your previous spending hidden from new family</string>
+    <string name="settings_family_migration_family_not_found">There is no such family, please check that you are scanning correct QR code, or use correct family link</string>
+    <string name="settings_family_migration_family_same_family">You are already joined this family</string>
+    <string name="settings_family_new_familyname">You are joining family: %1$s</string>
     <string name="photo_chooser_title">Choose source</string>
     <string name="photo_chooser_gallery">Gallery</string>
     <string name="photo_chooser_camera">Photo</string>
@@ -110,6 +116,12 @@
     <string name="detail_dialog_details_hint">Current bill components</string>
     <string name="detail_dialog_suggestions_hint">Suggestions</string>
     <string name="editing_spending_duplicate">Editing Spending Duplicate</string>
+    <string name="qr_code_gen">Generate QR Code</string>
+    <string name="qr_code_scan">Scan QR Code</string>
+    <string name="share">Share link</string>
+    <string name="family_leave">Leave family</string>
+    <string name="are_you_shure">Are you shure?</string>
+    <string name="leaveFamily">You are about to leave the family. All your personal data will be moved to your new family. Please enter new family name.</string>
 
 
 </resources>

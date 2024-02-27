@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.COLUMN_HIDDEN
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.COLUMN_ID
+import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.COLUMN_IS_DEFAULT
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity.Companion.TABLE_NAME
 
 @Dao
@@ -37,4 +38,7 @@ interface CategoriesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveCategories(categories: List<CategoryEntity>)
+
+    @Query("DELETE FROM $TABLE_NAME WHERE $COLUMN_IS_DEFAULT = :isDefault")
+    suspend fun deleteUserCategories(isDefault: Boolean)
 }

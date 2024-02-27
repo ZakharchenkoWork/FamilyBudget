@@ -1,16 +1,14 @@
 package com.faigenbloom.familybudget.domain.spendings
 
-import com.faigenbloom.familybudget.common.Identifiable
-import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
+import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
+import com.faigenbloom.familybudget.ui.spendings.mappers.SpendingsMapper
 
-class GetAllSpendingsUseCase<T : Identifiable>(
+class GetAllSpendingsUseCase(
     private val spendingsRepository: SpendingsRepository,
-    private val mapper: Mapper<T, SpendingEntity>,
+    private val mapper: SpendingsMapper,
 ) {
-
-    suspend operator fun invoke(isPlanned: Boolean): List<T> {
+    suspend operator fun invoke(isPlanned: Boolean): List<SpendingUiData> {
         return spendingsRepository.getSpendings(isPlanned)
             .map { mapper.forUI(it) }
     }

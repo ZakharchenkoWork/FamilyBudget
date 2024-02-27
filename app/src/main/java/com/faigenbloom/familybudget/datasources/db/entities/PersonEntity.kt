@@ -19,6 +19,8 @@ data class PersonEntity(
     val familyName: String,
     @ColumnInfo(name = COLUMN_IS_THIS_USER)
     val isThisUser: Boolean,
+    @ColumnInfo(name = COLUMN_IS_HIDDEN)
+    val isHidden: Boolean,
 ) {
     companion object {
         const val TABLE_NAME = "person"
@@ -27,5 +29,6 @@ data class PersonEntity(
         const val COLUMN_FAMILY_NAME = "familyName"
         const val COLUMN_NAME = "name"
         const val COLUMN_IS_THIS_USER = "isThisUser"
+        const val COLUMN_IS_HIDDEN = "isHidden"
     }
 }

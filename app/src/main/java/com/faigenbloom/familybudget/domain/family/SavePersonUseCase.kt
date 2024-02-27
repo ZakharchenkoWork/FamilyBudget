@@ -23,6 +23,7 @@ class SaveUserUseCase(
                     name = name,
                     familyName = familyName,
                     isThisUser = true,
+                    isHidden = false,
                 ),
             )
         }

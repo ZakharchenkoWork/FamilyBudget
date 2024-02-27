@@ -3,6 +3,7 @@
 package com.faigenbloom.familybudget
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -68,8 +69,9 @@ import com.faigenbloom.familybudget.ui.spendings.show.SpendingShowRoute
 import com.faigenbloom.familybudget.ui.spendings.show.spendingShowPage
 import com.faigenbloom.familybudget.ui.statistics.statisticsPage
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
-import io.github.g00fy2.quickie.QRResult
-import io.github.g00fy2.quickie.ScanQRCode
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -79,22 +81,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var mainNavController: NavHostController
-    private lateinit var scanQrCodeLauncher: ActivityResultLauncher<Nothing?>
     private lateinit var galleryLauncher: ActivityResultLauncher<GalleryRequest>
     override fun onStart() {
         super.onStart()
-        scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
-            when (result) {
-                is QRResult.QRSuccess -> {
-                    result.content.rawValue?.let {
-                        handleQRCapture(it, mainNavController)
-                    }
-                }
-
-                else -> {
-                }
-            }
-        }
         galleryLauncher = registerForActivityResult(GalleryPhotoContract(this)) { galleryResponse ->
             galleryResponse?.uri?.let {
                 handleImageCapture(
@@ -111,11 +100,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) {
+                it?.link?.getQueryParameter("familyId")?.let { familyId ->
+                    Log.d("familybudget", familyId)
+
+                    Firebase.auth.currentUser?.let {
+                        mainNavController.navigate(FamilyRoute(familyId))
+                    } ?: kotlin.run {
+                        mainNavController.navigate(RegisterRoute(familyId))
+                    }
+                }
+            }
         setContent {
             var withBottomNavigation by remember {
                 mutableStateOf(false)
             }
-
             var floatingMenuState by remember {
                 mutableStateOf<FloatingMenuState?>(null)
             }
@@ -153,13 +154,10 @@ class MainActivity : ComponentActivity() {
                                     mainNavController.navigate(LoginRoute())
                                 },
                                 onRegister = {
-                                    mainNavController.navigate(RegisterRoute())
+                                    mainNavController.navigate(RegisterRoute(it))
                                 },
                                 onLoggedIn = {
                                     mainNavController.navigate(SpendingsListPage())
-                                },
-                                onQrScan = {
-                                    scanQrCodeLauncher.launch(null)
                                 },
                             )
                             loginPage(
@@ -186,7 +184,6 @@ class MainActivity : ComponentActivity() {
                                     ->
                                     withBottomNavigation = showNavigation
                                     selectedBottomNavigationIndex = index
-
                                 },
                                 menuCallback = { floatingMenuState = it },
                                 onCalendarRequested = { from, to ->
@@ -309,9 +306,7 @@ class MainActivity : ComponentActivity() {
                                     floatingMenuState = null
                                 },
                                 options = { floatingMenuState = it },
-                                onQRScanRequested = {
-                                    scanQrCodeLauncher.launch(null)
-                                },
+                                onLinkShareRequest = { shareLink(it) },
                                 onBack = {
                                     mainNavController.popBackStack()
                                 },
@@ -385,7 +380,6 @@ class MainActivity : ComponentActivity() {
 
     private fun PopSpendings() {
         mainNavController.popBackStack()
-
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -417,12 +411,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         return false
-    }
-
-    private fun handleQRCapture(qrText: String, mainNavController: NavController) {
-        lifecycleScope.launch {
-            mainNavController.navigate(RegisterRoute(qrText))
-        }
     }
 
     private fun handleImageCapture(
@@ -457,6 +445,18 @@ class MainActivity : ComponentActivity() {
         }
 
         return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
+    }
+
+    private fun shareLink(link: String) {
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_TEXT, link)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(
+            sendIntent,
+            null,
+        )
+        startActivity(shareIntent)
     }
 
     override fun onDestroy() {

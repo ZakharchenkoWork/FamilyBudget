@@ -1,6 +1,7 @@
 package com.faigenbloom.familybudget.repositories
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
+import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
@@ -62,6 +63,15 @@ class SpendingsRepository(
             val filteredDetails = loadedDetails.filter { spendingModel.details.contains(it.id) }
             dataBaseDataSource.saveDetails(spendingModel.id, filteredDetails)
         }
+    }
+
+    suspend fun getThisUserSpendings() =
+        dataBaseDataSource.getThisUserSpendings(idSource[ID.USER])
+
+    suspend fun migrateSpendings(
+        spending: SpendingEntity,
+    ) {
+        networkDataSource.saveSpending(spendingSourceMapper.forServer(spending))
     }
 }
 

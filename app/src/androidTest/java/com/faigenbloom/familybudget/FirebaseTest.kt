@@ -3,9 +3,9 @@ package com.faigenbloom.familybudget
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
 import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.models.FamilyModel
+import com.faigenbloom.familybudget.datasources.firebase.models.PersonModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -34,7 +34,7 @@ class FirebaseTest : BaseTest() {
         runBlocking {
             firestore.createFamily(FamilyModel("fam1", "Zakh"))
             firestore.createFamilyMember(
-                PersonEntity("pers1", "fam1", "kos", "Zakh", true),
+                PersonModel("pers1", "fam1", "kos", "Zakh", isHidden = false),
                 ArrayList(),
             )
             firestore.connectFamily("pers1", "fam1")

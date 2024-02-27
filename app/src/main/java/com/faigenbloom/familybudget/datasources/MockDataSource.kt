@@ -223,6 +223,14 @@ class MockDataSource : BaseDataSource {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getThisUserSpendings(userId: String): List<SpendingEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun clean() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun addCategory(categoryEntity: CategoryEntity) {
         categories.add(categoryEntity)
     }
@@ -230,5 +238,4 @@ class MockDataSource : BaseDataSource {
     override suspend fun saveDetails(spendingId: String, details: List<SpendingDetailEntity>) {
         TODO("Not yet implemented")
     }
-
 }

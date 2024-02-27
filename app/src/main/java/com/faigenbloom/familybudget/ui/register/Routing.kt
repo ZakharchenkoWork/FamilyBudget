@@ -27,7 +27,6 @@ fun NavGraphBuilder.registerPage(
     ) { backStackEntry ->
         val registerPageViewModel = koinViewModel<RegisterPageViewModel>()
         registerPageViewModel.onRegistered = onLoggedIn
-        registerPageViewModel.forFamily(backStackEntry.arguments?.getString(OPTIONAL_ID_ARG))
         val state by registerPageViewModel
             .stateFlow
             .collectAsState()

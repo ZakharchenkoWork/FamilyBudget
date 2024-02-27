@@ -18,6 +18,6 @@ val spendingsPageModule = module {
     singleOf(::SpendingsWithCategoryMapper)
     single { SortPlatesUseCase<SpendingCategoryUiData>() }
     single { GetCategoryByIdUseCase(get(), get<CategoriesMapper>()) }
-    single { GetAllSpendingsUseCase(get(), get<SpendingsMapper>()) }
+    singleOf(::GetAllSpendingsUseCase)
     singleOf(::SpendingsPagingSource)
 }

@@ -20,4 +20,10 @@ interface FamilyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveFamilyMember(member: PersonEntity)
+
+    @Query("DELETE FROM ${FamilyEntity.TABLE_NAME}")
+    suspend fun deleteFamily()
+
+    @Query("DELETE FROM ${PersonEntity.TABLE_NAME}")
+    suspend fun deleteMembers()
 }

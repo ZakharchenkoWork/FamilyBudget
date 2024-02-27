@@ -23,6 +23,12 @@ interface SpendingsDao {
     )
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
 
+    @Query(
+        "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE ${SpendingEntity.COLUMN_OWNER_ID} = :userId",
+    )
+    suspend fun getSpendings(userId: String): List<SpendingEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSpending(entity: SpendingEntity)
 
@@ -139,5 +145,14 @@ interface SpendingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSpendings(spendings: List<SpendingEntity>)
+
+    @Query("DELETE FROM ${SpendingEntity.TABLE_NAME}")
+    suspend fun deleteAllSpendings()
+
+    @Query("DELETE FROM ${SpendingDetailEntity.TABLE_NAME}")
+    suspend fun deleteAllDetails()
+
+    @Query("DELETE FROM ${SpendingDetailsCrossRef.TABLE_NAME}")
+    suspend fun deleteAllCrossRefs()
 }
 

@@ -288,4 +288,17 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun getSettings(): SettingsEntity? {
         return appDatabase.settingsDao().getSettings()
     }
+
+    override suspend fun getThisUserSpendings(userId: String): List<SpendingEntity> {
+        return appDatabase.spendingsDao().getSpendings(userId)
+    }
+
+    override suspend fun clean() {
+        appDatabase.spendingsDao().deleteAllSpendings()
+        appDatabase.spendingsDao().deleteAllDetails()
+        appDatabase.spendingsDao().deleteAllCrossRefs()
+        appDatabase.familyDao().deleteFamily()
+        appDatabase.familyDao().deleteMembers()
+        appDatabase.categoriesDao().deleteUserCategories(false)
+    }
 }

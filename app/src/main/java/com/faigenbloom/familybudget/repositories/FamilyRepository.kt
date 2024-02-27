@@ -52,8 +52,14 @@ class FamilyRepository(
             FamilyModel(
                 id = familyEntity.id,
                 name = familyEntity.name,
-                members = listOf(),
-                ),
+                members = getFamilyMembers().let {
+                    if (it.isEmpty() || it[0].familyId != familyEntity.id) {
+                        emptyList()
+                    } else {
+                        it.map { it.id }
+                    }
+                },
+            ),
         )
         dataBaseSource.saveFamily(familyEntity)
     }
@@ -73,15 +79,36 @@ class FamilyRepository(
         val oldFamilyMembers = getFamilyMembers()
         members.forEach {
             if (oldFamilyMembers.contains(it).not()) {
-                networkSource.createFamilyMember(it, ArrayList(oldFamilyMembers))
+                networkSource.createFamilyMember(
+                    personSourceMapper.forServer(it),
+                    oldFamilyMembers.map { personSourceMapper.forServer(it) },
+                )
                 dataBaseSource.saveFamilyMember(it)
             }
         }
+    }
 
-        /*oldFamilyMembers.forEach {
-            if (members.contains(it).not()) {
-                dataBaseSource.deleteFamilyMember(it)
-            }
-        }*/
+    suspend fun getCurrentFamilyMember(): PersonEntity {
+        val personId = idSource[ID.USER]
+        return getFamilyMembers()
+            .first { it.id == personId }
+    }
+
+    suspend fun deleteUserFromFamily() {
+        dataBaseSource.clean()
+    }
+
+    suspend fun migrateFamilyMember(member: PersonEntity, oldFamilyId: String) {
+        networkSource.updateFamilyMember(
+            personSourceMapper.forServer(member.copy(familyId = oldFamilyId, isHidden = true)),
+        )
+        val newFamilyMembers =
+            networkSource.getFamilyMembers(idSource[ID.FAMILY])?.filterNotNull() ?: emptyList()
+
+        networkSource.createFamilyMember(
+            personSourceMapper.forServer(member.copy(familyId = idSource[ID.FAMILY])),
+            newFamilyMembers,
+        )
     }
 }
+

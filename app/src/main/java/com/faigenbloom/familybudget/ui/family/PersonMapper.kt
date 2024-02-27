@@ -21,6 +21,7 @@ class PersonMapper : Mapper<PersonUiData, PersonEntity>() {
             familyName = model.familyName,
             name = model.name,
             isThisUser = model.isThisUser,
+            isHidden = false,
         )
     }
 

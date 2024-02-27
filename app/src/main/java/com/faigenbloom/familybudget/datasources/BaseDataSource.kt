@@ -67,4 +67,6 @@ interface BaseDataSource {
     suspend fun saveBudgetLines(budgetEntities: List<BudgetLineEntity>)
     suspend fun saveSettings(settingsEntity: SettingsEntity)
     suspend fun getSettings(): SettingsEntity?
+    suspend fun getThisUserSpendings(userId: String): List<SpendingEntity>
+    suspend fun clean()
 }

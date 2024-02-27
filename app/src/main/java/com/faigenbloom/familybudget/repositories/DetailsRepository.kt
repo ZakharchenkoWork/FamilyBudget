@@ -56,4 +56,10 @@ class DetailsRepository(
         )
     }
 
+    suspend fun migrateSpendingDetails(spendingId: String, details: List<SpendingDetailEntity>) {
+        networkDataSource.saveDetails(
+            spendingId,
+            details.map { spendingDetailsSourceMapper.forServer(it) },
+        )
+    }
 }

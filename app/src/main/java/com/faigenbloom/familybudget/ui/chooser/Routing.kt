@@ -33,7 +33,7 @@ fun NavGraphBuilder.imageSourceChooserDialog(
             },
         ),
     ) { backStackEntry ->
-        val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
+    val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
         val id = backStackEntry.arguments?.getString(OPTIONAL_ID_ARG)
 
         ImageSourceChooser(

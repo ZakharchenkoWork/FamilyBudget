@@ -15,10 +15,13 @@ import com.faigenbloom.familybudget.domain.currency.GetAllCurrenciesUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.currency.GetSettingsUseCase
 import com.faigenbloom.familybudget.domain.currency.SaveSettingsUseCase
+import com.faigenbloom.familybudget.domain.family.GetFamilyLinkUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyNameUseCase
 import com.faigenbloom.familybudget.domain.family.GetFamilyUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
 import com.faigenbloom.familybudget.domain.family.GetThisPersonUseCase
+import com.faigenbloom.familybudget.domain.family.LeaveFamilyUseCase
+import com.faigenbloom.familybudget.domain.family.MigrateFamilyUseCase
 import com.faigenbloom.familybudget.domain.family.SaveFamilyMembersUseCase
 import com.faigenbloom.familybudget.domain.family.SaveFamilyUseCase
 import com.faigenbloom.familybudget.domain.family.SaveUserUseCase
@@ -50,10 +53,13 @@ val domainModule = module {
     singleOf(::SaveBudgetLinesUseCase)
     singleOf(::GetBudgetLinesUseCase)
     singleOf(::GenerateDefaultBudgetLinesUseCase)
+    singleOf(::GetFamilyLinkUseCase)
     singleOf(::BudgetLineMapper)
     singleOf(::CalculateMoneyUseCase)
     singleOf(::CalculateFormulasUseCase)
     singleOf(::ReCalculateFormulasUseCase)
+    singleOf(::MigrateFamilyUseCase)
+    singleOf(::LeaveFamilyUseCase)
     singleOf(::GetThisPersonUseCase)
     singleOf(::GetSettingsUseCase)
     singleOf(::SaveUserUseCase)

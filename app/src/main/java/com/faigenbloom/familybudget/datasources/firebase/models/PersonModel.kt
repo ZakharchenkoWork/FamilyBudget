@@ -5,6 +5,7 @@ data class PersonModel(
     val familyId: String,
     val name: String,
     val familyName: String,
+    val isHidden: Boolean,
 ) {
     companion object {
         const val COLLECTION_NAME = "person"

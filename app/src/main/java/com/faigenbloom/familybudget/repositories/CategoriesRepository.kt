@@ -23,9 +23,7 @@ class CategoriesRepository(
         }
     }
 
-    suspend fun addCategory(
-        categoryEntity: CategoryEntity,
-    ) {
+    suspend fun addCategory(categoryEntity: CategoryEntity) {
         networkDataSource.saveCategory(categorySourceMapper.forServer(categoryEntity))
         dataSource.addCategory(categoryEntity)
     }
@@ -45,6 +43,9 @@ class CategoriesRepository(
     suspend fun loadCategories() {
         val loadedCategories = networkDataSource.loadCategories()
         dataSource.saveCategories(loadedCategories.map { categorySourceMapper.forDB(it) })
+    }
 
+    suspend fun migrateCategory(categoryEntity: CategoryEntity) {
+        networkDataSource.saveCategory(categorySourceMapper.forServer(categoryEntity))
     }
 }
