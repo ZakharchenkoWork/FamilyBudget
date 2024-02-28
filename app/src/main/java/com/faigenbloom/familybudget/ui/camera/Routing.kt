@@ -12,13 +12,13 @@ import com.faigenbloom.familybudget.common.OPTIONAL_ID_ARG
 import com.faigenbloom.familybudget.common.OPTIONAL_ID_KEY
 import com.faigenbloom.familybudget.common.PHOTO_REASON
 import com.faigenbloom.familybudget.common.PHOTO_REASON_ARG
+import org.koin.mp.KoinPlatformTools
 import java.io.File
 
 fun NavGraphBuilder.cameraPage(
     bottomNavigationOptions: (
         showNavigation: Boolean,
     ) -> Unit,
-    outputDirectory: File,
     onImageCaptured: (uri: Uri, photoReason: String?, id: String?) -> Unit,
 ) {
     composable(
@@ -36,8 +36,9 @@ fun NavGraphBuilder.cameraPage(
         val reason = backStackEntry.arguments?.getString(PHOTO_REASON_ARG)
         val id = backStackEntry.arguments?.getString(OPTIONAL_ID_ARG)
         bottomNavigationOptions(false)
+        val outpuDir by lazy { KoinPlatformTools.defaultContext().get().get<File>() }
         CameraScreen(
-            outputDirectory = outputDirectory,
+            outputDirectory = outpuDir,
             onImageCaptured = {
                 onImageCaptured(it, reason, id)
             },

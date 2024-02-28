@@ -4,6 +4,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -15,6 +16,9 @@ val networkModule = module {
         Firebase.firestore
     }
     single {
+        Firebase.storage
+    }
+    single {
         Firebase.auth
     }
     singleOf(::FamilyNetworkSource)
@@ -23,4 +27,5 @@ val networkModule = module {
     singleOf(::NetworkDataSource)
     singleOf(::CategoryNetworkSource)
     singleOf(::BudgetNetworkSource)
+    singleOf(::ImageSource)
 }

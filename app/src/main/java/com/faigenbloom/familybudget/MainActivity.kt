@@ -73,12 +73,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
-    private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var mainNavController: NavHostController
     private lateinit var galleryLauncher: ActivityResultLauncher<GalleryRequest>
@@ -314,7 +312,6 @@ class MainActivity : ComponentActivity() {
                                     withBottomNavigation = it
                                     floatingMenuState = null
                                 },
-                                outputDirectory = getOutputDirectory(),
                                 onImageCaptured = { uri, photoReason, id ->
                                     handleImageCapture(
                                         uri = uri,
@@ -372,7 +369,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -436,15 +432,6 @@ class MainActivity : ComponentActivity() {
         }
         popBackStack()
     }
-
-    private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
-        }
-
-        return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
-    }
-
     private fun shareLink(link: String) {
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             putExtra(Intent.EXTRA_TEXT, link)

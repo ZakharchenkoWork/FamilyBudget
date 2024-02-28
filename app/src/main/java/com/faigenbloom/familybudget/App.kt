@@ -20,6 +20,8 @@ import com.faigenbloom.familybudget.ui.statistics.statisticsPageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import java.io.File
 
 open class App : Application() {
     protected lateinit var koinApplication: KoinApplication
@@ -31,6 +33,7 @@ open class App : Application() {
             modules(
                 databaseModule,
                 networkModule,
+                imageStoreDirectoryModule,
                 domainModule,
                 repositoryModule,
                 loginPageModule,
@@ -46,6 +49,16 @@ open class App : Application() {
                 familyPageModule,
                 onboardingModule,
             )
+        }
+    }
+
+    private val imageStoreDirectoryModule = module {
+        single<File> {
+            val mediaDir = externalMediaDirs.firstOrNull()?.let {
+                File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+            }
+
+            if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
         }
     }
 }

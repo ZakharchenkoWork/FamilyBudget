@@ -12,15 +12,20 @@ class NetworkDataSource(
     private val spendingsNetworkSource: SpendingsNetworkSource,
     private val categoryNetworkSource: CategoryNetworkSource,
     private val budgetNetworkSource: BudgetNetworkSource,
+    private val imageSource: ImageSource,
     private val idSource: IdSource,
 ) {
-    suspend fun saveSpending(entity: SpendingModel) {
-        spendingsNetworkSource.saveSpending(entity)
+    suspend fun saveSpending(model: SpendingModel) {
+        spendingsNetworkSource.saveSpending(model)
+        model.photoUri?.let {
+            imageSource.upload(it)
+        }
+
         familyNetworkSource.getFamily(idSource[ID.FAMILY])?.let { family ->
             val oldSpendings = family.spendings ?: emptyList()
             familyNetworkSource.createFamily(
                 family.copy(
-                    spendings = ArrayList(oldSpendings).apply { add(entity.id) },
+                    spendings = ArrayList(oldSpendings).apply { add(model.id) },
                 ),
             )
         }
@@ -34,7 +39,13 @@ class NetworkDataSource(
     }
 
     suspend fun loadSpendings(): List<SpendingModel> {
-        return spendingsNetworkSource.loadSpendings()
+        val loadSpendings = spendingsNetworkSource.loadSpendings()
+        loadSpendings.forEach {
+            it.photoUri?.let { uri ->
+                imageSource.download(uri)
+            }
+        }
+        return loadSpendings
     }
 
     suspend fun loadDetails(): List<SpendingDetailModel> {
@@ -42,11 +53,20 @@ class NetworkDataSource(
     }
 
     suspend fun loadCategories(): List<CategoryModel> {
-        return categoryNetworkSource.loadCategories()
+        val loadCategories = categoryNetworkSource.loadCategories()
+        loadCategories.forEach {
+            it.photoUri?.let { uri ->
+                imageSource.download(uri)
+            }
+        }
+        return loadCategories
     }
 
     suspend fun saveCategory(categoryModel: CategoryModel) {
         categoryNetworkSource.saveCategory(categoryModel)
+        categoryModel.photoUri?.let {
+            imageSource.upload(it)
+        }
     }
 
     suspend fun saveBudgetLines(budgetLines: List<BudgetLineModel>) {
