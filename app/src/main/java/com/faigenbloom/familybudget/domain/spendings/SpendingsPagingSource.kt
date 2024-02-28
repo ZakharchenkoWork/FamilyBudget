@@ -55,7 +55,7 @@ class SpendingsPagingSource(
                         }
                         filter = filter.move(isMovedForward)
                     } else {
-
+                        break
                     }
                 } while (spendings.isEmpty())
 

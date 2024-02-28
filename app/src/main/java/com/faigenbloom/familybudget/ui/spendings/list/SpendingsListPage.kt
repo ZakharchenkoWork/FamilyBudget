@@ -21,7 +21,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.isEmpty
-import com.faigenbloom.familybudget.common.ui.LoadingIndicator
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.domain.spendings.DatedList
 import com.faigenbloom.familybudget.domain.spendings.FilterType
 import com.faigenbloom.familybudget.domain.spendings.Pattern
@@ -50,12 +50,14 @@ fun SpendingsListPage(
 
         if (state.isLoading.not()) {
             if (lazyPagingItems.isEmpty()) {
-                if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                    LoadingIndicator()
-                } else {
+                if (lazyPagingItems.loadState.source.refresh is LoadState.NotLoading &&
+                    lazyPagingItems.loadState.append.endOfPaginationReached
+                    && lazyPagingItems.itemCount < 1
+                ) {
                     EmptySpendings(modifier = modifier)
+                } else {
+                    Loading(true)
                 }
-
             } else {
                 DynamicPlatesHolder(
                     datedPatterns = lazyPagingItems,
@@ -64,11 +66,10 @@ fun SpendingsListPage(
                 )
             }
         } else {
-            LoadingIndicator()
+            Loading(true)
         }
     }
 }
-
 
 @Composable
 fun EmptySpendings(

@@ -155,12 +155,20 @@ class MainActivity : ComponentActivity() {
                                     mainNavController.navigate(RegisterRoute(it))
                                 },
                                 onLoggedIn = {
-                                    mainNavController.navigate(SpendingsListPage())
+                                    mainNavController.navigate(SpendingsListPage()) {
+                                        popUpTo(OnboardingRoute()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                             )
                             loginPage(
                                 onLoggedIn = {
-                                    mainNavController.navigate(SpendingsListPage())
+                                    mainNavController.navigate(SpendingsListPage()) {
+                                        popUpTo(OnboardingRoute()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                                 onBack = {
                                     mainNavController.popBackStack()
@@ -168,7 +176,11 @@ class MainActivity : ComponentActivity() {
                             )
                             registerPage(
                                 onLoggedIn = {
-                                    mainNavController.navigate(SpendingsListPage())
+                                    mainNavController.navigate(SpendingsListPage()) {
+                                        popUpTo(OnboardingRoute()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                                 onBack = {
                                     mainNavController.popBackStack()
@@ -203,7 +215,9 @@ class MainActivity : ComponentActivity() {
                                         SpendingShowRoute(spendingId),
                                     )
                                 },
-                                onBack = ::PopSpendings,
+                                onBack = {
+                                    mainNavController.popBackStack(SpendingsListPage(), false)
+                                },
                                 onPhotoRequest = { spendingId ->
                                     if (requestCameraPermission()) {
                                         mainNavController.navigate(
@@ -244,7 +258,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onBack = {
-                                    PopSpendings()
+                                    mainNavController.popBackStack(SpendingsListPage(), false)
                                 },
                             )
                             statisticsPage(
@@ -370,10 +384,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
-    }
-
-    private fun PopSpendings() {
-        mainNavController.popBackStack()
     }
 
     private val requestPermissionLauncher = registerForActivityResult(

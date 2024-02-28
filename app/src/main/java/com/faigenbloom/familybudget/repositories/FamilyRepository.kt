@@ -66,8 +66,12 @@ class FamilyRepository(
 
     suspend fun getFamilyMembers(): List<PersonEntity> {
         return dataBaseSource.getFamilyMembers().ifEmpty {
-            updateFamilyMembers(idSource[ID.FAMILY])
-            dataBaseSource.getFamilyMembers()
+            if (idSource[ID.FAMILY].isNotEmpty()) {
+                updateFamilyMembers(idSource[ID.FAMILY])
+                dataBaseSource.getFamilyMembers()
+            } else {
+                emptyList()
+            }
         }
     }
 
