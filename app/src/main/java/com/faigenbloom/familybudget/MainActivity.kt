@@ -216,7 +216,11 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onBack = {
-                                    mainNavController.popBackStack(SpendingsListPage(), false)
+                                    mainNavController.navigate(SpendingsListPage()) {
+                                        popUpTo(SpendingsListPage()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                                 onPhotoRequest = { spendingId ->
                                     if (requestCameraPermission()) {
@@ -258,7 +262,11 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onBack = {
-                                    mainNavController.popBackStack(SpendingsListPage(), false)
+                                    mainNavController.navigate(SpendingsListPage()) {
+                                        popUpTo(SpendingsListPage()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                             )
                             statisticsPage(
