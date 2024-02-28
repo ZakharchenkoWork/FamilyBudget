@@ -34,7 +34,7 @@ class FirebaseTest : BaseTest() {
         runBlocking {
             firestore.createFamily(FamilyModel("fam1", "Zakh"))
             firestore.createFamilyMember(
-                PersonModel("pers1", "fam1", "kos", "Zakh", isHidden = false),
+                PersonModel("pers1", "fam1", "kos", "Zakh", hidden = false),
                 ArrayList(),
             )
             firestore.connectFamily("pers1", "fam1")

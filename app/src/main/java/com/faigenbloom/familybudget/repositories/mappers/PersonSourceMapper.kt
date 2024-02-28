@@ -11,7 +11,7 @@ class PersonSourceMapper {
             name = model.name,
             familyName = model.familyName,
             isThisUser = false,
-            isHidden = model.isHidden,
+            isHidden = model.hidden,
         )
     }
 
@@ -21,7 +21,7 @@ class PersonSourceMapper {
             familyId = entity.familyId,
             name = entity.name,
             familyName = entity.familyName,
-            isHidden = entity.isHidden,
+            hidden = entity.isHidden,
         )
     }
 }

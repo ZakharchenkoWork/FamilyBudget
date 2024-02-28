@@ -1,5 +1,6 @@
 package com.faigenbloom.familybudget.repositories
 
+import com.faigenbloom.familybudget.repositories.mappers.BudgetLineSourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.CategorySourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.FamilySourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.PersonSourceMapper
@@ -12,12 +13,13 @@ val repositoryModule = module {
     singleOf(::DetailsRepository)
     singleOf(::SpendingsRepository)
     singleOf(::CategoriesRepository)
-    singleOf(::BudgetPageRepository)
+    singleOf(::BudgetRepository)
     singleOf(::FamilyRepository)
     singleOf(::AuthRepository)
     singleOf(::SpendingSourceMapper)
     singleOf(::SpendingDetailsSourceMapper)
     singleOf(::FamilySourceMapper)
+    singleOf(::BudgetLineSourceMapper)
     singleOf(::PersonSourceMapper)
     singleOf(::CategorySourceMapper)
     singleOf(::SettingsRepository)

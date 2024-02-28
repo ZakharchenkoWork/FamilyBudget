@@ -14,9 +14,9 @@ class SpendingSourceMapper {
             date = entity.date,
             categoryId = entity.categoryId,
             photoUri = entity.photoUri,
-            isManualTotal = entity.isManualTotal,
-            isPlanned = entity.isPlanned,
-            isHidden = entity.isHidden,
+            manualTotal = entity.isManualTotal,
+            planned = entity.isPlanned,
+            hidden = entity.isHidden,
             details = listOf(),
         )
     }
@@ -30,9 +30,9 @@ class SpendingSourceMapper {
             date = model.date,
             categoryId = model.categoryId,
             photoUri = model.photoUri,
-            isManualTotal = model.isManualTotal,
-            isPlanned = model.isPlanned,
-            isHidden = model.isHidden,
+            isManualTotal = model.manualTotal,
+            isPlanned = model.planned,
+            isHidden = model.hidden,
             isDuplicate = false,
         )
     }

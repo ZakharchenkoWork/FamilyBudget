@@ -2,14 +2,14 @@ package com.faigenbloom.familybudget.domain.budget
 
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.domain.spendings.GetSpentTotalUseCase
-import com.faigenbloom.familybudget.repositories.BudgetPageRepository
+import com.faigenbloom.familybudget.repositories.BudgetRepository
 import com.faigenbloom.familybudget.ui.budget.BudgetLabels
 import com.faigenbloom.familybudget.ui.budget.BudgetLineUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetBudgetLinesUseCase(
-    private val budgetPageRepository: BudgetPageRepository,
+    private val budgetPageRepository: BudgetRepository,
     private val generateDefaultBudgetLinesUseCase: GenerateDefaultBudgetLinesUseCase,
     private val getSpentTotalUseCase: GetSpentTotalUseCase,
     private val calculateFormulasUseCase: CalculateFormulasUseCase,
@@ -34,6 +34,7 @@ class GetBudgetLinesUseCase(
                         ArrayList(it)
                     }
                 }.recalculateValues(from, to)
+                    .sortedWith(BudgetLinesSorter())
 
             calculateFormulasUseCase(budgetLineEntities)
                 .map { budgetLineMapper.forUI(it) }
@@ -71,6 +72,21 @@ class GetBudgetLinesUseCase(
                 amount = value,
             ),
         )
+    }
+}
+
+class BudgetLinesSorter : Comparator<BudgetLineEntity> {
+    override fun compare(first: BudgetLineEntity, second: BudgetLineEntity): Int {
+        return if (first.isDefault && second.isDefault) {
+            BudgetLabels.valueOf(first.repeatableId).ordinal -
+                    BudgetLabels.valueOf(second.repeatableId).ordinal
+        } else if (first.isDefault) {
+            -1
+        } else if (second.isDefault) {
+            +1
+        } else {
+            first.hashCode() - second.hashCode()
+        }
     }
 }
 

@@ -8,9 +8,9 @@ data class SpendingModel(
     val date: Long,
     val categoryId: String,
     val photoUri: String?,
-    val isManualTotal: Boolean,
-    val isPlanned: Boolean,
-    val isHidden: Boolean,
+    val manualTotal: Boolean,
+    val planned: Boolean,
+    val hidden: Boolean,
     val details: List<String>,
 ) {
     companion object {

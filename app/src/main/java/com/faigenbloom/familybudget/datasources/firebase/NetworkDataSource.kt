@@ -2,6 +2,8 @@ package com.faigenbloom.familybudget.datasources.firebase
 
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
+import com.faigenbloom.familybudget.datasources.firebase.models.BudgetLineModel
+import com.faigenbloom.familybudget.datasources.firebase.models.CategoryModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingDetailModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingModel
 
@@ -9,6 +11,7 @@ class NetworkDataSource(
     private val familyNetworkSource: FamilyNetworkSource,
     private val spendingsNetworkSource: SpendingsNetworkSource,
     private val categoryNetworkSource: CategoryNetworkSource,
+    private val budgetNetworkSource: BudgetNetworkSource,
     private val idSource: IdSource,
 ) {
     suspend fun saveSpending(entity: SpendingModel) {
@@ -45,17 +48,17 @@ class NetworkDataSource(
     suspend fun saveCategory(categoryModel: CategoryModel) {
         categoryNetworkSource.saveCategory(categoryModel)
     }
-}
 
-data class CategoryModel(
-    val id: String,
-    val isHidden: Boolean,
-    val name: String,
-    val photoUri: String? = null,
-) {
-    companion object {
-        const val COLLECTION_NAME = "categories"
+    suspend fun saveBudgetLines(budgetLines: List<BudgetLineModel>) {
+        budgetNetworkSource.saveBudgets(budgetLines)
+    }
+
+    suspend fun loadBudgets(): List<BudgetLineModel> {
+        return budgetNetworkSource.loadBudgets().filter {
+            it.forFamily || it.ownerId == idSource[ID.USER]
+        }
     }
 }
+
 
 

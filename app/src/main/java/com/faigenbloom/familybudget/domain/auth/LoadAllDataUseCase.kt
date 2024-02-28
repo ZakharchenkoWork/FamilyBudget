@@ -3,6 +3,7 @@ package com.faigenbloom.familybudget.domain.auth
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.repositories.AuthRepository
+import com.faigenbloom.familybudget.repositories.BudgetRepository
 import com.faigenbloom.familybudget.repositories.CategoriesRepository
 import com.faigenbloom.familybudget.repositories.FamilyRepository
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
@@ -14,6 +15,7 @@ class LoadAllDataUseCase(
     private val familyRepository: FamilyRepository,
     private val spendingsRepository: SpendingsRepository,
     private val categoriesRepository: CategoriesRepository,
+    private val budgetRepository: BudgetRepository,
     private val idSource: IdSource,
 ) {
     suspend operator fun invoke(): Boolean {
@@ -23,6 +25,7 @@ class LoadAllDataUseCase(
                 familyRepository.loadFamily(idSource[ID.USER])?.let {
                     spendingsRepository.loadSpendings()
                     categoriesRepository.loadCategories()
+                    budgetRepository.loadBudgetLines()
                     return@withContext true
                 }
             }

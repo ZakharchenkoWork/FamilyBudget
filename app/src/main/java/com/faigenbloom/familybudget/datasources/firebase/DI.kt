@@ -22,4 +22,5 @@ val networkModule = module {
     singleOf(::SpendingsNetworkSource)
     singleOf(::NetworkDataSource)
     singleOf(::CategoryNetworkSource)
+    singleOf(::BudgetNetworkSource)
 }

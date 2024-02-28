@@ -3,26 +3,25 @@ package com.faigenbloom.familybudget.datasources.firebase
 import com.faigenbloom.familybudget.common.throughJson
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.datasources.firebase.models.CategoryModel
+import com.faigenbloom.familybudget.datasources.firebase.models.BudgetLineModel
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CategoryNetworkSource(
+class BudgetNetworkSource(
     firestore: FirebaseFirestore,
     private val idSource: IdSource,
 ) : BaseNetworkSource(firestore) {
-    suspend fun saveCategory(model: CategoryModel) {
+    suspend fun saveBudgets(model: List<BudgetLineModel>) {
         set(
             collectionId = idSource[ID.FAMILY],
-            document = CategoryModel.COLLECTION_NAME,
-            innerId = model.id,
+            document = BudgetLineModel.COLLECTION_NAME,
             data = model,
         )
     }
 
-    suspend fun loadCategories(): List<CategoryModel> {
+    suspend fun loadBudgets(): List<BudgetLineModel> {
         return getAsList(
             idSource[ID.FAMILY],
-            CategoryModel.COLLECTION_NAME,
+            BudgetLineModel.COLLECTION_NAME,
         ).map { it.throughJson() }
     }
 }
