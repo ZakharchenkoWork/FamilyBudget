@@ -77,14 +77,21 @@ fun SpendingEditPage(
             onStartIconCLicked = onBack,
         )
         StripeBar(
-            textId = R.string.choose_category,
-            secondTabTextId = R.string.spending_information,
-            isLeftSelected = state.isCategoriesOpened,
+            textId = R.string.spending_information,
+            secondTabTextId = R.string.choose_category,
+            isLeftSelected = state.isInfoOpened,
             onSelectionChanged = state.onPageChanged,
         )
 
-        AnimateTabs(isLeftTab = state.isCategoriesOpened) { isCategoriesOpened ->
-            if (isCategoriesOpened) {
+        AnimateTabs(isLeftTab = state.isInfoOpened) { isInfoOpened ->
+            if (isInfoOpened) {
+                Information(
+                    state = state,
+                    onPhotoRequest = onPhotoRequest,
+                    onCalendarOpened = onCalendarOpened,
+                    onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
+                )
+            } else {
                 categoryState.onCategoryError(state.isCategoryError)
                 CategoriesPage(
                     state = categoryState,
@@ -93,13 +100,6 @@ fun SpendingEditPage(
                         categoryState.onCategoryError(false)
                     },
                     onCategoryPhotoRequest = onCategoryPhotoRequest,
-                )
-            } else {
-                Information(
-                    state = state,
-                    onPhotoRequest = onPhotoRequest,
-                    onCalendarOpened = onCalendarOpened,
-                    onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
                 )
             }
         }
@@ -376,7 +376,7 @@ fun SpendingEditPageCategoriesPreview() {
             SpendingEditPage(
                 state = SpendingEditState(
                     spendingId = "asdf",
-                    isCategoriesOpened = true,
+                    isInfoOpened = true,
                     onPageChanged = {},
                     namingText = "",
                     isNameError = false,
@@ -442,7 +442,7 @@ fun SpendingEditPageDetailsPreview() {
             SpendingEditPage(
                 state = SpendingEditState(
                     spendingId = "",
-                    isCategoriesOpened = false,
+                    isInfoOpened = false,
                     onPageChanged = {},
                     namingText = "Food",
                     amountText = "19.50",

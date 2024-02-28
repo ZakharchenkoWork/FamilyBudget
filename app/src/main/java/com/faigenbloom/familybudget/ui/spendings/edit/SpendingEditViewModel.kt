@@ -108,14 +108,14 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 isNameError = state.namingText.isBlank(),
-
                 isAmountError = state.amountText.isBlank(),
                 isCategoryError = state.namingText.isBlank().not() && state.amountText.isBlank()
                     .not() && selectedCategory == null,
+                isInfoOpened = true,
             )
         }
         if (state.isCategoryError) {
-            onPageChanged(true)
+            onPageChanged(false)
         }
         return checkAllFilled()
     }
@@ -193,13 +193,13 @@ class SpendingEditViewModel(
         }
     }
 
-    private fun onPageChanged(isCategoriesOpened: Boolean) {
+    private fun onPageChanged(isInfoOpened: Boolean) {
         _stateFlow.update {
             state.copy(
-                isCategoriesOpened = isCategoriesOpened,
+                isInfoOpened = isInfoOpened,
             )
         }
-        onScreenTransition(isCategoriesOpened)
+        onScreenTransition(isInfoOpened)
     }
 
     private fun onPlannedChanged() {
@@ -298,7 +298,7 @@ class SpendingEditViewModel(
 data class SpendingEditState(
     val spendingId: String = "",
     val canDuplicate: Boolean = false,
-    val isCategoriesOpened: Boolean = true,
+    val isInfoOpened: Boolean = true,
     val isDuplicate: Boolean = false,
     val onPageChanged: (Boolean) -> Unit,
     val namingText: String = "",

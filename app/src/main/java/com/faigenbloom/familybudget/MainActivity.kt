@@ -198,10 +198,8 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                             spendingEditPage(
-                                options = { bottomNavigation, menuState ->
-                                    withBottomNavigation = bottomNavigation
-                                    floatingMenuState = menuState
-                                },
+                                bottomNavigationOptions = { withBottomNavigation = it },
+                                options = { floatingMenuState = it },
                                 onNext = { spendingId ->
                                     mainNavController.navigate(
                                         SpendingShowRoute(spendingId),

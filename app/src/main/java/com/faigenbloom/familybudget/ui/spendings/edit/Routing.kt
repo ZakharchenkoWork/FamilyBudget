@@ -31,10 +31,8 @@ import org.koin.androidx.compose.koinViewModel
 
 
 fun NavGraphBuilder.spendingEditPage(
-    options: (
-        showNavigation: Boolean,
-        menuState: FloatingMenuState,
-    ) -> Unit,
+    bottomNavigationOptions: (Boolean) -> Unit,
+    options: (menuState: FloatingMenuState) -> Unit,
     onPhotoRequest: (id: String) -> Unit,
     onCategoryPhotoRequest: (id: String?) -> Unit,
     onCalendarOpened: (String) -> Unit,
@@ -68,14 +66,13 @@ fun NavGraphBuilder.spendingEditPage(
             else
                 onBack()
         }
-
+        bottomNavigationOptions(false)
         spendingsViewModel.onScreenTransition = {
             options(
-                false,
                 if (it) {
-                    getCategoryMenuState(categoryState)
-                } else {
                     getEditSpendingMenuState(state)
+                } else {
+                    getCategoryMenuState(state, categoryState)
                 },
             )
         }
@@ -87,11 +84,10 @@ fun NavGraphBuilder.spendingEditPage(
 
 
         options(
-            false,
-            if (state.isCategoriesOpened) {
-                getCategoryMenuState(categoryState)
-            } else {
+            if (state.isInfoOpened) {
                 getEditSpendingMenuState(state)
+            } else {
+                getCategoryMenuState(state, categoryState)
             },
         )
         backStack.getPoppedArgument(CALENDAR_START_DATE_ARG, "")?.let { calendarDate ->
@@ -136,12 +132,25 @@ fun NavGraphBuilder.spendingEditPage(
     }
 }
 
-fun getCategoryMenuState(categoryState: CategoriesState): FloatingMenuState {
+fun getCategoryMenuState(
+    state: SpendingEditState,
+    categoryState: CategoriesState,
+): FloatingMenuState {
     return FloatingMenuState(
         icon = R.drawable.icon_plus,
         onMenuClick = {
             categoryState.onCategoryDialogVisibilityChanged(NO_INDEX)
         },
+        alwaysVisibleButton = MenuItemState(
+            label = R.string.button_save,
+            icon = if (state.isOkActive) {
+                R.drawable.icon_ok
+            } else {
+                R.drawable.icon_ok_inactive
+            },
+            semantics = SPENDING_SAVE_BUTTON,
+            onClick = state.onSave,
+        ),
     )
 }
 
