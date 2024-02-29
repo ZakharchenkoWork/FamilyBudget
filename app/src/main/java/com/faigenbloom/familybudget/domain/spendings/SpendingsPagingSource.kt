@@ -3,13 +3,12 @@ package com.faigenbloom.familybudget.domain.spendings
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.faigenbloom.familybudget.domain.categories.GetCategoryByIdUseCase
+import com.faigenbloom.familybudget.domain.mappers.SpendingsWithCategoryMapper
 import com.faigenbloom.familybudget.domain.spendings.dividers.DayGroupDivider
 import com.faigenbloom.familybudget.domain.spendings.dividers.MonthGroupDivider
 import com.faigenbloom.familybudget.domain.spendings.dividers.YearGroupDivider
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
-import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.list.SpendingCategoryUiData
-import com.faigenbloom.familybudget.ui.spendings.mappers.SpendingsWithCategoryMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -18,9 +17,8 @@ class SpendingsPagingSource(
     private val spendingsRepository: SpendingsRepository,
     private val sortPlatesUseCase: SortPlatesUseCase<SpendingCategoryUiData>,
     private val spendingsWithCategoryMapper: SpendingsWithCategoryMapper,
-    private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
-
-    ) : PagingSource<FilterType, DatedList>() {
+    private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
+) : PagingSource<FilterType, DatedList>() {
     var lowestFrom = 0L
     var highestTo = 0L
 

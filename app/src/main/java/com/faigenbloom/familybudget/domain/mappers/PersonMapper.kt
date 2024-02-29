@@ -1,10 +1,10 @@
-package com.faigenbloom.familybudget.ui.family
+package com.faigenbloom.familybudget.domain.mappers
 
-import com.faigenbloom.familybudget.common.Mapper
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.ui.family.PersonUiData
 
-class PersonMapper : Mapper<PersonUiData, PersonEntity>() {
-    override fun forUI(entity: PersonEntity): PersonUiData {
+class PersonMapper {
+    fun forUI(entity: PersonEntity): PersonUiData {
         return PersonUiData(
             id = entity.id,
             familyId = entity.familyId,
@@ -14,7 +14,7 @@ class PersonMapper : Mapper<PersonUiData, PersonEntity>() {
         )
     }
 
-    override fun forDB(model: PersonUiData): PersonEntity {
+    fun forDB(model: PersonUiData): PersonEntity {
         return PersonEntity(
             id = model.id,
             familyId = model.familyId,
@@ -23,9 +23,5 @@ class PersonMapper : Mapper<PersonUiData, PersonEntity>() {
             isThisUser = model.isThisUser,
             isHidden = false,
         )
-    }
-
-    override fun copyChangingId(model: PersonUiData, id: String): PersonUiData {
-        return model.copy(id = id)
     }
 }

@@ -58,6 +58,7 @@ import com.faigenbloom.familybudget.ui.onboarding.OnboardingRoute
 import com.faigenbloom.familybudget.ui.onboarding.onboardingPage
 import com.faigenbloom.familybudget.ui.register.RegisterRoute
 import com.faigenbloom.familybudget.ui.register.registerPage
+import com.faigenbloom.familybudget.ui.settings.SettingsRoute
 import com.faigenbloom.familybudget.ui.settings.settingsPage
 import com.faigenbloom.familybudget.ui.spendings.detail.DetailDialogRoute
 import com.faigenbloom.familybudget.ui.spendings.detail.detailDialog
@@ -105,9 +106,17 @@ class MainActivity : ComponentActivity() {
                     Log.d("familybudget", familyId)
 
                     Firebase.auth.currentUser?.let {
-                        mainNavController.navigate(FamilyRoute(familyId))
+                        mainNavController.navigate(FamilyRoute(familyId)) {
+                            popUpTo(OnboardingRoute()) {
+                                inclusive = true
+                            }
+                        }
                     } ?: kotlin.run {
-                        mainNavController.navigate(RegisterRoute(familyId))
+                        mainNavController.navigate(RegisterRoute(familyId)) {
+                            popUpTo(OnboardingRoute()) {
+                                inclusive = true
+                            }
+                        }
                     }
                 }
             }
@@ -326,7 +335,13 @@ class MainActivity : ComponentActivity() {
                                 options = { floatingMenuState = it },
                                 onLinkShareRequest = { shareLink(it) },
                                 onBack = {
-                                    mainNavController.popBackStack()
+                                    mainNavController.navigate(
+                                        SettingsRoute(),
+                                    ) {
+                                        popUpTo(OnboardingRoute()) {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                             )
                             cameraPage(
@@ -450,6 +465,7 @@ class MainActivity : ComponentActivity() {
         }
         popBackStack()
     }
+
     private fun shareLink(link: String) {
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             putExtra(Intent.EXTRA_TEXT, link)

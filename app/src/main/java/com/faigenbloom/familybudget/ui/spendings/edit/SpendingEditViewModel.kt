@@ -36,8 +36,8 @@ class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val normalizeDateUseCase: NormalizeDateUseCase,
     private val saveSpendingUseCase: SaveSpendingUseCase,
-    private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
-    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
+    private val saveDetailsUseCase: SaveDetailsUseCase,
+    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase,
     private val getSpendingUseCase: GetSpendingUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val deleteSpendingUseCase: DeleteSpendingUseCase,
@@ -49,7 +49,6 @@ class SpendingEditViewModel(
     private var selectedCategory: CategoryUiData? = null
     private var ownerId: String = ""
     private var isManualTotal: Boolean = false
-
     var onNext: (String) -> Unit = {}
     var onCategoryIdLoaded: (categoryId: String) -> Unit = {}
     var onScreenTransition: (isCategoriesOpened: Boolean) -> Unit = {}
@@ -153,22 +152,21 @@ class SpendingEditViewModel(
                             date = normalizeDateUseCase(state.dateText),
                             categoryId = categoryId,
                             photoUri = state.photoUri,
-                                isHidden = state.isHidden,
-                                isPlanned = state.isPlanned,
-                                isManualTotal = isManualTotal,
-                                isDuplicate = true,
-                                ownerId = ownerId,
-                            ),
-                        )
-                        saveDetailsUseCase(
-                            spendingId = spendingId,
-                            details = state.detailsList,
+                            isHidden = state.isHidden,
+                            isPlanned = state.isPlanned,
+                            isManualTotal = isManualTotal,
                             isDuplicate = true,
-                        )
-                        reload()
-                    }
+                            ownerId = ownerId,
+                        ),
+                    )
+                    saveDetailsUseCase(
+                        spendingId = spendingId,
+                        details = state.detailsList,
+                        isDuplicate = true,
+                    )
+                    reload()
                 }
-
+            }
         }
     }
 
@@ -191,7 +189,6 @@ class SpendingEditViewModel(
                 isOkActive = true,
             )
         }
-
     }
 
     private fun deleteSpending() {
@@ -236,7 +233,6 @@ class SpendingEditViewModel(
             )
         }
         isManualTotal = amount.isNotBlank()
-
     }
 
     private fun onHideChanged() {
@@ -270,7 +266,6 @@ class SpendingEditViewModel(
     init {
         reload()
     }
-
 
     private fun reload() {
         viewModelScope.launch {

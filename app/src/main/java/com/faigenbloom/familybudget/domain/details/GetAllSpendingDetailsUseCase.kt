@@ -1,13 +1,11 @@
 package com.faigenbloom.familybudget.domain.details
 
-import com.faigenbloom.familybudget.common.Identifiable
-import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.domain.mappers.DetailsMapper
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 
-class GetAllSpendingDetailsUseCase<T : Identifiable>(
+class GetAllSpendingDetailsUseCase(
     private val detailsRepository: DetailsRepository,
-    private val mapper: Mapper<T, SpendingDetailEntity>,
+    private val mapper: DetailsMapper,
 ) {
     suspend operator fun invoke() =
         detailsRepository.getAllDetails().map { mapper.forUI(it) }

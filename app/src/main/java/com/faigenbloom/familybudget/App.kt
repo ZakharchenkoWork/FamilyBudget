@@ -4,6 +4,7 @@ import android.app.Application
 import com.faigenbloom.familybudget.datasources.databaseModule
 import com.faigenbloom.familybudget.datasources.firebase.networkModule
 import com.faigenbloom.familybudget.domain.domainModule
+import com.faigenbloom.familybudget.domain.mappers.domainMappers
 import com.faigenbloom.familybudget.repositories.repositoryModule
 import com.faigenbloom.familybudget.ui.budget.budgetPageModule
 import com.faigenbloom.familybudget.ui.categories.categoriesModule
@@ -35,6 +36,7 @@ open class App : Application() {
                 networkModule,
                 imageStoreDirectoryModule,
                 domainModule,
+                domainMappers,
                 repositoryModule,
                 loginPageModule,
                 registerPageModule,

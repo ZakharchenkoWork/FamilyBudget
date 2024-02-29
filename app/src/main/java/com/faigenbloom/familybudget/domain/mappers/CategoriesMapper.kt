@@ -1,8 +1,9 @@
-package com.faigenbloom.familybudget.ui.categories
+package com.faigenbloom.familybudget.domain.mappers
 
 import com.faigenbloom.familybudget.common.Mapper
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
+import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 
 class CategoriesMapper : Mapper<CategoryUiData, CategoryEntity>() {
     override fun forUI(entity: CategoryEntity): CategoryUiData {

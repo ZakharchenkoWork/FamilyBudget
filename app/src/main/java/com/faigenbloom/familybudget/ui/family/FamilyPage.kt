@@ -138,7 +138,10 @@ private fun Dialogs(
         isShown = state.migrationDialogState.isMigrationDialogOpened,
         isShowIcon = false,
         title = stringResource(R.string.settings_family_migration_title),
-        text = stringResource(R.string.settings_family_new_familyname, state.familyName),
+        text = stringResource(
+            R.string.settings_family_new_familyname,
+            state.migrationDialogState.familyName,
+        ),
         onOkClick = state.migrationDialogState.onOkClicked,
         onCancelClick = { state.migrationDialogState.onMigrationDialogVisibilityChanged(false) },
     ) {

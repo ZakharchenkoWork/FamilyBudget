@@ -1,8 +1,8 @@
 package com.faigenbloom.familybudget.domain.spendings
 
+import com.faigenbloom.familybudget.domain.mappers.SpendingsMapper
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
-import com.faigenbloom.familybudget.ui.spendings.mappers.SpendingsMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

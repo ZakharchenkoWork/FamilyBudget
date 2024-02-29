@@ -1,15 +1,13 @@
 package com.faigenbloom.familybudget.domain.details
 
-import com.faigenbloom.familybudget.common.Identifiable
-import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.domain.mappers.DetailsMapper
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetSpendingDetailsByIdUseCase<T : Identifiable>(
+class GetSpendingDetailsByIdUseCase(
     private val detailsRepository: DetailsRepository,
-    private val mapper: Mapper<T, SpendingDetailEntity>,
+    private val mapper: DetailsMapper,
 ) {
     suspend operator fun invoke(spendingId: String) =
         withContext(Dispatchers.IO) {

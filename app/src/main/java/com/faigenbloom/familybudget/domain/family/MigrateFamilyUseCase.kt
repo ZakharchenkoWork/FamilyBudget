@@ -25,9 +25,9 @@ class MigrateFamilyUseCase(
             } else if (repository.getFamilyName(familyId).isBlank()) {
                 return@withContext Result.NoSuchFamily
             }
-            val oldFamilyId = idSource[ID.FAMILY]
+
+            repository.migrateFamilyMember(repository.getCurrentFamilyMember(), familyId)
             idSource[ID.FAMILY] = familyId
-            repository.migrateFamilyMember(repository.getCurrentFamilyMember(), oldFamilyId)
             val allThisUserSpendings = spendingsRepository.getThisUserSpendings()
             allThisUserSpendings.forEach {
                 val spending = if (isHideUserSpending) {

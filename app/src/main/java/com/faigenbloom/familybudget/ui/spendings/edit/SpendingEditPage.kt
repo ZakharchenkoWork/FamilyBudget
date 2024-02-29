@@ -71,7 +71,7 @@ fun SpendingEditPage(
                 stringResource(R.string.editing_planned_spending_title)
             } else if (state.isHidden) {
                 stringResource(R.string.editing_hidden_spending_title)
-            } else if (state.isCurrentUserOwner.not()) {
+            } else if (state.isCurrentUserOwner) {
                 stringResource(R.string.editing_spending_title)
             } else {
                 stringResource(R.string.editing_another_user_spending_title, state.ownerName)

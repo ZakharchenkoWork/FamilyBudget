@@ -8,8 +8,7 @@ import org.koin.dsl.module
 
 val categoriesModule = module {
     viewModelOf(::CategoriesViewModel)
-    singleOf(::CategoriesMapper)
-    single { GetCategoriesUseCase(get(), get<CategoriesMapper>()) }
+    singleOf(::GetCategoriesUseCase)
     singleOf(::SetCategoryUseCase)
     singleOf(::SetCategoryUseCase)
 }

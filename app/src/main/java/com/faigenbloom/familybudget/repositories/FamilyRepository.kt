@@ -11,6 +11,7 @@ import com.faigenbloom.familybudget.repositories.mappers.FamilySourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.PersonSourceMapper
 
 class FamilyRepository(
+    private val repository: AuthRepository,
     private val dataBaseSource: BaseDataSource,
     private val networkSource: FamilyNetworkSource,
     private val personSourceMapper: PersonSourceMapper,
@@ -93,7 +94,11 @@ class FamilyRepository(
     }
 
     suspend fun getCurrentFamilyMember(): PersonEntity {
-        val personId = idSource[ID.USER]
+        val personId = idSource[ID.USER].ifEmpty {
+            repository.isAuthenticated()
+            idSource[ID.USER]
+        }
+
         return getFamilyMembers()
             .first { it.id == personId }
     }
@@ -102,15 +107,15 @@ class FamilyRepository(
         dataBaseSource.clean()
     }
 
-    suspend fun migrateFamilyMember(member: PersonEntity, oldFamilyId: String) {
+    suspend fun migrateFamilyMember(member: PersonEntity, newFamilyId: String) {
         networkSource.updateFamilyMember(
-            personSourceMapper.forServer(member.copy(familyId = oldFamilyId, isHidden = true)),
+            personSourceMapper.forServer(member.copy(isHidden = true)),
         )
         val newFamilyMembers =
-            networkSource.getFamilyMembers(idSource[ID.FAMILY])?.filterNotNull() ?: emptyList()
+            networkSource.getFamilyMembers(newFamilyId)?.filterNotNull() ?: emptyList()
 
         networkSource.createFamilyMember(
-            personSourceMapper.forServer(member.copy(familyId = idSource[ID.FAMILY])),
+            personSourceMapper.forServer(member.copy(familyId = newFamilyId)),
             newFamilyMembers,
         )
     }

@@ -14,7 +14,6 @@ import com.faigenbloom.familybudget.common.ID_KEY
 import com.faigenbloom.familybudget.common.MenuItemState
 import org.koin.androidx.compose.koinViewModel
 
-
 fun NavGraphBuilder.spendingShowPage(
     bottomNavigationOptions: (Boolean) -> Unit,
     options: (menuState: FloatingMenuState) -> Unit,

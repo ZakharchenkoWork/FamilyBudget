@@ -18,7 +18,7 @@ import java.util.Locale
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle,
-    private val getAllSpendingDetailsUseCase: GetAllSpendingDetailsUseCase<DetailUiData>,
+    private val getAllSpendingDetailsUseCase: GetAllSpendingDetailsUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
     private var spendingDetails: ArrayList<DetailUiData> =

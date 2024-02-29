@@ -8,12 +8,12 @@ import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
 import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
+import com.faigenbloom.familybudget.domain.mappers.SpendingsMapper
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
-import com.faigenbloom.familybudget.ui.spendings.mappers.SpendingsMapper
 import com.google.firebase.firestore.FirebaseFirestore
 import io.kotest.matchers.shouldBe
 import io.mockk.every

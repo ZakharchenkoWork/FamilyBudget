@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 const val NO_INDEX = -1
 
 class CategoriesViewModel(
-    private val getCategoriesUseCase: GetCategoriesUseCase<CategoryUiData>,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     private val setCategoryUseCase: SetCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {

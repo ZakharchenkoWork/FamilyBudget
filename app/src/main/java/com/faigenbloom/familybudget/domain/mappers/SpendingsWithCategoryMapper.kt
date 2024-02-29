@@ -1,4 +1,4 @@
-package com.faigenbloom.familybudget.ui.spendings.mappers
+package com.faigenbloom.familybudget.domain.mappers
 
 import com.faigenbloom.familybudget.common.toLocalDate
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity

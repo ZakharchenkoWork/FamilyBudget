@@ -11,11 +11,11 @@ import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
 import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
+import com.faigenbloom.familybudget.domain.mappers.DetailsMapper
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
-import com.faigenbloom.familybudget.ui.spendings.mappers.DetailsMapper
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockkStatic

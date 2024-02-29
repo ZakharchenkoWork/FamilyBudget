@@ -1,19 +1,18 @@
 package com.faigenbloom.familybudget.domain.details
 
-import com.faigenbloom.familybudget.common.Identifiable
-import com.faigenbloom.familybudget.common.Mapper
-import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
+import com.faigenbloom.familybudget.domain.mappers.DetailsMapper
 import com.faigenbloom.familybudget.repositories.DetailsRepository
+import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class SaveDetailsUseCase<T : Identifiable>(
+class SaveDetailsUseCase(
     private val detailsRepository: DetailsRepository,
-    private val detailsMapper: Mapper<T, SpendingDetailEntity>,
+    private val detailsMapper: DetailsMapper,
 ) {
     suspend operator fun invoke(
         spendingId: String,
-        details: List<T>,
+        details: List<DetailUiData>,
         isDuplicate: Boolean = false,
     ) {
         withContext(Dispatchers.IO) {

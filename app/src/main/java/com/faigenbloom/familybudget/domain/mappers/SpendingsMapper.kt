@@ -1,4 +1,4 @@
-package com.faigenbloom.familybudget.ui.spendings.mappers
+package com.faigenbloom.familybudget.domain.mappers
 
 import androidx.core.net.toUri
 import com.faigenbloom.familybudget.common.toLongDate

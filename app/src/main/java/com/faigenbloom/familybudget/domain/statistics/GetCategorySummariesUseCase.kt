@@ -4,13 +4,12 @@ import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toSortableDate
 import com.faigenbloom.familybudget.domain.categories.GetCategoriesUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetAllSpendingsUseCase
-import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.statistics.CategorySummaryUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetCategorySummariesUseCase(
-    private val getCategoriesUseCase: GetCategoriesUseCase<CategoryUiData>,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getAllSpendingsUseCase: GetAllSpendingsUseCase,
 ) {
     suspend operator fun invoke(filter: FilterType): ArrayList<CategorySummaryUi> {

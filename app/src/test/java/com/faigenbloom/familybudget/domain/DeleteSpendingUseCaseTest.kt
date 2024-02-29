@@ -9,6 +9,7 @@ import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
 import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
+import com.faigenbloom.familybudget.domain.mappers.DetailsMapper
 import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
@@ -16,7 +17,6 @@ import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMa
 import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
-import com.faigenbloom.familybudget.ui.spendings.mappers.DetailsMapper
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockkStatic

@@ -1,4 +1,4 @@
-package com.faigenbloom.familybudget.domain.budget
+package com.faigenbloom.familybudget.domain.mappers
 
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableMoney
