@@ -35,10 +35,10 @@ import java.util.Locale
 class SpendingEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val normalizeDateUseCase: NormalizeDateUseCase,
-    private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData>,
+    private val saveSpendingUseCase: SaveSpendingUseCase,
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
-    private val getSpendingUseCase: GetSpendingUseCase<SpendingUiData>,
+    private val getSpendingUseCase: GetSpendingUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val deleteSpendingUseCase: DeleteSpendingUseCase,
     private val calculateTotalUseCase: CalculateTotalUseCase,
@@ -49,7 +49,6 @@ class SpendingEditViewModel(
     private var selectedCategory: CategoryUiData? = null
     private var ownerId: String = ""
     private var isManualTotal: Boolean = false
-    private var canDuplicate: Boolean = false
 
     var onNext: (String) -> Unit = {}
     var onCategoryIdLoaded: (categoryId: String) -> Unit = {}
@@ -72,6 +71,7 @@ class SpendingEditViewModel(
 
     private fun onSave() {
         if (checkAndShowErrors()) {
+            state.isLoading.value = true
             _stateFlow.update { it.copy(isOkActive = false) }
             viewModelScope.launch {
                 selectedCategory?.id?.let { categoryId ->
@@ -97,6 +97,7 @@ class SpendingEditViewModel(
 
                     onNext(spendingId)
                 }
+                state.isLoading.value = false
             }
         }
     }
@@ -140,18 +141,18 @@ class SpendingEditViewModel(
     }
 
     private fun onDuplicate() {
-        if (canDuplicate) {
-            if (checkAndShowErrors()) {
-                viewModelScope.launch {
-                    selectedCategory?.id?.let { categoryId ->
-                        spendingId = saveSpendingUseCase(
-                            SpendingUiData(
-                                id = "",
-                                name = state.namingText,
-                                amount = state.amountText,
-                                date = normalizeDateUseCase(state.dateText),
-                                categoryId = categoryId,
-                                photoUri = state.photoUri,
+        if (state.canDuplicate) {
+            state.isLoading.value = true
+            viewModelScope.launch {
+                selectedCategory?.id?.let { categoryId ->
+                    spendingId = saveSpendingUseCase(
+                        SpendingUiData(
+                            id = "",
+                            name = state.namingText,
+                            amount = state.amountText,
+                            date = normalizeDateUseCase(state.dateText),
+                            categoryId = categoryId,
+                            photoUri = state.photoUri,
                                 isHidden = state.isHidden,
                                 isPlanned = state.isPlanned,
                                 isManualTotal = isManualTotal,
@@ -167,7 +168,7 @@ class SpendingEditViewModel(
                         reload()
                     }
                 }
-            }
+
         }
     }
 
@@ -247,7 +248,8 @@ class SpendingEditViewModel(
         }
     }
 
-
+    private val state: SpendingEditState
+        get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
         SpendingEditState(
             onResetErrors = ::onResetErrors,
@@ -264,15 +266,16 @@ class SpendingEditViewModel(
         ),
     )
     val stateFlow = _stateFlow.asStateFlow()
-        .apply {
-            reload()
-        }
-    private val state: SpendingEditState
-        get() = _stateFlow.value
+
+    init {
+        reload()
+    }
+
 
     private fun reload() {
         viewModelScope.launch {
             if (spendingId.isNotBlank()) {
+                state.isLoading.value = true
                 val spendingUiData = getSpendingUseCase(spendingId)
                 isManualTotal = spendingUiData.isManualTotal
                 ownerId = spendingUiData.ownerId
@@ -302,6 +305,7 @@ class SpendingEditViewModel(
                     )
                 }
             }
+            state.isLoading.value = false
         }
     }
 }

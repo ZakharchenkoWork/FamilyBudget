@@ -37,17 +37,13 @@ fun NavGraphBuilder.spendingsListPage(
             backStack.getPoppedArgument(CALENDAR_END_DATE_ARG, "") ?: "",
         )
         val state by viewModel
-            .spendingsStateFlow
+            .stateFlow
             .collectAsState()
         options(true, 0)
         menuCallback(
             getMainMenu(
                 state = state,
                 menuCallback = menuCallback,
-                rangeClicked = viewModel::calendarRequest,
-                dailyClicked = viewModel::onDailyFiltered,
-                monthlyClicked = viewModel::onMonthlyFiltered,
-                yearlyClicked = viewModel::onYearlyFiltered,
             ),
         )
 
@@ -64,21 +60,17 @@ fun NavGraphBuilder.spendingsListPage(
 fun getMainMenu(
     state: SpendingsState,
     menuCallback: (menuState: FloatingMenuState) -> Unit,
-    rangeClicked: () -> Unit,
-    yearlyClicked: () -> Unit,
-    monthlyClicked: () -> Unit,
-    dailyClicked: () -> Unit,
 ): FloatingMenuState {
     return FloatingMenuState(
         R.drawable.icon_options,
         listOf(
             MenuItemState(
-                label = if (state.isPlannedListShown) {
+                label = if (state.filterType.isPlanned) {
                     R.string.spendings_previous_title
                 } else {
                     R.string.spendings_planned_title
                 },
-                icon = if (state.isPlannedListShown) {
+                icon = if (state.filterType.isPlanned) {
                     R.drawable.icon_list_outlined
                 } else {
                     R.drawable.icon_list_planned_outlined
@@ -91,19 +83,12 @@ fun getMainMenu(
                 onClick = {
                     menuCallback(
                         getFilterMenu(
-                            rangeClicked = rangeClicked,
-                            monthlyClicked = monthlyClicked,
-                            yearlyClicked = yearlyClicked,
-                            dailyClicked = dailyClicked,
+                            state = state,
                             onClose = {
                                 menuCallback(
                                     getMainMenu(
                                         state,
                                         menuCallback,
-                                        rangeClicked,
-                                        yearlyClicked,
-                                        monthlyClicked,
-                                        dailyClicked,
                                     ),
                                 )
                             },
@@ -116,10 +101,7 @@ fun getMainMenu(
 }
 
 fun getFilterMenu(
-    rangeClicked: () -> Unit,
-    yearlyClicked: () -> Unit,
-    monthlyClicked: () -> Unit,
-    dailyClicked: () -> Unit,
+    state: SpendingsState,
     onClose: () -> Unit,
 ): FloatingMenuState {
     return FloatingMenuState(
@@ -128,19 +110,19 @@ fun getFilterMenu(
         items = listOf(
             MenuItemState(
                 label = R.string.spendings_filter_range,
-                onClick = rangeClicked,
+                onClick = state.onRangeFiltered,
             ),
             MenuItemState(
                 label = R.string.spendings_filter_yearly,
-                onClick = yearlyClicked,
+                onClick = state.onYearlyFiltered,
             ),
             MenuItemState(
                 label = R.string.spendings_filter_monthly,
-                onClick = monthlyClicked,
+                onClick = state.onMonthlyFiltered,
             ),
             MenuItemState(
                 label = R.string.spendings_filter_daily,
-                onClick = dailyClicked,
+                onClick = state.onDailyFiltered,
             ),
         ),
     )

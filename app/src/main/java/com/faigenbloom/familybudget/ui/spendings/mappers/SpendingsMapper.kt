@@ -1,7 +1,6 @@
 package com.faigenbloom.familybudget.ui.spendings.mappers
 
 import androidx.core.net.toUri
-import com.faigenbloom.familybudget.common.Mapper
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableDate
@@ -9,8 +8,8 @@ import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 
-class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
-    override fun forUI(entity: SpendingEntity): SpendingUiData {
+class SpendingsMapper {
+    fun forUI(entity: SpendingEntity): SpendingUiData {
         return SpendingUiData(
             id = entity.id,
             name = entity.name,
@@ -26,7 +25,7 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
         )
     }
 
-    override fun forDB(model: SpendingUiData): SpendingEntity {
+    fun forDB(model: SpendingUiData): SpendingEntity {
         val date = model.date.toLongDate()
         return SpendingEntity(
             id = model.id,
@@ -41,9 +40,5 @@ class SpendingsMapper : Mapper<SpendingUiData, SpendingEntity>() {
             isDuplicate = model.isDuplicate,
             ownerId = model.ownerId,
         )
-    }
-
-    override fun copyChangingId(model: SpendingUiData, id: String): SpendingUiData {
-        return model.copy(id = id)
     }
 }

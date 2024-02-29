@@ -72,7 +72,6 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
         to: Long = getYearEndDate(),
         isPlanned: Boolean = false,
     ) : FilterType(from, to, isPlanned) {
-
         constructor(isPlanned: Boolean) : this(
             from = getYearStartDate(past = 5),
             to = getYearEndDate(future = 5),
@@ -99,4 +98,15 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
     }
 
     abstract fun move(isForward: Boolean): FilterType
+    fun copy(
+        from: Long = this.from,
+        to: Long = this.to,
+        isPlanned: Boolean = this.isPlanned,
+    ): FilterType {
+        return when (this) {
+            is Daily -> Daily(from, to, isPlanned)
+            is Monthly -> Monthly(from, to, isPlanned)
+            is Yearly -> Yearly(from, to, isPlanned)
+        }
+    }
 }

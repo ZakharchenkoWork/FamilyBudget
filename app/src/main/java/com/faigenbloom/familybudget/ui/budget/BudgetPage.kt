@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -45,6 +47,7 @@ import com.faigenbloom.familybudget.common.isMoneyBlank
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
 import com.faigenbloom.familybudget.common.ui.DateSwitcherBar
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.domain.statistics.FilterType
 import com.faigenbloom.familybudget.ui.spendings.detail.OK_BUTTON
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
@@ -89,6 +92,8 @@ fun BudgetPage(
     if (state.budgetChangeState.isShown) {
         BudgetLineChangeDialog(state.budgetChangeState)
     }
+    val isLoading by remember { state.isLoading }
+    Loading(isShown = isLoading)
 }
 
 

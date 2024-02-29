@@ -17,13 +17,7 @@ val spendingShowModule = module {
     singleOf(::SpendingsMapper)
     singleOf(::DetailsMapper)
     singleOf(::CategoriesMapper)
-    single {
-        SaveSpendingUseCase(
-            idGeneratorUseCase = get(),
-            spendingsRepository = get(),
-            spendingsMapper = get<SpendingsMapper>(),
-        )
-    }
+    singleOf(::SaveSpendingUseCase)
     single {
         SaveDetailsUseCase(
             detailsRepository = get(),
@@ -32,7 +26,7 @@ val spendingShowModule = module {
     }
 
 
-    single { GetSpendingUseCase(get(), get<SpendingsMapper>()) }
+    singleOf(::GetSpendingUseCase)
     single { GetSpendingDetailsByIdUseCase(get(), get<DetailsMapper>()) }
 
     single { GetCategoryByIdUseCase(get(), get<CategoriesMapper>()) }

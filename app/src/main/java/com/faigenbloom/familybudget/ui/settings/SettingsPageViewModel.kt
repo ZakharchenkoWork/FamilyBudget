@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.settings
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.domain.currency.GetAllCurrenciesUseCase
@@ -73,6 +75,7 @@ class SettingsPageViewModel(
     }
 
     private fun onSave() {
+        state.isLoading.value = true
         viewModelScope.launch {
             saveSettingsUseCase(
                 currency = state.chosenCurrency,
@@ -86,6 +89,7 @@ class SettingsPageViewModel(
                     canSave = false,
                 )
             }
+            state.isLoading.value = false
         }
     }
 
@@ -108,6 +112,7 @@ class SettingsPageViewModel(
 
     init {
         viewModelScope.launch {
+            state.isLoading.value = true
             val settings = getSettingsUseCase()
 
             _stateFlow.update { state ->
@@ -118,9 +123,9 @@ class SettingsPageViewModel(
                     isPasswordEnabled = settings.isPasswordEnabled,
                     name = settings.name,
                     surname = settings.familyName,
-
-                    )
+                )
             }
+            state.isLoading.value = false
         }
     }
 }
@@ -134,6 +139,7 @@ data class SettingsState(
     val isPasswordEnabled: Boolean = false,
     val isCurrenciesDialogVisible: Boolean = false,
     val chosenCurrency: Currency = Currency.getInstance(Locale.getDefault()),
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onNameChanged: (String) -> Unit,
     val onSurnameChanged: (String) -> Unit,
     val onShowCurrencyDialog: () -> Unit,

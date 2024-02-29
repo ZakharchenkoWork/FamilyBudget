@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -38,6 +40,7 @@ import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.ui.AnimateError
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.common.ui.MoneyTextTransformation
 import com.faigenbloom.familybudget.ui.categories.CategoriesPage
 import com.faigenbloom.familybudget.ui.categories.CategoriesState
@@ -104,6 +107,9 @@ fun SpendingEditPage(
             }
         }
     }
+    val isLoadingCategory by remember { categoryState.isLoading }
+    val isLoading by remember { state.isLoading }
+    Loading(isShown = isLoading || isLoadingCategory)
 }
 
 @Composable
@@ -328,7 +334,6 @@ fun SpacerStripe(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-
             Text(
                 modifier = Modifier
                     .weight(0.5f)
@@ -341,7 +346,6 @@ fun SpacerStripe(
                 modifier = Modifier
                     .weight(0.5f),
                 horizontalArrangement = Arrangement.End,
-
                 ) {
                 if (state.isHidden) {
                     Image(
@@ -422,7 +426,6 @@ fun SpendingEditPageCategoriesPreview() {
                     onDeleteCategory = {},
                     isCategoryError = false,
                     onCategoryError = {},
-
                     ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },

@@ -17,6 +17,7 @@ class LoginPageViewModel(
 
     private fun onLoginClicked() {
         viewModelScope.launch {
+            state.isLoading.value = true
             if (loginUserUseCase(state.loginState.value, state.passwordState.value)) {
                 onLoggedIn()
             } else {
@@ -26,6 +27,7 @@ class LoginPageViewModel(
                     )
                 }
             }
+            state.isLoading.value = false
         }
     }
 
@@ -57,6 +59,7 @@ data class LoginPageState(
     val loginState: MutableState<String> = mutableStateOf("baskinaerobins@gmail.com"),
     val passwordState: MutableState<String> = mutableStateOf("philips2010"),
     val authError: Boolean = false,
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onDropError: () -> Unit,
     val onLoginClicked: () -> Unit,
     val onForgotPasswordClicked: () -> Unit,

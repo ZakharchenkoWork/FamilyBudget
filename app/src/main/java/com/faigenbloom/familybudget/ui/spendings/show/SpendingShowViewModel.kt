@@ -1,6 +1,8 @@
 package com.faigenbloom.familybudget.ui.spendings.show
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,9 +30,9 @@ import java.util.Locale
 
 class SpendingShowViewModel(
     savedStateHandle: SavedStateHandle,
-    private val getSpendingUseCase: GetSpendingUseCase<SpendingUiData>,
+    private val getSpendingUseCase: GetSpendingUseCase,
     private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData>,
-    private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData>,
+    private val saveSpendingUseCase: SaveSpendingUseCase,
     private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData>,
     private val setPurchasedSpendingUseCase: SetPurchasedSpendingUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase<CategoryUiData>,
@@ -43,10 +45,12 @@ class SpendingShowViewModel(
 
     var onEditSpending: (String) -> Unit = {}
     private fun onEditClicked() {
+        state.isLoading.value = true
         onEditSpending(spendingId)
     }
 
     private fun markPurchased() {
+        state.isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             setPurchasedSpendingUseCase(spendingId)
             _stateFlow.update {
@@ -54,11 +58,13 @@ class SpendingShowViewModel(
                     isPlanned = false,
                 )
             }
+            state.isLoading.value = false
         }
     }
 
     private fun createDuplicate() {
         viewModelScope.launch {
+            state.isLoading.value = true
             val duplicateSpendingId = saveSpendingUseCase(
                 spending = SpendingUiData(
                     id = "",
@@ -81,12 +87,12 @@ class SpendingShowViewModel(
             )
 
             onEditSpending(duplicateSpendingId)
+            state.isLoading.value = false
         }
     }
 
     private val state: SpendingShowState
         get() = _stateFlow.value
-
     private val _stateFlow = MutableStateFlow(
         SpendingShowState(
             onMarkPurchasedClicked = ::markPurchased,
@@ -94,9 +100,12 @@ class SpendingShowViewModel(
             onEditClicked = ::onEditClicked,
         ),
     )
-    val stateFlow = _stateFlow.asStateFlow().apply {
+    val stateFlow = _stateFlow.asStateFlow()
+
+    init {
         viewModelScope.launch {
             if (spendingId.isNotBlank()) {
+                state.isLoading.value = true
                 val spending = getSpendingUseCase(spendingId)
 
                 isManualTotal = spending.isManualTotal
@@ -117,9 +126,9 @@ class SpendingShowViewModel(
                     )
                 }
             }
+            state.isLoading.value = false
         }
     }
-
 }
 
 data class SpendingShowState(
@@ -134,6 +143,7 @@ data class SpendingShowState(
     val isCurrentUserOwner: Boolean = false,
     val isHidden: Boolean = false,
     val isPlanned: Boolean = false,
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onEditClicked: () -> Unit,
     val onDuplicateClicked: () -> Unit,
     val onMarkPurchasedClicked: () -> Unit,

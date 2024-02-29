@@ -14,19 +14,13 @@ val spendingEditModule = module {
     viewModelOf(::SpendingEditViewModel)
     singleOf(::SpendingsMapper)
     singleOf(::DetailsMapper)
-    single {
-        SaveSpendingUseCase(
-            idGeneratorUseCase = get(),
-            spendingsRepository = get(),
-            spendingsMapper = get<SpendingsMapper>(),
-        )
-    }
+    singleOf(::SaveSpendingUseCase)
     single {
         SaveDetailsUseCase(
             detailsRepository = get(),
             detailsMapper = get<DetailsMapper>(),
         )
     }
-    single { GetSpendingUseCase(get(), get<SpendingsMapper>()) }
+    singleOf(::GetSpendingUseCase)
     single { GetSpendingDetailsByIdUseCase(get(), get<DetailsMapper>()) }
 }

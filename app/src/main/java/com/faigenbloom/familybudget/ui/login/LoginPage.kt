@@ -28,6 +28,7 @@ import com.faigenbloom.familybudget.common.BaseTextField
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -80,6 +81,8 @@ fun LoginPage(
             onClick = state.onLoginClicked,
         )
     }
+    val isLoading by remember { state.isLoading }
+    Loading(isShown = isLoading)
 }
 
 @Composable

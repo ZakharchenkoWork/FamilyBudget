@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.spendings.list
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -20,107 +22,116 @@ import kotlinx.coroutines.flow.update
 class SpendingsListViewModel(
     private val spendingsPagingSource: SpendingsPagingSource,
 ) : ViewModel() {
-    private var isPlanned: Boolean = false
-    private var isLoading: Boolean = true
-    private var filterType: FilterType = FilterType.Daily(isPlanned)
-    private var fromDate: Long = filterType.from
-    private var toDate: Long = filterType.to
-
-    private var spendingsPager: Flow<PagingData<DatedList>> = flowOf(PagingData.empty())
-
     var onCalendarRequested: (fromDate: String, toDate: String) -> Unit = { _, _ ->
-
     }
 
-    val onDateRangeChanged: (fromDate: String, toDate: String) -> Unit = { fromDate, toDate ->
+    fun onDateRangeChanged(fromDate: String, toDate: String) {
         if (fromDate.isNotBlank()) {
-            this.fromDate = fromDate.toLongDate()
-            this.toDate = toDate.ifBlank { fromDate }.toLongDate()
-            reloadData()
+            val filterType = state.filterType.copy(
+                from = fromDate.toLongDate(),
+                to = toDate.ifBlank { fromDate }.toLongDate(),
+            )
+            reloadData(filterType)
         }
+    }
+
+    private fun onRangeFiltered() {
+        onCalendarRequested(
+            state.filterType.from.toReadableDate(),
+            state.filterType.to.toReadableDate(),
+        )
+    }
+
+    private fun onDailyFiltered() {
+        val filterType = if (state.filterType is FilterType.Daily) {
+            FilterType.Daily(
+                isPlanned = state.filterType.isPlanned,
+            )
+        } else {
+            FilterType.Daily(
+                from = state.filterType.from,
+                to = state.filterType.to,
+                isPlanned = state.filterType.isPlanned,
+            )
+        }
+        reloadData(filterType)
+    }
+
+    private fun onMonthlyFiltered() {
+        val filterType = if (state.filterType is FilterType.Monthly) {
+            FilterType.Monthly(isPlanned = state.filterType.isPlanned)
+        } else {
+            FilterType.Monthly(
+                from = state.filterType.from,
+                to = state.filterType.to,
+                isPlanned = state.filterType.isPlanned,
+            )
+        }
+        reloadData(filterType)
+    }
+
+    private fun onYearlyFiltered() {
+        val filterType = if (state.filterType is FilterType.Yearly) {
+            FilterType.Yearly(isPlanned = state.filterType.isPlanned)
+        } else {
+            FilterType.Yearly(
+                from = state.filterType.from,
+                to = state.filterType.to,
+                isPlanned = state.filterType.isPlanned,
+            )
+        }
+        reloadData(filterType)
     }
 
     private fun onPlannedSwitched() {
-        isPlanned = isPlanned.not()
-
-        filterType = when (filterType) {
-            is FilterType.Daily -> FilterType.Daily(isPlanned)
-            is FilterType.Monthly -> FilterType.Monthly(isPlanned)
-            is FilterType.Yearly -> FilterType.Yearly(isPlanned)
-        }
-
-        reloadData()
-    }
-
-    fun calendarRequest() {
-        onCalendarRequested(fromDate.toReadableDate(), toDate.toReadableDate())
-    }
-
-    fun onDailyFiltered() {
-        filterType = if (filterType is FilterType.Daily) {
-            FilterType.Daily(isPlanned)
-        } else {
-            FilterType.Daily(fromDate, toDate, isPlanned)
-        }
-        reloadData()
-    }
-
-    fun onMonthlyFiltered() {
-        filterType = if (filterType is FilterType.Monthly) {
-            FilterType.Monthly(isPlanned)
-        } else {
-            FilterType.Monthly(fromDate, toDate, isPlanned)
-        }
-        reloadData()
-    }
-
-    fun onYearlyFiltered() {
-        filterType = if (filterType is FilterType.Yearly) {
-            FilterType.Yearly(isPlanned)
-        } else {
-            FilterType.Yearly(fromDate, toDate, isPlanned)
-        }
-        reloadData()
-    }
-
-    private val spendingsState: SpendingsState
-        get() = SpendingsState(
-            spendingsPager = spendingsPager,
-            isPlannedListShown = isPlanned,
-            isLoading = isLoading,
-            filterType = filterType,
-            onPlannedSwitched = ::onPlannedSwitched,
+        val filterType = state.filterType.copy(
+            isPlanned = state.filterType.isPlanned.not(),
         )
-    private val _spendingsStateFlow = MutableStateFlow(spendingsState)
+        reloadData(filterType)
+    }
 
-    val spendingsStateFlow = _spendingsStateFlow.asStateFlow().apply {
+    private val state: SpendingsState
+        get() = _stateFlow.value
+    private val _stateFlow = MutableStateFlow(
+        SpendingsState(
+            onPlannedSwitched = ::onPlannedSwitched,
+            onRangeFiltered = ::onRangeFiltered,
+            onDailyFiltered = ::onDailyFiltered,
+            onMonthlyFiltered = ::onMonthlyFiltered,
+            onYearlyFiltered = ::onYearlyFiltered,
+        ),
+    )
+    val stateFlow = _stateFlow.asStateFlow()
+
+    init {
         reloadData()
     }
 
-    fun reloadData() {
-        isLoading = true
-        updateUI()
-        spendingsPager = Pager(
-            pagingSourceFactory = { spendingsPagingSource },
-            initialKey = filterType,
-            config = pagingConfig,
-        ).flow.cachedIn(viewModelScope)
-
-        isLoading = false
-        updateUI()
-    }
-
-    private fun updateUI() {
-        _spendingsStateFlow.update { spendingsState }
+    private fun reloadData(filterType: FilterType = state.filterType) {
+        state.isLoading.value = true
+        _stateFlow.update { state ->
+            state.copy(
+                spendingsPager = Pager(
+                    pagingSourceFactory = { spendingsPagingSource },
+                    initialKey = filterType,
+                    config = pagingConfig,
+                ).flow.cachedIn(viewModelScope),
+                filterType = filterType,
+            )
+        }
+        state.isLoading.value = false
     }
 }
 
 data class SpendingsState(
-    val spendingsPager: Flow<PagingData<DatedList>>,
-    val isPlannedListShown: Boolean,
-    val filterType: FilterType,
-    val isLoading: Boolean,
-    val onPlannedSwitched: (() -> Unit),
+    val spendingsPager: Flow<PagingData<DatedList>> = flowOf(PagingData.empty()),
+    val filterType: FilterType = FilterType.Daily(false),
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
+    val onPlannedSwitched: (() -> Unit) = {},
+    val onRangeFiltered: (() -> Unit) = {},
+    val onDailyFiltered: (() -> Unit) = {},
+    val onMonthlyFiltered: (() -> Unit) = {},
+    val onYearlyFiltered: (() -> Unit) = {},
 )
 
 val pagingConfig = PagingConfig(

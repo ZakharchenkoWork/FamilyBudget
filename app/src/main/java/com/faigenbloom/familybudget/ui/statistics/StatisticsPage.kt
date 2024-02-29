@@ -19,11 +19,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.common.ui.AnimateTabs
 import com.faigenbloom.familybudget.common.ui.DateSwitcherBar
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.common.ui.MoneyTextTransformation
 import com.faigenbloom.familybudget.common.ui.PieChart
 import com.faigenbloom.familybudget.common.ui.PieChartData
@@ -71,6 +74,8 @@ fun StatisticsPage(state: StatisicsState) {
             }
         }
     }
+    val isLoading by remember { state.isLoading }
+    Loading(isShown = isLoading)
 }
 
 @Composable
@@ -168,12 +173,12 @@ private fun BarChartContent(state: StatisicsState) {
                                             )
                                             .padding(vertical = 16.dp),
                                     ) {
-                                        Divider(
+                                        HorizontalDivider(
                                             modifier = Modifier
                                                 .width(barLeftPadding)
                                                 .height(barWidth),
-                                            color = MaterialTheme.colorScheme.primaryContainer,
                                             thickness = barLeftPadding,
+                                            color = MaterialTheme.colorScheme.primaryContainer
                                         )
                                     }
                                 }

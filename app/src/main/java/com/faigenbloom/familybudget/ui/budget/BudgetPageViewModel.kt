@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.budget
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.toLongMoney
@@ -214,6 +216,7 @@ class BudgetPageViewModel(
 
 
     private fun saveBudget() {
+        state.isLoading.value = true
         viewModelScope.launch {
             saveBudgetUseCase(
                 budget = state.budgetLines,
@@ -226,6 +229,7 @@ class BudgetPageViewModel(
     }
 
     private fun reload() {
+        state.isLoading.value = true
         viewModelScope.launch {
             val budgetLines = getBudgetLinesUseCase(
                 isForMonth = state.filterType is FilterType.Monthly,
@@ -241,6 +245,7 @@ class BudgetPageViewModel(
                     isSaveVisible = false,
                 )
             }
+            state.isLoading.value = false
         }
     }
 
@@ -283,6 +288,7 @@ data class BudgetState(
     val isBalanceError: Boolean = false,
     val isSaveVisible: Boolean = false,
     val filterType: FilterType = FilterType.Monthly(),
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onPageChanged: (Boolean) -> Unit,
     val onDateMoved: (isRight: Boolean) -> Unit,
     val monthlyClicked: () -> Unit,

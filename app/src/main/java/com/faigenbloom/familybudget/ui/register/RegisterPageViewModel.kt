@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.register
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,9 +22,11 @@ class RegisterPageViewModel(
     private var familyId: String = ""
     var onRegistered: () -> Unit = {}
     fun forFamily(id: String?) {
+
         id?.let {
             if (id.isNotBlank()) {
                 familyId = id
+                state.isLoading.value = true
                 viewModelScope.launch {
                     val familyName = getFamilyNameUseCase(id)
                     if (familyName.isNotBlank()) {
@@ -42,6 +46,7 @@ class RegisterPageViewModel(
                             )
                         }
                     }
+                    state.isLoading.value = false
                 }
             }
         }
@@ -74,6 +79,7 @@ class RegisterPageViewModel(
 
     private fun onRegisterClicked() {
         if (isRegistrationEnabled()) {
+            state.isLoading.value = true
             viewModelScope.launch {
                 if (registerUserUseCase(
                         familyId = familyId,
@@ -88,6 +94,7 @@ class RegisterPageViewModel(
                 } else {
                     _stateFlow.update { state.copy(registerError = true) }
                 }
+                state.isLoading.value = false
             }
         }
     }
@@ -218,6 +225,7 @@ data class RegisterPageState(
     val emailError: Boolean = false,
     val isSameFamilyName: Boolean = true,
     val isRegistrationEnabled: Boolean = false,
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onRegisterClicked: () -> Unit,
     var onFamilyNameChanged: (String) -> Unit,
     var onSurNameChanged: (String) -> Unit,

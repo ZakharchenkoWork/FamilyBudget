@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -26,6 +28,7 @@ import com.faigenbloom.familybudget.common.BaseTextField
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.common.ui.dialogs.FailureDialog
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 
@@ -60,6 +63,8 @@ fun RegisterPage(
         text = stringResource(R.string.settings_family_migration_family_not_found),
         onHideDialog = state.migrationErrorDialogState.onHideDialog,
     )
+    val isLoading by remember { state.isLoading }
+    Loading(isShown = isLoading)
 }
 
 @Composable

@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.BaseButton
+import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.circle
 
@@ -30,12 +33,13 @@ fun OnboardingPage(
     onRegister: () -> Unit,
     onQrScan: () -> Unit,
 ) {
+    val isLoading by remember { state.isLoading }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.secondary),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = if (state.isLoading.not()) {
+        verticalArrangement = if (isLoading.not()) {
             Arrangement.Center
         } else {
             Arrangement.Top
@@ -61,7 +65,7 @@ fun OnboardingPage(
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
         )
-        if (state.isLoading.not()) {
+        if (isLoading.not()) {
             BaseButton(
                 modifier = Modifier.padding(top = 24.dp),
                 textRes = R.string.login,
@@ -79,6 +83,7 @@ fun OnboardingPage(
             )
         }
     }
+    Loading(isShown = isLoading)
 }
 
 @Suppress("UnusedMaterial3ScaffoldPaddingParameter")

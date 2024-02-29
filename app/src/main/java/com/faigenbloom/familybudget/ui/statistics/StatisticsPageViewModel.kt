@@ -1,5 +1,7 @@
 package com.faigenbloom.familybudget.ui.statistics
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faigenbloom.familybudget.common.getCurrentDate
@@ -20,133 +22,112 @@ class StatisticsPageViewModel(
     private val getCategorySummariesUseCase: GetCategorySummariesUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
 ) : ViewModel() {
-    private var summaries: List<CategorySummaryUi> = emptyList()
-    private var sum: String = ""
-    private var max: Long = 0L
-    private var sideLabelValues: Array<String> = emptyArray()
-    private var currency = Currency.getInstance(Locale.getDefault())
-    private var filterType: FilterType = FilterType.Monthly()
-    private var fromDate: Long = filterType.from
-    private var toDate: Long = filterType.to
-    private var isNoDataToShow: Boolean = false
-
-
-    private var isPieChartOpened: Boolean = true
-    private var onPageChanged: (Boolean) -> Unit = {
-        isPieChartOpened = it
-        updateUi()
-    }
-
     var onCalendarRequested: (fromDate: String, toDate: String) -> Unit = { _, _ -> }
 
-    val onDateRangeChanged: (fromDate: String, toDate: String) -> Unit = { fromDate, toDate ->
+    fun onDateRangeChanged(fromDate: String, toDate: String) {
         if (fromDate.isNotBlank()) {
-            this.fromDate = fromDate.toLongDate()
-            this.toDate = toDate.ifBlank { fromDate }.toLongDate()
-            filterType = FilterType.Range(this.fromDate, this.toDate)
-            reloadData()
+            val filterType =
+                FilterType.Range(fromDate.toLongDate(), toDate.ifBlank { fromDate }.toLongDate())
+            reloadData(filterType)
+        }
+    }
+
+    private fun onPageChanged(isLeft: Boolean) {
+        _stateFlow.update { state ->
+            state.copy(
+                isPieChartOpened = isLeft,
+            )
         }
     }
 
     private fun onRangeClicked() {
-        if (filterType is FilterType.Yearly) {
+        if (state.filterType is FilterType.Yearly) {
             onCalendarRequested(
                 getCurrentDate().toReadableDate(),
                 getCurrentDate().toReadableDate(),
             )
         } else {
             onCalendarRequested(
-                fromDate.toReadableDate(),
-                toDate.toReadableDate(),
+                state.filterType.from.toReadableDate(),
+                state.filterType.to.toReadableDate(),
             )
         }
     }
 
     private fun onYearlyClicked() {
-        filterType = FilterType.Yearly()
-        fromDate = filterType.from
-        toDate = filterType.to
-        reloadData()
+        reloadData(FilterType.Yearly())
     }
 
     private fun onMonthlyClicked() {
-        filterType = FilterType.Monthly()
-        fromDate = filterType.from
-        toDate = filterType.to
-        reloadData()
+        reloadData(FilterType.Monthly())
     }
 
     private fun onDailyClicked() {
-        filterType = FilterType.Daily()
-        fromDate = filterType.from
-        toDate = filterType.to
-        reloadData()
+        reloadData(FilterType.Daily())
     }
 
     private fun onDateMoved(isRight: Boolean) {
-        filterType = filterType.move(isRight)
-        fromDate = filterType.from
-        toDate = filterType.to
-        reloadData()
+        reloadData(state.filterType.move(isRight))
     }
 
     private val state: StatisicsState
-        get() = StatisicsState(
-            categorySummary = summaries,
-            sum = sum,
-            max = max,
-            currency = currency,
-            sideLabelValues = sideLabelValues,
-            isPieChartOpened = isPieChartOpened,
+        get() = _stateFlow.value
+    private val _stateFlow = MutableStateFlow(
+        StatisicsState(
             rangeClicked = ::onRangeClicked,
-            filterType = filterType,
-            isNoDataToShow = isNoDataToShow,
             onDateMoved = ::onDateMoved,
             yearlyClicked = ::onYearlyClicked,
             monthlyClicked = ::onMonthlyClicked,
             dailyClicked = ::onDailyClicked,
-            onPageChanged = onPageChanged,
-        )
+            onPageChanged = ::onPageChanged,
+        ),
+    )
+    val stateFlow = _stateFlow.asStateFlow()
 
-    private val _stateFlow = MutableStateFlow(state)
-    val stateFlow = _stateFlow.asStateFlow().apply {
+    init {
         reloadData()
     }
 
-    private fun reloadData() {
+    private fun reloadData(filterType: FilterType = state.filterType) {
+        state.isLoading.value = true
         viewModelScope.launch {
-            summaries = getCategorySummariesUseCase(filterType)
+            val summaries = getCategorySummariesUseCase(filterType)
             if (summaries.isEmpty()) {
-                isNoDataToShow = true
-                updateUi()
-                return@launch
+                _stateFlow.update { state ->
+                    state.copy(
+                        isNoDataToShow = true,
+                    )
+                }
+            } else {
+                val max = summaries.maxOf { it.amount }
+                _stateFlow.update { state ->
+                    state.copy(
+                        categorySummary = summaries,
+                        isNoDataToShow = false,
+                        sum = summaries.sumOf { it.amount }.toReadableMoney(),
+                        max = summaries.maxOf { it.amount },
+                        sideLabelValues = Array(10) {
+                            "${(max / 10) * it}"
+                        },
+                        currency = getChosenCurrencyUseCase(),
+                    )
+                }
             }
-            sum = summaries.sumOf { it.amount }.toReadableMoney()
-            max = summaries.maxOf { it.amount }
-            sideLabelValues = Array(10) {
-                "${(max / 10) * it}"
-            }
-
-            currency = getChosenCurrencyUseCase()
-            isNoDataToShow = false
-            updateUi()
+            state.isLoading.value = false
         }
-    }
-
-    private fun updateUi() {
-        _stateFlow.update { state }
     }
 }
 
 data class StatisicsState(
-    val categorySummary: List<CategorySummaryUi>,
-    val sum: String,
-    val max: Long,
-    val currency: Currency,
-    val sideLabelValues: Array<String>,
-    val filterType: FilterType,
-    val isPieChartOpened: Boolean,
-    val isNoDataToShow: Boolean,
+    val categorySummary: List<CategorySummaryUi> = emptyList(),
+    val sum: String = "",
+    val max: Long = 0L,
+    val currency: Currency = Currency.getInstance(Locale.getDefault()),
+    val sideLabelValues: Array<String> = emptyArray(),
+    val filterType: FilterType = FilterType.Monthly(),
+    val isPieChartOpened: Boolean = true,
+    val isNoDataToShow: Boolean = false,
+    val isLoading: MutableState<Boolean> = mutableStateOf(false),
     val rangeClicked: () -> Unit,
     val yearlyClicked: () -> Unit,
     val monthlyClicked: () -> Unit,

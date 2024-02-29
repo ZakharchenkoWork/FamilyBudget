@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,7 +24,6 @@ import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.isEmpty
 import com.faigenbloom.familybudget.common.ui.Loading
 import com.faigenbloom.familybudget.domain.spendings.DatedList
-import com.faigenbloom.familybudget.domain.spendings.FilterType
 import com.faigenbloom.familybudget.domain.spendings.Pattern
 import com.faigenbloom.familybudget.domain.spendings.PlateSizeType
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
@@ -39,7 +39,7 @@ fun SpendingsListPage(
     Column(modifier = modifier) {
         TopBar(
             title = stringResource(
-                id = if (state.isPlannedListShown) {
+                id = if (state.filterType.isPlanned) {
                     R.string.spendings_planned_title
                 } else {
                     R.string.spendings_previous_title
@@ -48,7 +48,7 @@ fun SpendingsListPage(
         )
         val lazyPagingItems = state.spendingsPager.collectAsLazyPagingItems()
 
-        if (state.isLoading.not()) {
+        if (state.isLoading.value.not()) {
             if (lazyPagingItems.isEmpty()) {
                 if (lazyPagingItems.loadState.source.refresh is LoadState.NotLoading &&
                     lazyPagingItems.loadState.append.endOfPaginationReached
@@ -106,13 +106,7 @@ fun SpandingsEmptyPagePreview() {
         Surface {
             SpendingsListPage(
                 onOpenSpending = {},
-                state = SpendingsState(
-                    spendingsPager = flowOf(value = PagingData.empty()),
-                    isPlannedListShown = false,
-                    isLoading = false,
-                    onPlannedSwitched = {},
-                    filterType = FilterType.Daily(),
-                ),
+                state = SpendingsState(),
             )
         }
     }
@@ -187,10 +181,7 @@ fun SpandingsPagePreview() {
                             ),
                         ),
                     ),
-                    isPlannedListShown = false,
-                    isLoading = false,
-                    onPlannedSwitched = {},
-                    filterType = FilterType.Daily(),
+                    isLoading = mutableStateOf(false),
                 ),
             )
         }

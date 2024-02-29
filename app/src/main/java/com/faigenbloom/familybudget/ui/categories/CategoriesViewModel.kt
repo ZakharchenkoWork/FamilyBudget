@@ -1,6 +1,8 @@
 package com.faigenbloom.familybudget.ui.categories
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +22,6 @@ class CategoriesViewModel(
     private val setCategoryUseCase: SetCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {
-
     var onCategorySelected: (CategoryUiData) -> Unit = {}
     fun onCategoryIdLoaded(categoryId: String) {
         _stateFlow.update {
@@ -102,11 +103,11 @@ class CategoriesViewModel(
                 isSaveCategoryVisible = name.isNotBlank(),
             )
         }
-
     }
 
     private fun onDeleteCategory() {
         state.categoryId?.let { id ->
+            state.isLoading.value = true
             viewModelScope.launch {
                 deleteCategoryUseCase(id)
                 onCategoryDialogVisibilityChanged(NO_INDEX)
@@ -116,20 +117,27 @@ class CategoriesViewModel(
                         categoriesList = getCategoriesUseCase(false),
                     )
                 }
+                state.isLoading.value = false
             }
         }
     }
 
     private fun onNewCategorySaved() {
         if (state.newCategoryName.isNotBlank()) {
+            state.isLoading.value = true
+            _stateFlow.update { state ->
+                state.copy(
+                    isSaveCategoryVisible = false,
+                    isEditCategoryShown = false,
+                )
+            }
+
             viewModelScope.launch(Dispatchers.IO) {
                 val categoryId = setCategoryUseCase(
                     id = state.categoryId ?: "",
                     name = state.newCategoryName,
                     uri = state.newCategoryPhoto,
                 )
-
-                onCategoryDialogVisibilityChanged(NO_INDEX)
                 val categoriesList = getCategoriesUseCase(false)
                 _stateFlow.update {
                     state.copy(
@@ -137,13 +145,13 @@ class CategoriesViewModel(
                         selectedIndex = categoriesList.indexOfFirst { it.id == categoryId },
                     )
                 }
+                state.isLoading.value = false
             }
         }
     }
 
     private val state: CategoriesState
         get() = _stateFlow.value
-
     private val _stateFlow = MutableStateFlow(
         CategoriesState(
             onCategoryError = ::onCategoryError,
@@ -155,9 +163,11 @@ class CategoriesViewModel(
             onDeleteCategory = ::onDeleteCategory,
         ),
     )
-    val stateFlow = _stateFlow.asStateFlow().apply {
+    val stateFlow = _stateFlow.asStateFlow()
+
+    init {
         viewModelScope.launch(Dispatchers.IO) {
-            _stateFlow.update {
+            _stateFlow.update { state ->
                 state.copy(
                     categoriesList = getCategoriesUseCase(false),
                 )
@@ -179,6 +189,7 @@ data class CategoriesState(
     val isSaveCategoryVisible: Boolean = false,
     val isEditCategoryShown: Boolean = false,
     val categoryPhotoChooserId: String? = null,
+    val isLoading: MutableState<Boolean> = mutableStateOf(false),
     val onSelectionChanged: (Int) -> Unit,
     val onNewCategoryNameChanged: (String) -> Unit,
     val onNewCategorySaved: () -> Unit,
