@@ -1,6 +1,8 @@
 package com.faigenbloom.familybudget.ui.spendings.edit
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,6 +64,7 @@ class SpendingEditViewModel(
                 state.copy(
                     detailsList = update.details,
                     amountText = updateTotal(update.details),
+                    isOkActive = true,
                 )
             }
         }
@@ -69,6 +72,7 @@ class SpendingEditViewModel(
 
     private fun onSave() {
         if (checkAndShowErrors()) {
+            _stateFlow.update { it.copy(isOkActive = false) }
             viewModelScope.launch {
                 selectedCategory?.id?.let { categoryId ->
                     spendingId = saveSpendingUseCase(
@@ -105,13 +109,14 @@ class SpendingEditViewModel(
     }
 
     private fun checkAndShowErrors(): Boolean {
-        _stateFlow.update {
+        _stateFlow.update { state ->
             state.copy(
                 isNameError = state.namingText.isBlank(),
                 isAmountError = state.amountText.isBlank(),
                 isCategoryError = state.namingText.isBlank().not() && state.amountText.isBlank()
                     .not() && selectedCategory == null,
-                isInfoOpened = true,
+                isInfoOpened = state.isInfoOpened || state.namingText.isBlank()
+                    .not() || state.amountText.isBlank(),
             )
         }
         if (state.isCategoryError) {
@@ -172,6 +177,7 @@ class SpendingEditViewModel(
                 state.copy(
                     dateText = date,
                     isPlanned = state.isPlanned || date.toLongDate() > getCurrentDate(),
+                    isOkActive = true,
                 )
             }
         }
@@ -181,6 +187,7 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 photoUri = photoUri,
+                isOkActive = true,
             )
         }
 
@@ -206,6 +213,7 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 isPlanned = !state.isPlanned,
+                isOkActive = true,
             )
         }
     }
@@ -214,6 +222,7 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 namingText = name,
+                isOkActive = true,
             )
         }
     }
@@ -222,6 +231,7 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 amountText = amount.toNormalizedMoney(),
+                isOkActive = true,
             )
         }
         isManualTotal = amount.isNotBlank()
@@ -232,6 +242,7 @@ class SpendingEditViewModel(
         _stateFlow.update {
             state.copy(
                 isHidden = !state.isHidden,
+                isOkActive = true,
             )
         }
     }
@@ -311,6 +322,7 @@ data class SpendingEditState(
     val dateText: String = "",
     var photoUri: Uri? = null,
     val detailsList: List<DetailUiData> = emptyList(),
+    val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val isOkActive: Boolean = false,
     val isPlanned: Boolean = false,
     val isHidden: Boolean = false,

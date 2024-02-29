@@ -142,12 +142,9 @@ fun getCategoryMenuState(
             categoryState.onCategoryDialogVisibilityChanged(NO_INDEX)
         },
         alwaysVisibleButton = MenuItemState(
+            isShown = state.isOkActive,
             label = R.string.button_save,
-            icon = if (state.isOkActive) {
-                R.drawable.icon_ok
-            } else {
-                R.drawable.icon_ok_inactive
-            },
+            icon = R.drawable.icon_ok,
             semantics = SPENDING_SAVE_BUTTON,
             onClick = state.onSave,
         ),
@@ -197,12 +194,9 @@ fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
             ),
         ),
         alwaysVisibleButton = MenuItemState(
+            isShown = state.isOkActive,
             label = R.string.button_save,
-            icon = if (state.isOkActive) {
-                R.drawable.icon_ok
-            } else {
-                R.drawable.icon_ok_inactive
-            },
+            icon = R.drawable.icon_ok,
             semantics = SPENDING_SAVE_BUTTON,
             onClick = state.onSave,
         ),
