@@ -14,11 +14,12 @@ class LoginPageViewModel(
     private val loginUserUseCase: LoginUserUseCase,
 ) : ViewModel() {
     var onLoggedIn: () -> Unit = {}
-
+    val loginField = StateAble("baskinaerobins@gmail.com") { onDropError() }
     private fun onLoginClicked() {
+
         viewModelScope.launch {
             state.isLoading.value = true
-            if (loginUserUseCase(state.loginState.value, state.passwordState.value)) {
+            if (loginUserUseCase(loginField.state.value, state.passwordState.value)) {
                 onLoggedIn()
             } else {
                 _stateFlow.update {
@@ -56,11 +57,19 @@ class LoginPageViewModel(
 }
 
 data class LoginPageState(
-    val loginState: MutableState<String> = mutableStateOf("baskinaerobins@gmail.com"),
     val passwordState: MutableState<String> = mutableStateOf("philips2010"),
     val authError: Boolean = false,
-    val isLoading: MutableState<Boolean> = mutableStateOf(true),
+    val isLoading: MutableState<Boolean> = mutableStateOf(false),
     val onDropError: () -> Unit,
     val onLoginClicked: () -> Unit,
     val onForgotPasswordClicked: () -> Unit,
 )
+
+class StateAble<T>(value: T, onStateChanged: (value: T) -> Unit = {}) {
+    private val _state = MutableStateFlow(value)
+    val state = _state.asStateFlow()
+    val onChanged: (newValue: T) -> Unit = {newValue->
+        onStateChanged(newValue)
+        _state.update { newValue }
+    }
+}

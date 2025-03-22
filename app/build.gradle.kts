@@ -1,19 +1,20 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.gradle)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
     namespace = "com.faigenbloom.familybudget"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.faigenbloom.familybudget"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -44,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.9"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     packaging {
@@ -60,63 +61,60 @@ android {
 }
 
 dependencies {
-
-    val koinVersion = "3.4.2"
-    val roomVersion = "2.6.1"
-    val mockkVersion = "1.13.9"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.paging:paging-runtime-ktx:3.3.0-alpha03")
-    implementation("androidx.paging:paging-compose:3.3.0-alpha03")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material:material:1.6.2")
-    implementation("androidx.compose.material3:material3:1.2.0")
-    implementation("androidx.camera:camera-lifecycle:1.3.1")
-    implementation("androidx.camera:camera-view:1.3.1")
-    implementation("androidx.camera:camera-camera2:1.3.1")
-    implementation("io.github.g0dkar:qrcode-kotlin:4.0.6")
-    implementation("com.chargemap.compose:numberpicker:1.0.3")
-    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
-    implementation("io.insert-koin:koin-androidx-compose-navigation:3.4.5")
-    implementation("io.insert-koin:koin-core:$koinVersion")
-    implementation("io.github.g00fy2.quickie:quickie-bundled:1.8.0")
-    implementation("io.coil-kt:coil-compose:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("io.mockk:mockk:${mockkVersion}")
-    implementation("com.airbnb.android:lottie-compose:6.3.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-dynamic-links-ktx")
-    implementation("com.google.firebase:firebase-storage")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.kotest:kotest-assertions-core:5.7.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("org.robolectric:robolectric:4.4")
-    testImplementation("io.mockk:mockk-android:${mockkVersion}")
-    testImplementation("io.mockk:mockk-agent:${mockkVersion}")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    testImplementation("androidx.test:core:1.5.0")
-    testImplementation("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation("io.insert-koin:koin-test:2.1.6")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("com.android.support.test:rules:1.0.2")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.qrcode.kotlin)
+    implementation(libs.numberpicker)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.barcode.scanning)
+    implementation(libs.koin.androidx.compose.navigation)
+    implementation(libs.koin.core)
+    implementation(libs.quickie.bundled)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.palette.ktx)
+    implementation(libs.androidx.espresso.core)
+    implementation(libs.gson)
+    implementation(libs.mockk)
+    implementation(libs.lottie.compose)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.dynamic.links.ktx)
+    implementation(libs.firebase.storage)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.androidx.junit.ktx)
+    testImplementation(libs.androidx.core)
+    testImplementation(libs.core.ktx)
+    androidTestImplementation(libs.koin.test)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.rules)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.guava)
     implementation(project(":ninepatch"))
 }

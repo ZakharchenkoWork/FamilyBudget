@@ -20,6 +20,7 @@ fun NavGraphBuilder.loginPage(
             .stateFlow
             .collectAsState()
         LoginPage(
+            loginState = loginPageViewModel.loginField,
             state = state,
             onBack = onBack,
         )

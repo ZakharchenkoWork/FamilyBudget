@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 fun LoginPage(
     state: LoginPageState,
     onBack: () -> Unit,
+    loginState: StateAble<String>,
 ) {
     Column {
         TopBar(
@@ -42,20 +44,20 @@ fun LoginPage(
             onStartIconCLicked = onBack,
         )
         StripeBar(textId = R.string.authorization)
-        var loginState by remember { state.loginState }
+        val loginText by loginState.state.collectAsState()
+
         BaseTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 100.dp)
                 .padding(horizontal = 16.dp),
             labelId = R.string.email,
-            text = loginState,
+            text = loginText,
             isError = state.authError,
             textFieldType = TextFieldType.Email,
             onTextChange = {
-                loginState = it
-                state.onDropError()
-            },
+                loginState.onChanged(it)
+                           },
         )
         var passwordState by remember { state.passwordState }
         BaseTextField(
@@ -120,7 +122,6 @@ fun LoginPagePreview() {
         Scaffold { _ ->
             LoginPage(
                 state = LoginPageState(
-                    loginState = mutableStateOf(Mock.loginText),
                     passwordState = mutableStateOf(Mock.passwordText),
                     authError = true,
                     onLoginClicked = {},
@@ -128,6 +129,7 @@ fun LoginPagePreview() {
                     onDropError = {},
                 ),
                 onBack = {},
+                loginState = StateAble(""),
             )
         }
     }
