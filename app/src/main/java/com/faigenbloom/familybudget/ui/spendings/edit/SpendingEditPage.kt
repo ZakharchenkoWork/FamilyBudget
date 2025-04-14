@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import com.faigenbloom.familybudget.ui.categories.CategoriesPage
 import com.faigenbloom.familybudget.ui.categories.CategoriesState
 import com.faigenbloom.familybudget.ui.categories.mockCategoriesList
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.hint
 import java.util.Currency
@@ -106,6 +108,13 @@ fun SpendingEditPage(
                 )
             }
         }
+    }
+    if (state.showRepeatDialog){
+        SpendingRepeatDialog(
+            chosenOptions = state.repeatOptions,
+            onDismiss = {state.onShowRepeatDialogChanged(false)},
+            onChoose = state.onRepeatChanged
+        )
     }
     val isLoadingCategory by remember { categoryState.isLoading }
     val isLoading by remember { state.isLoading }
@@ -344,7 +353,8 @@ fun SpacerStripe(
             )
             Row(
                 modifier = Modifier
-                    .weight(0.5f),
+                    .weight(0.5f)
+                    .padding(end = 16.dp),
                 horizontalArrangement = Arrangement.End,
                 ) {
                 if (state.isHidden) {
@@ -366,6 +376,27 @@ fun SpacerStripe(
                         painter = painterResource(id = R.drawable.icon_list_planned_outlined),
                         contentDescription = "",
                     )
+                }
+                if (state.repeatOptions != RepeatOptionsUi.NONE) {
+                    Box(
+                        modifier = Modifier.size(32.dp).aspectRatio(1f).padding(start = 8.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .height(32.dp)
+                                .aspectRatio(1f),
+                            painter = painterResource(id = state.repeatOptions.icon),
+                            contentDescription = "",
+                        )
+                        Text(
+                            modifier = Modifier,
+                            text = stringResource(state.repeatOptions.stringResource)[0].toString(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         }
@@ -408,6 +439,9 @@ fun SpendingEditPageCategoriesPreview() {
                     onPlannedChanged = {},
                     isAmountError = false,
                     isCategoryError = false,
+                    onRepeatChanged = {},
+                    showRepeatDialog = false,
+                    onShowRepeatDialogChanged = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList = mockCategoriesList,
@@ -472,6 +506,8 @@ fun SpendingEditPageDetailsPreview() {
                     onPlannedChanged = {},
                     isAmountError = false,
                     isCategoryError = false,
+                    onRepeatChanged = {},
+                    onShowRepeatDialogChanged = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList =

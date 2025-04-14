@@ -5,6 +5,7 @@ import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.domain.GenerateIdUseCase
 import com.faigenbloom.familybudget.domain.mappers.SpendingsMapper
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,6 +27,7 @@ class SaveSpendingUseCase(
                     spending.copy(
                         id = spendingId,
                         ownerId = spending.ownerId.ifBlank { idSource[ID.USER] },
+                        repeatOptions = if (spending.isPlanned.not()){ RepeatOptionsUi.NONE } else spending.repeatOptions
                     ),
                 ),
             )

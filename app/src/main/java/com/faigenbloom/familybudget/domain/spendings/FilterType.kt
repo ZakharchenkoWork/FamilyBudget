@@ -22,14 +22,14 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
         override fun move(isForward: Boolean): FilterType {
             return Daily(
                 from = if (isForward) {
-                    from.getMonthStartDate(future = if (isPlanned.not()) 1 else 2)
+                    from.getMonthStartDate(future = 1)
                 } else {
-                    from.getMonthStartDate(past = if (isPlanned.not()) 1 else 2)
+                    from.getMonthStartDate(past = 1)
                 },
                 to = if (isForward) {
-                    to.getMonthEndDate(future = if (isPlanned.not()) 1 else 2)
+                    to.getMonthEndDate(future = 1)
                 } else {
-                    to.getMonthEndDate(past = if (isPlanned.not()) 1 else 2)
+                    to.getMonthEndDate(past = 1)
                 },
                 isPlanned = isPlanned,
             ).also {

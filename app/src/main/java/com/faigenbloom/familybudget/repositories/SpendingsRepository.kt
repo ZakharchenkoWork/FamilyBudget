@@ -34,8 +34,10 @@ class SpendingsRepository(
     suspend fun getSpendings(isPlanned: Boolean) =
         dataBaseDataSource.getSpendings(isPlanned)
 
-    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long) =
-        dataBaseDataSource.getSpendingsByDate(isPlanned, from, to)
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity> {
+
+     return dataBaseDataSource.getSpendingsByDate(isPlanned, from, to)
+    }
 
     suspend fun getSpendingsMinMaxDate(isPlanned: Boolean) =
         dataBaseDataSource.getSpendingsMinMaxDate(isPlanned)

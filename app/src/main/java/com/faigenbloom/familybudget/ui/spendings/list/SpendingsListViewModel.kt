@@ -24,7 +24,7 @@ class SpendingsListViewModel(
 ) : ViewModel() {
     var onCalendarRequested: (fromDate: String, toDate: String) -> Unit = { _, _ ->
     }
-
+    private var isRangeFiltered = false
     fun onDateRangeChanged(fromDate: String, toDate: String) {
         if (fromDate.isNotBlank()) {
             val filterType = state.filterType.copy(
@@ -32,10 +32,12 @@ class SpendingsListViewModel(
                 to = toDate.ifBlank { fromDate }.toLongDate(),
             )
             reloadData(filterType)
+            isRangeFiltered = true
         }
     }
 
     private fun onRangeFiltered() {
+        isRangeFiltered = true
         onCalendarRequested(
             state.filterType.from.toReadableDate(),
             state.filterType.to.toReadableDate(),
@@ -43,7 +45,7 @@ class SpendingsListViewModel(
     }
 
     private fun onDailyFiltered() {
-        val filterType = if (state.filterType is FilterType.Daily) {
+        val filterType = if (!isRangeFiltered) {
             FilterType.Daily(
                 isPlanned = state.filterType.isPlanned,
             )
@@ -58,7 +60,7 @@ class SpendingsListViewModel(
     }
 
     private fun onMonthlyFiltered() {
-        val filterType = if (state.filterType is FilterType.Monthly) {
+        val filterType = if (!isRangeFiltered) {
             FilterType.Monthly(isPlanned = state.filterType.isPlanned)
         } else {
             FilterType.Monthly(
@@ -71,7 +73,7 @@ class SpendingsListViewModel(
     }
 
     private fun onYearlyFiltered() {
-        val filterType = if (state.filterType is FilterType.Yearly) {
+        val filterType = if (!isRangeFiltered) {
             FilterType.Yearly(isPlanned = state.filterType.isPlanned)
         } else {
             FilterType.Yearly(

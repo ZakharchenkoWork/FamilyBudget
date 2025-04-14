@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
@@ -124,6 +125,12 @@ interface SpendingsDao {
                 "AND ${SpendingEntity.COLUMN_DATE} <= :to",
     )
     suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
+
+    @Query(
+        "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
+                "WHERE NOT ${SpendingEntity.COLUMN_REPEAT_OPTIONS} = :option ",
+    )
+    suspend fun getSpendingsRepeatable(option: String = RepeatOptions.NONE.name): List<SpendingEntity>
 
     @Query(
         "SELECT " +

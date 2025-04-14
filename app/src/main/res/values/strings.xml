@@ -7,7 +7,9 @@
     <string name="spendings_previous_title">Previous spendings</string>
     <string name="spendings_planned_title">Planned spendings</string>
     <string name="spendings_filter_title">Filter</string>
+    <string name="spendings_filter_never">Never</string>
     <string name="spendings_filter_daily">Daily</string>
+    <string name="spendings_filter_weekly">Weekly</string>
     <string name="spendings_filter_monthly">Monthly</string>
     <string name="spendings_filter_yearly">Yearly</string>
     <string name="spendings_filter_range">Select range</string>
@@ -106,6 +108,7 @@
     <string name="button_duplicate">Duplicate</string>
     <string name="button_spent">Make spent</string>
     <string name="button_planned">Make planned</string>
+    <string name="button_repeat">Repeat</string>
     <string name="button_edit">Edit</string>
     <string name="button_hide">Make hidden</string>
     <string name="button_show">Make visible</string>
@@ -122,6 +125,6 @@
     <string name="family_leave">Leave family</string>
     <string name="are_you_shure">Are you shure?</string>
     <string name="leaveFamily">You are about to leave the family. All your personal data will be moved to your new family. Please enter new family name.</string>
-
+    <string name="repeat_dialog_title">Repeat:</string>
 
 </resources>

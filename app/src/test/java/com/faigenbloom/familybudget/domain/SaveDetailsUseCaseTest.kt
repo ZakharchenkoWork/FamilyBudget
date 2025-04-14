@@ -77,16 +77,18 @@ class SaveDetailsUseCaseTest {
                 idSource = IdSource(),
             ),
             idSource = IdSource(),
+            budgetNetworkSource = mock(),
+            imageSource = mock(),
         ),
         spendingDetailsSourceMapper = SpendingDetailsSourceMapper(),
     )
-    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase<DetailUiData> =
+    private val getSpendingDetailsUseCase: GetSpendingDetailsByIdUseCase =
         GetSpendingDetailsByIdUseCase(
             detailsRepository = detailsRepository,
             mapper = detailsMapper,
         )
 
-    private val saveDetailsUseCase: SaveDetailsUseCase<DetailUiData> =
+    private val saveDetailsUseCase: SaveDetailsUseCase =
         SaveDetailsUseCase(
             detailsRepository = detailsRepository,
             detailsMapper = detailsMapper,

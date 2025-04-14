@@ -30,6 +30,8 @@ data class SpendingEntity(
     val isPlanned: Boolean,
     @ColumnInfo(name = COLUMN_IS_HIDDEN)
     val isHidden: Boolean,
+    @ColumnInfo(name = COLUMN_REPEAT_OPTIONS)
+    val repeatOptions: RepeatOptions = RepeatOptions.NONE,
     @ColumnInfo(name = COLUMN_IS_DUPLICATE)
     val isDuplicate: Boolean = false,
 ) : Countable {
@@ -54,6 +56,10 @@ data class SpendingEntity(
         const val COLUMN_IS_TOTAL_MANUAL = "is_total_manual"
         const val COLUMN_IS_PLANNED = "is_planned"
         const val COLUMN_IS_HIDDEN = "is_hidden"
+        const val COLUMN_REPEAT_OPTIONS = "repeat_options"
         const val COLUMN_IS_DUPLICATE = "is_duplicate"
     }
+}
+enum class RepeatOptions{
+    NONE, DAILY, WEEKLY, MONTHLY, YEARLY
 }

@@ -1,18 +1,22 @@
 package com.faigenbloom.familybudget.datasources
 
 import android.util.Log
+import com.faigenbloom.familybudget.common.findDatesBetween
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import java.util.UUID
 
+const val REPEAT_INFIX = "_REPEAT_INFIX_"
+const val REPEAT_SPENDED_INFIX = "_REPEAT_SPENDED_INFIX_"
 class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun login(email: String, password: String): Boolean {
         TODO("Not yet implemented")
@@ -150,11 +154,26 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         from: Long,
         to: Long,
     ): List<SpendingEntity> {
-        return appDatabase.spendingsDao().getSpendingsByDate(isPlanned, from, to)
+        val allSpendings = mutableListOf<SpendingEntity>()
+        if (isPlanned) {
+            appDatabase.spendingsDao().getSpendingsRepeatable().forEach { repeatedSpending->
+                findDatesBetween(from, to, repeatedSpending.date, repeatedSpending.repeatOptions).forEach{ date ->
+                    allSpendings.add(repeatedSpending.copy(id = "$date$REPEAT_INFIX${repeatedSpending.id}", date = date))
+                }
+            }
+        }
+
+        return allSpendings.apply{ addAll(appDatabase.spendingsDao().getSpendingsByDate(isPlanned, from, to))}
     }
 
+
     override suspend fun getSpending(id: String): SpendingEntity {
-        return appDatabase.spendingsDao().getSpending(id)
+        return if (id.contains(REPEAT_INFIX)){
+            val splited = id.split(REPEAT_INFIX)
+            appDatabase.spendingsDao().getSpending(splited[1]).copy(id = id, date = splited[0].toLong())
+        } else{
+            appDatabase.spendingsDao().getSpending(id)
+        }
     }
 
     override suspend fun getBudgetData(): BudgetEntity {

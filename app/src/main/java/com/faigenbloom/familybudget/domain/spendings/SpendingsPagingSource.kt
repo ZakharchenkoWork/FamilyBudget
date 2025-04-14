@@ -19,8 +19,8 @@ class SpendingsPagingSource(
     private val spendingsWithCategoryMapper: SpendingsWithCategoryMapper,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
 ) : PagingSource<FilterType, DatedList>() {
-    var lowestFrom = 0L
-    var highestTo = 0L
+    private var lowestFrom = 0L
+    private var highestTo = 0L
 
     override suspend fun load(params: LoadParams<FilterType>): LoadResult<FilterType, DatedList> {
         return try {

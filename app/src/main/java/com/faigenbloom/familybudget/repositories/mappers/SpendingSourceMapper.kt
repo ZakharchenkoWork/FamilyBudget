@@ -1,5 +1,6 @@
 package com.faigenbloom.familybudget.repositories.mappers
 
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingModel
 
@@ -17,6 +18,7 @@ class SpendingSourceMapper {
             manualTotal = entity.isManualTotal,
             planned = entity.isPlanned,
             hidden = entity.isHidden,
+            repeatOptions = entity.repeatOptions.ordinal,
             details = listOf(),
         )
     }
@@ -33,6 +35,7 @@ class SpendingSourceMapper {
             isManualTotal = model.manualTotal,
             isPlanned = model.planned,
             isHidden = model.hidden,
+            repeatOptions = RepeatOptions.entries[model.repeatOptions],
             isDuplicate = false,
         )
     }

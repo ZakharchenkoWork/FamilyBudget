@@ -5,7 +5,9 @@ import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toLongMoney
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.common.toReadableMoney
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 
 class SpendingsMapper {
@@ -17,11 +19,12 @@ class SpendingsMapper {
             date = entity.date.toReadableDate(),
             categoryId = entity.categoryId,
             photoUri = entity.photoUri?.toUri(),
-            isManualTotal = entity.isManualTotal,
             isPlanned = entity.isPlanned,
             isHidden = entity.isHidden,
-            isDuplicate = entity.isDuplicate,
+            isManualTotal = entity.isManualTotal,
             ownerId = entity.ownerId,
+            isDuplicate = entity.isDuplicate,
+            repeatOptions = RepeatOptionsUi.entries[entity.repeatOptions.ordinal],
         )
     }
 
@@ -38,7 +41,9 @@ class SpendingsMapper {
             isPlanned = model.isPlanned,
             isHidden = model.isHidden,
             isDuplicate = model.isDuplicate,
+            repeatOptions = RepeatOptions.entries[model.repeatOptions.ordinal],
             ownerId = model.ownerId,
         )
     }
 }
+

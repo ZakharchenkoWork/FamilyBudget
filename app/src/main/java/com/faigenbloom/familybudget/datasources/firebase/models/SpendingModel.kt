@@ -11,6 +11,7 @@ data class SpendingModel(
     val manualTotal: Boolean,
     val planned: Boolean,
     val hidden: Boolean,
+    val repeatOptions: Int,
     val details: List<String>,
 ) {
     companion object {

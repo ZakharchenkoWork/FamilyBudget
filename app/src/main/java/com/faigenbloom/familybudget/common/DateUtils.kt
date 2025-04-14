@@ -1,5 +1,6 @@
 package com.faigenbloom.familybudget.common
 
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -112,3 +113,33 @@ fun Long.getYearEndDate(past: Int = 0, future: Int = 0) = toLocalDate()
     .let {
         LocalDate.of(it.year, 12, 31)
     }.toLongDate()
+
+fun findDatesBetween(startDate: Long, endDate: Long, spendingDate: Long, repeatOption: RepeatOptions): List<Long> {
+    var currentDate = if (startDate > spendingDate) startDate else spendingDate
+
+    val result = mutableListOf<Long>()
+    while (currentDate <= endDate) {
+        when (repeatOption) {
+            RepeatOptions.DAILY -> {
+                result += currentDate
+                currentDate = currentDate.toLocalDate().plusDays(1).toLongDate()
+            }
+
+            RepeatOptions.WEEKLY -> {
+                result += currentDate
+                currentDate = currentDate.toLocalDate().plusWeeks(1).toLongDate()
+            }
+
+            RepeatOptions.MONTHLY -> {
+                result += currentDate
+                currentDate = currentDate.toLocalDate().plusMonths(1).toLongDate()
+            }
+            RepeatOptions.YEARLY -> {
+                result += currentDate
+                currentDate = currentDate.toLocalDate().plusYears(1).toLongDate()
+            }
+            else -> {}
+        }
+    }
+    return result
+}

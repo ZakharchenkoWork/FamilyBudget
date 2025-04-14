@@ -182,6 +182,11 @@ fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
                 onClick = state.onHideChanged,
             ),
             MenuItemState(
+                label = R.string.button_repeat,
+                icon = state.repeatOptions.icon,
+                onClick = {state.onShowRepeatDialogChanged(true)},
+            ),
+            MenuItemState(
                 label = R.string.button_delete,
                 icon = R.drawable.icon_delete,
                 onClick = state.deleteSpending,

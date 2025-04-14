@@ -38,6 +38,7 @@ import com.faigenbloom.familybudget.ui.categories.getCategoryIcon
 import com.faigenbloom.familybudget.ui.categories.getCategoryName
 import com.faigenbloom.familybudget.ui.categories.mockCategoriesList
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import java.util.Currency
@@ -132,6 +133,7 @@ fun Stripe(
             .background(
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
             ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
 
         Row(
@@ -158,6 +160,27 @@ fun Stripe(
                     painter = painterResource(id = R.drawable.icon_list_planned_outlined),
                     contentDescription = "",
                 )
+            }
+            if (state.repeatOptions != RepeatOptionsUi.NONE) {
+                Box(
+                    modifier = Modifier.size(32.dp).aspectRatio(1f).padding(start = 8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .height(32.dp)
+                            .aspectRatio(1f),
+                        painter = painterResource(id = state.repeatOptions.icon),
+                        contentDescription = "",
+                    )
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(state.repeatOptions.stringResource)[0].toString(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
         }
         Text(

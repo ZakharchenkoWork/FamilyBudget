@@ -12,6 +12,7 @@ import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toNormalizedMoney
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.domain.CalculateTotalUseCase
 import com.faigenbloom.familybudget.domain.NormalizeDateUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
@@ -23,6 +24,7 @@ import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingDetailListWrapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,6 +87,7 @@ class SpendingEditViewModel(
                             isManualTotal = isManualTotal,
                             isHidden = state.isHidden,
                             isPlanned = state.isPlanned,
+                            repeatOptions = state.repeatOptions,
                             isDuplicate = false,
                             ownerId = ownerId.ifBlank { idSource[ID.USER] },
                         ),
@@ -152,11 +155,12 @@ class SpendingEditViewModel(
                             date = normalizeDateUseCase(state.dateText),
                             categoryId = categoryId,
                             photoUri = state.photoUri,
-                            isHidden = state.isHidden,
                             isPlanned = state.isPlanned,
+                            isHidden = state.isHidden,
                             isManualTotal = isManualTotal,
-                            isDuplicate = true,
                             ownerId = ownerId,
+                            isDuplicate = true,
+                            repeatOptions = state.repeatOptions,
                         ),
                     )
                     saveDetailsUseCase(
@@ -244,6 +248,22 @@ class SpendingEditViewModel(
         }
     }
 
+    private fun onRepeatChanged(repeatOptions: RepeatOptionsUi) {
+        _stateFlow.update {
+            state.copy(
+                showRepeatDialog = false,
+                repeatOptions = repeatOptions,
+            )
+        }
+    }
+
+    fun onShowRepeatDialogChanged(isShown: Boolean) {
+        _stateFlow.update {
+            state.copy(
+                showRepeatDialog = isShown,
+            )
+        }
+    }
     private val state: SpendingEditState
         get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
@@ -258,6 +278,8 @@ class SpendingEditViewModel(
             onSave = ::onSave,
             onPlannedChanged = ::onPlannedChanged,
             onDateChanged = ::onDateChanged,
+            onRepeatChanged = ::onRepeatChanged,
+            onShowRepeatDialogChanged = ::onShowRepeatDialogChanged,
             onDuplicate = ::onDuplicate,
         ),
     )
@@ -289,6 +311,7 @@ class SpendingEditViewModel(
                         canDuplicate = spendingId.isNotBlank() && spendingUiData.isDuplicate.not(),
                         currency = getChosenCurrencyUseCase(),
                         ownerName = getPersonNameUseCase(spendingUiData.ownerId),
+                        repeatOptions = spendingUiData.repeatOptions,
                         isCurrentUserOwner = ownerId == idSource[ID.USER],
                     )
                 }
@@ -325,6 +348,8 @@ data class SpendingEditState(
     val isOkActive: Boolean = false,
     val isPlanned: Boolean = false,
     val isHidden: Boolean = false,
+    val repeatOptions: RepeatOptionsUi = RepeatOptionsUi.NONE,
+    val showRepeatDialog: Boolean = false,
     val currency: Currency = Currency.getInstance(Locale.getDefault()),
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
@@ -334,6 +359,9 @@ data class SpendingEditState(
     val onResetErrors: () -> Unit,
     val onSave: () -> Unit,
     val onHideChanged: () -> Unit,
+    val onRepeatChanged: (RepeatOptionsUi) -> Unit,
     val deleteSpending: () -> Unit,
     val onDuplicate: () -> Unit,
+    val onShowRepeatDialogChanged: (Boolean) -> Unit
+
 )

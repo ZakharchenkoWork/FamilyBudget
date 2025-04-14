@@ -1,7 +1,11 @@
 package com.faigenbloom.familybudget.ui.spendings
 
 import android.net.Uri
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.faigenbloom.familybudget.common.Identifiable
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
+import com.faigenbloom.familybudget.R
 
 data class SpendingUiData(
     override val id: String,
@@ -15,4 +19,13 @@ data class SpendingUiData(
     val isManualTotal: Boolean,
     val ownerId: String,
     val isDuplicate: Boolean = false,
+    val repeatOptions: RepeatOptionsUi,
 ) : Identifiable
+
+enum class RepeatOptionsUi(@DrawableRes val icon: Int, @StringRes val stringResource: Int) {
+    NONE(R.drawable.icon_repeat, R.string.spendings_filter_never),
+    DAILY(R.drawable.icon_repeat_daily, R.string.spendings_filter_daily ),
+    WEEKLY(R.drawable.icon_repeat_weekly, R.string.spendings_filter_weekly),
+    MONTHLY(R.drawable.icon_repeat_monthly, R.string.spendings_filter_monthly),
+    YEARLY(R.drawable.icon_repeat_yearly, R.string.spendings_filter_yearly)
+}

@@ -13,6 +13,7 @@ import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.google.firebase.firestore.FirebaseFirestore
 import io.kotest.matchers.shouldBe
@@ -41,10 +42,11 @@ class SaveSpendingUseCaseTest {
         categoryId = "asdf",
         photoUri = null,
         isPlanned = false,
-        isManualTotal = false,
         isHidden = false,
+        isManualTotal = false,
         ownerId = "",
         isDuplicate = false,
+        repeatOptions = RepeatOptionsUi.NONE,
     )
     private val idGeneratorUseCase: GenerateIdUseCase = mock {
         wheneverBlocking { it.invoke("") }.thenReturn(altSpendingId)
@@ -73,16 +75,19 @@ class SaveSpendingUseCaseTest {
                 idSource = IdSource(),
             ),
             idSource = IdSource(),
+            budgetNetworkSource = mock(),
+            imageSource = mock(),
         ),
         spendingSourceMapper = SpendingSourceMapper(),
         detailsSourceMapper = SpendingDetailsSourceMapper(),
         idSource = IdSource(),
     )
-    private val saveSpendingUseCase: SaveSpendingUseCase<SpendingUiData> =
+    private val saveSpendingUseCase: SaveSpendingUseCase =
         SaveSpendingUseCase(
             idGeneratorUseCase = idGeneratorUseCase,
             spendingsRepository = spendingsRepository,
             spendingsMapper = spendingsMapper,
+            idSource = IdSource(),
         )
 
     @Before

@@ -19,6 +19,7 @@ import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SetPurchasedSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,10 +53,26 @@ class SpendingShowViewModel(
     private fun markPurchased() {
         state.isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            setPurchasedSpendingUseCase(spendingId)
+            saveSpendingUseCase(
+                SpendingUiData(
+                    id = spendingId,
+                    name = state.name,
+                    amount = state.amount,
+                    date = state.date,
+                    categoryId = state.category.id,
+                    photoUri = state.photoUri,
+                    isPlanned = false,
+                    isHidden = state.isHidden,
+                    isManualTotal = isManualTotal,
+                    ownerId = "",
+                    isDuplicate = true,
+                    repeatOptions = RepeatOptionsUi.NONE,
+                ),
+            )
             _stateFlow.update {
                 state.copy(
                     isPlanned = false,
+                    repeatOptions = RepeatOptionsUi.NONE,
                 )
             }
             state.isLoading.value = false
@@ -76,8 +93,9 @@ class SpendingShowViewModel(
                     isPlanned = state.isPlanned,
                     isHidden = state.isHidden,
                     isManualTotal = isManualTotal,
-                    isDuplicate = true,
                     ownerId = "",
+                    isDuplicate = true,
+                    repeatOptions = state.repeatOptions,
                 ),
             )
             saveDetailsUseCase(
@@ -122,6 +140,7 @@ class SpendingShowViewModel(
                         isHidden = spending.isHidden,
                         ownerName = getPersonNameUseCase(spending.ownerId),
                         isCurrentUserOwner = spending.ownerId == idSource[ID.USER],
+                        repeatOptions = spending.repeatOptions,
                         currency = getChosenCurrencyUseCase(),
                     )
                 }
@@ -143,6 +162,7 @@ data class SpendingShowState(
     val isCurrentUserOwner: Boolean = false,
     val isHidden: Boolean = false,
     val isPlanned: Boolean = false,
+    val repeatOptions: RepeatOptionsUi = RepeatOptionsUi.NONE,
     val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onEditClicked: () -> Unit,
     val onDuplicateClicked: () -> Unit,
