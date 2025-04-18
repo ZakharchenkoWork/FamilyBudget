@@ -37,7 +37,6 @@ class FirebaseTest : BaseTest() {
                 PersonModel("pers1", "fam1", "kos", "Zakh", hidden = false),
                 ArrayList(),
             )
-            firestore.connectFamily("pers1", "fam1")
 
             val familyId = firestore.getFamilyId("pers1") ?: ""
             assert(familyId == "fam1")

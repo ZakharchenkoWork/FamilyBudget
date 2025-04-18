@@ -1,5 +1,8 @@
 package com.faigenbloom.familybudget.datasources.firebase.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class PersonModel(
     val id: String,
     val familyId: String,

@@ -1,7 +1,9 @@
 package com.faigenbloom.familybudget.datasources.firebase.models
 
 import com.faigenbloom.familybudget.common.Identifiable
+import kotlinx.serialization.Serializable
 
+@Serializable
 class BudgetLineModel(
     override val id: String,
     val repeatableId: String,

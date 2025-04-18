@@ -1,5 +1,8 @@
 package com.faigenbloom.familybudget.datasources.firebase.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CategoryModel(
     val id: String,
     val hidden: Boolean,

@@ -16,7 +16,10 @@
       <SelectionState runConfigName="ninepatch">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SpendingRepeatDialogPreview">
+      <SelectionState runConfigName="FirebaseTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="can_create_user_with_family()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

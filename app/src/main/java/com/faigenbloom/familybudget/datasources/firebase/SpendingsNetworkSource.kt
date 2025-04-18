@@ -5,48 +5,38 @@ import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingDetailModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingModel
+import com.faigenbloom.familybudget.datasources.firebase.models.Wrapper
 import com.google.firebase.firestore.FirebaseFirestore
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
 class SpendingsNetworkSource(
     firestore: FirebaseFirestore,
     private val idSource: IdSource,
 ) : BaseNetworkSource(firestore) {
     suspend fun saveSpending(model: SpendingModel) {
-        set(
-            collectionId = idSource[ID.FAMILY],
-            document = SpendingModel.COLLECTION_NAME,
-            innerId = model.id,
-            data = model,
-        )
+        client.post("/spendings/save/${idSource[ID.FAMILY]}") {
+            setBody(model)
+        }
     }
 
     suspend fun getSpending(spendingId: String): SpendingModel? {
-        return get(
-            collectionId = idSource[ID.FAMILY],
-            document = SpendingModel.COLLECTION_NAME,
-            id = spendingId,
-        )?.throughJson()
+        return client.get("/spendings/$spendingId").body()
     }
 
     suspend fun saveSpendingDetails(details: List<SpendingDetailModel>) {
-        return set(
-            collectionId = idSource[ID.FAMILY],
-            document = SpendingDetailModel.COLLECTION_NAME,
-            data = details,
-        )
+        client.post("/spendings/details/save") {
+            setBody(Wrapper(details))
+        }
     }
 
     suspend fun loadSpendings(): List<SpendingModel> {
-        return getAsList(
-            idSource[ID.FAMILY],
-            SpendingModel.COLLECTION_NAME,
-        ).map { it.throughJson() }
+        return client.get("/spendings/all/${idSource[ID.FAMILY]}").body<Wrapper<SpendingModel>>().list
     }
 
     suspend fun loadDetails(): List<SpendingDetailModel> {
-        return getAsList(
-            idSource[ID.FAMILY],
-            SpendingDetailModel.COLLECTION_NAME,
-        ).map { it.throughJson() }
+        return client.get("/spendings/details/${idSource[ID.FAMILY]}").body<Wrapper<SpendingDetailModel>>().list
     }
 }

@@ -34,7 +34,9 @@ class NetworkDataSource(
     suspend fun saveDetails(spendingId: String, details: List<SpendingDetailModel>) {
         spendingsNetworkSource.getSpending(spendingId)?.let { spending ->
             spendingsNetworkSource.saveSpending(spending.copy(details = details.map { it.id }))
-            spendingsNetworkSource.saveSpendingDetails(details)
+            if (details.isNotEmpty()) {
+                spendingsNetworkSource.saveSpendingDetails(details)
+            }
         }
     }
 
