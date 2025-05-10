@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatableOptionEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingEntity
@@ -130,7 +131,7 @@ interface SpendingsDao {
         "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
                 "WHERE NOT ${SpendingEntity.COLUMN_REPEAT_OPTIONS} = :option ",
     )
-    suspend fun getSpendingsRepeatable(option: String = RepeatOptions.NONE.name): List<SpendingEntity>
+    suspend fun getSpendingsRepeatable(option: String = ""): List<SpendingEntity>
 
     @Query(
         "SELECT " +
@@ -152,6 +153,22 @@ interface SpendingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSpendings(spendings: List<SpendingEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRepeatableOptions(repeatableOption: List<RepeatableOptionEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRepeatableOption(repeatableOption: RepeatableOptionEntity)
+    @Query(
+        "SELECT * FROM ${RepeatableOptionEntity.TABLE_NAME} " +
+                "WHERE ${RepeatableOptionEntity.COLUMN_ID} = :id",
+    )
+    suspend fun getRepeatableOption(id: String): RepeatableOptionEntity
+
+    @Query("SELECT * FROM ${RepeatableOptionEntity.TABLE_NAME}")
+    suspend fun getRepeatableOptions(): List<RepeatableOptionEntity>
+    @Query("SELECT * FROM ${RepeatableOptionEntity.TABLE_NAME}")
+    suspend fun getRepeatableSpendings(): List<RepeatableOptionEntity>
 
     @Query("DELETE FROM ${SpendingEntity.TABLE_NAME}")
     suspend fun deleteAllSpendings()

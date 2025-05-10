@@ -161,25 +161,30 @@ fun Stripe(
                     contentDescription = "",
                 )
             }
-            if (state.repeatOptions != RepeatOptionsUi.NONE) {
-                Box(
-                    modifier = Modifier.size(32.dp).aspectRatio(1f).padding(start = 8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
+            state.repeatOptions?.let {
+                if (state.repeatOptions.repeatType != RepeatOptionsUi.NONE) {
+                    Box(
                         modifier = Modifier
-                            .height(32.dp)
-                            .aspectRatio(1f),
-                        painter = painterResource(id = state.repeatOptions.icon),
-                        contentDescription = "",
-                    )
-                    Text(
-                        modifier = Modifier,
-                        text = stringResource(state.repeatOptions.stringResource)[0].toString(),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                    )
+                            .size(32.dp)
+                            .aspectRatio(1f)
+                            .padding(start = 8.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .height(32.dp)
+                                .aspectRatio(1f),
+                            painter = painterResource(id = state.repeatOptions.repeatType.icon),
+                            contentDescription = "",
+                        )
+                        Text(
+                            modifier = Modifier,
+                            text = stringResource(state.repeatOptions.repeatType.stringResource)[0].toString(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         }

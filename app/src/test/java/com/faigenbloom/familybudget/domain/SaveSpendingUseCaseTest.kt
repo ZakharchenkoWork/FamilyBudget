@@ -8,12 +8,15 @@ import com.faigenbloom.familybudget.datasources.firebase.CategoryNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.FamilyNetworkSource
 import com.faigenbloom.familybudget.datasources.firebase.NetworkDataSource
 import com.faigenbloom.familybudget.datasources.firebase.SpendingsNetworkSource
+import com.faigenbloom.familybudget.domain.mappers.RepeatableOptionsMapper
 import com.faigenbloom.familybudget.domain.mappers.SpendingsMapper
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
+import com.faigenbloom.familybudget.repositories.mappers.SpendingRepeatableOptionsSourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
+import com.faigenbloom.familybudget.ui.spendings.RepeatableOptionDataUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.google.firebase.firestore.FirebaseFirestore
 import io.kotest.matchers.shouldBe
@@ -46,7 +49,7 @@ class SaveSpendingUseCaseTest {
         isManualTotal = false,
         ownerId = "",
         isDuplicate = false,
-        repeatOptions = RepeatOptionsUi.NONE,
+        repeatOptions = RepeatableOptionDataUi(repeatType = RepeatOptionsUi.NONE),
     )
     private val idGeneratorUseCase: GenerateIdUseCase = mock {
         wheneverBlocking { it.invoke("") }.thenReturn(altSpendingId)
@@ -81,6 +84,7 @@ class SaveSpendingUseCaseTest {
         spendingSourceMapper = SpendingSourceMapper(),
         detailsSourceMapper = SpendingDetailsSourceMapper(),
         idSource = IdSource(),
+        repeatablesSourceMapper = SpendingRepeatableOptionsSourceMapper(),
     )
     private val saveSpendingUseCase: SaveSpendingUseCase =
         SaveSpendingUseCase(
@@ -88,6 +92,7 @@ class SaveSpendingUseCaseTest {
             spendingsRepository = spendingsRepository,
             spendingsMapper = spendingsMapper,
             idSource = IdSource(),
+            repeatableOptionsMapper = RepeatableOptionsMapper(),
         )
 
     @Before

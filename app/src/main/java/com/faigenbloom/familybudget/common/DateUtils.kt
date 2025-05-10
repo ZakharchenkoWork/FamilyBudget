@@ -113,9 +113,30 @@ fun Long.getYearEndDate(past: Int = 0, future: Int = 0) = toLocalDate()
     .let {
         LocalDate.of(it.year, 12, 31)
     }.toLongDate()
-
+fun getStartDateOnRepeatableSpending(startDate: Long, spendingDate: Long,repeatOption: RepeatOptions): Long{
+    var currentDate = if (startDate < spendingDate) spendingDate else {
+        when (repeatOption) {
+            RepeatOptions.WEEKLY -> {
+                val dayOfWeekSpending = spendingDate.toLocalDate().dayOfWeek.value
+                val dayOfWeekStart = startDate.toLocalDate().dayOfWeek.value
+                startDate.toLocalDate().plusDays(7 - (dayOfWeekStart.toLong() - dayOfWeekSpending)).toLongDate()
+            }
+            RepeatOptions.MONTHLY -> {
+                val dayOfMonth = spendingDate.toLocalDate().dayOfMonth
+                startDate.toLocalDate().withDayOfMonth(dayOfMonth).toLongDate()
+            }
+            RepeatOptions.YEARLY -> {
+                val dayOfMonth = spendingDate.toLocalDate().dayOfMonth
+                val month = spendingDate.toLocalDate().monthValue
+                startDate.toLocalDate().withMonth(month).withDayOfMonth(dayOfMonth).toLongDate()
+            }
+            else -> startDate
+        }
+    }
+    return currentDate
+}
 fun findDatesBetween(startDate: Long, endDate: Long, spendingDate: Long, repeatOption: RepeatOptions): List<Long> {
-    var currentDate = if (startDate > spendingDate) startDate else spendingDate
+    var currentDate = getStartDateOnRepeatableSpending(startDate, spendingDate, repeatOption)
 
     val result = mutableListOf<Long>()
     while (currentDate <= endDate) {
@@ -141,5 +162,6 @@ fun findDatesBetween(startDate: Long, endDate: Long, spendingDate: Long, repeatO
             else -> {}
         }
     }
+    result -= spendingDate
     return result
 }

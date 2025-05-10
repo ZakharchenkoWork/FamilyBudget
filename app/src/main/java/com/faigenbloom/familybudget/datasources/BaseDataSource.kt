@@ -6,6 +6,7 @@ import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatableOptionEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
@@ -27,6 +28,8 @@ interface BaseDataSource {
     suspend fun addCategory(categoryEntity: CategoryEntity)
     suspend fun saveDetails(spendingId: String, details: List<SpendingDetailEntity>)
     suspend fun saveSpending(spending: SpendingEntity)
+    suspend fun saveRepeatables(repeatableOptions: List<RepeatableOptionEntity>)
+    suspend fun saveRepeatable(repeatableOptions: RepeatableOptionEntity)
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
     suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
     suspend fun getSpending(id: String): SpendingEntity
@@ -43,6 +46,7 @@ interface BaseDataSource {
     suspend fun addSpendingDetail(spendingDetailEntity: SpendingDetailEntity)
     suspend fun addCrossRef(crossRef: SpendingDetailsCrossRef)
     suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef>
+    suspend fun getRepeatableOption(string: String): RepeatableOptionEntity
     suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef)
     suspend fun deleteSpendingDetail(id: String)
     suspend fun deleteSpending(id: String)
@@ -69,4 +73,5 @@ interface BaseDataSource {
     suspend fun getSettings(): SettingsEntity?
     suspend fun getThisUserSpendings(userId: String): List<SpendingEntity>
     suspend fun clean()
+
 }

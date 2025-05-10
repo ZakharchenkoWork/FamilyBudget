@@ -12,7 +12,6 @@ import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toNormalizedMoney
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
-import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.domain.CalculateTotalUseCase
 import com.faigenbloom.familybudget.domain.NormalizeDateUseCase
 import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
@@ -24,7 +23,7 @@ import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
-import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
+import com.faigenbloom.familybudget.ui.spendings.RepeatableOptionDataUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingDetailListWrapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,6 +50,8 @@ class SpendingEditViewModel(
     private var selectedCategory: CategoryUiData? = null
     private var ownerId: String = ""
     private var isManualTotal: Boolean = false
+    private var isChangeRepeatableEndDateRequested: Boolean = false
+
     var onNext: (String) -> Unit = {}
     var onCategoryIdLoaded: (categoryId: String) -> Unit = {}
     var onScreenTransition: (isCategoriesOpened: Boolean) -> Unit = {}
@@ -176,12 +177,20 @@ class SpendingEditViewModel(
 
     private fun onDateChanged(date: String) {
         if (date.isNotBlank()) {
-            _stateFlow.update {
-                state.copy(
-                    dateText = date,
-                    isPlanned = state.isPlanned || date.toLongDate() > getCurrentDate(),
-                    isOkActive = true,
-                )
+            if (isChangeRepeatableEndDateRequested.not()) {
+                _stateFlow.update {
+                    state.copy(
+                        dateText = date,
+                        isPlanned = state.isPlanned || date.toLongDate() > getCurrentDate(),
+                        isOkActive = true,
+                    )
+                }
+            } else{
+                _stateFlow.update {
+                    state.copy(
+                        repeatOptions = it.repeatOptions?.copy(endDate = date),
+                    )
+                }
             }
         }
     }
@@ -248,7 +257,7 @@ class SpendingEditViewModel(
         }
     }
 
-    private fun onRepeatChanged(repeatOptions: RepeatOptionsUi) {
+    private fun onRepeatChanged(repeatOptions: RepeatableOptionDataUi) {
         _stateFlow.update {
             state.copy(
                 showRepeatDialog = false,
@@ -264,6 +273,8 @@ class SpendingEditViewModel(
             )
         }
     }
+
+
     private val state: SpendingEditState
         get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
@@ -280,6 +291,7 @@ class SpendingEditViewModel(
             onDateChanged = ::onDateChanged,
             onRepeatChanged = ::onRepeatChanged,
             onShowRepeatDialogChanged = ::onShowRepeatDialogChanged,
+            onChangeRepeatDateRequested = { isChangeRepeatableEndDateRequested = it },
             onDuplicate = ::onDuplicate,
         ),
     )
@@ -348,20 +360,21 @@ data class SpendingEditState(
     val isOkActive: Boolean = false,
     val isPlanned: Boolean = false,
     val isHidden: Boolean = false,
-    val repeatOptions: RepeatOptionsUi = RepeatOptionsUi.NONE,
+    val repeatOptions: RepeatableOptionDataUi? = null,
     val showRepeatDialog: Boolean = false,
     val currency: Currency = Currency.getInstance(Locale.getDefault()),
     val onNamingTextChanged: (String) -> Unit,
     val onAmountTextChanged: (String) -> Unit,
     val onPhotoUriChanged: (photoUri: Uri?) -> Unit,
+    val onChangeRepeatDateRequested: (Boolean) -> Unit,
     val onDateChanged: (String) -> Unit,
     val onPlannedChanged: () -> Unit,
     val onResetErrors: () -> Unit,
     val onSave: () -> Unit,
     val onHideChanged: () -> Unit,
-    val onRepeatChanged: (RepeatOptionsUi) -> Unit,
+    val onRepeatChanged: (RepeatableOptionDataUi) -> Unit,
     val deleteSpending: () -> Unit,
     val onDuplicate: () -> Unit,
-    val onShowRepeatDialogChanged: (Boolean) -> Unit
+    val onShowRepeatDialogChanged: (Boolean) -> Unit,
 
-)
+    )

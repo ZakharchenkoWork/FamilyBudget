@@ -31,7 +31,7 @@ data class SpendingEntity(
     @ColumnInfo(name = COLUMN_IS_HIDDEN)
     val isHidden: Boolean,
     @ColumnInfo(name = COLUMN_REPEAT_OPTIONS)
-    val repeatOptions: RepeatOptions = RepeatOptions.NONE,
+    val repeatOptionsId: String,
     @ColumnInfo(name = COLUMN_IS_DUPLICATE)
     val isDuplicate: Boolean = false,
 ) : Countable {

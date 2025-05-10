@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.faigenbloom.familybudget.common.Identifiable
-import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import com.faigenbloom.familybudget.R
 
 data class SpendingUiData(
@@ -19,7 +18,7 @@ data class SpendingUiData(
     val isManualTotal: Boolean,
     val ownerId: String,
     val isDuplicate: Boolean = false,
-    val repeatOptions: RepeatOptionsUi,
+    val repeatOptions: RepeatableOptionDataUi?,
 ) : Identifiable
 
 enum class RepeatOptionsUi(@DrawableRes val icon: Int, @StringRes val stringResource: Int) {
@@ -29,3 +28,10 @@ enum class RepeatOptionsUi(@DrawableRes val icon: Int, @StringRes val stringReso
     MONTHLY(R.drawable.icon_repeat_monthly, R.string.spendings_filter_monthly),
     YEARLY(R.drawable.icon_repeat_yearly, R.string.spendings_filter_yearly)
 }
+data class RepeatableOptionDataUi(
+    val id: String = "",
+    val startDate: String = "",
+    val endDate: String = "",
+    val repeatType: RepeatOptionsUi,
+    val excludedIDs: List<String> = emptyList()
+)

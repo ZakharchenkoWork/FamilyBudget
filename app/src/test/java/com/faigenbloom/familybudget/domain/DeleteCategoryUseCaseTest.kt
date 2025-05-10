@@ -31,6 +31,7 @@ class DeleteCategoryUseCaseTest {
         isHidden = false,
         ownerId = "",
         isDuplicate = false,
+        repeatOptionsId = "",
     )
     private val dataSource: MockDataSource = mock {}
     private val networkDataSource: NetworkDataSource = mock {}

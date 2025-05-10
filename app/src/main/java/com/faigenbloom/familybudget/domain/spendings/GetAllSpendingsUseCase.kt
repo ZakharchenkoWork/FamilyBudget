@@ -9,7 +9,7 @@ class GetAllSpendingsUseCase(
     private val mapper: SpendingsMapper,
 ) {
     suspend operator fun invoke(isPlanned: Boolean): List<SpendingUiData> {
-        return spendingsRepository.getSpendings(isPlanned)
+        return spendingsRepository.getSpendings(isPlanned)//TODO: Probasbly need to add repeatables too
             .map { mapper.forUI(it) }
     }
 }

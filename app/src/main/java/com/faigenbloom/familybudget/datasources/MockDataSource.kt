@@ -9,6 +9,7 @@ import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatableOptionEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
@@ -35,6 +36,8 @@ class MockDataSource : BaseDataSource {
                 isManualTotal = true,
                 isHidden = false,
                 ownerId = "asdf",
+                repeatOptionsId = TODO(),
+                isDuplicate = TODO(),
             )
         },
     )
@@ -72,6 +75,14 @@ class MockDataSource : BaseDataSource {
         spending: SpendingEntity,
     ) {
         spendingsEntity.add(spending)
+    }
+
+    override suspend fun saveRepeatables(repeatableOptions: List<RepeatableOptionEntity>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveRepeatable(repeatableOptions: RepeatableOptionEntity) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
@@ -143,6 +154,10 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef> {
         return emptyList()
+    }
+
+    override suspend fun getRepeatableOption(string: String): RepeatableOptionEntity {
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef) {

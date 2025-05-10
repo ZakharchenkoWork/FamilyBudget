@@ -12,4 +12,5 @@ val domainMappers = module {
     singleOf(::FamilyMapper)
     singleOf(::BudgetLineMapper)
     singleOf(::SettingsMapper)
+    singleOf(::RepeatableOptionsMapper)
 }

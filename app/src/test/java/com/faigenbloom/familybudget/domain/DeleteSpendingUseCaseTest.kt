@@ -14,8 +14,10 @@ import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.repositories.DetailsRepository
 import com.faigenbloom.familybudget.repositories.SpendingsRepository
 import com.faigenbloom.familybudget.repositories.mappers.SpendingDetailsSourceMapper
+import com.faigenbloom.familybudget.repositories.mappers.SpendingRepeatableOptionsSourceMapper
 import com.faigenbloom.familybudget.repositories.mappers.SpendingSourceMapper
 import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
+import com.faigenbloom.familybudget.ui.spendings.RepeatableOptionDataUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
 import com.faigenbloom.familybudget.ui.spendings.edit.mockDetailsList
 import com.google.firebase.firestore.FirebaseFirestore
@@ -47,7 +49,7 @@ class DeleteSpendingUseCaseTest {
         isManualTotal = false,
         ownerId = "",
         isDuplicate = false,
-        repeatOptions = RepeatOptionsUi.NONE,
+        repeatOptions = RepeatableOptionDataUi(repeatType = RepeatOptionsUi.NONE),
     )
 
     private val mockDetail = DetailsMapper().forDB(mockDetailsList[0])
@@ -63,6 +65,7 @@ class DeleteSpendingUseCaseTest {
                 spendingSourceMapper = SpendingSourceMapper(),
                 detailsSourceMapper = SpendingDetailsSourceMapper(),
                 idSource = IdSource(),
+                repeatablesSourceMapper = SpendingRepeatableOptionsSourceMapper()
             ),
             detailsRepository = DetailsRepository(
                 dataSource,

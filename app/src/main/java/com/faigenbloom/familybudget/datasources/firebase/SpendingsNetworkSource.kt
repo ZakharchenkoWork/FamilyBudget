@@ -3,6 +3,7 @@ package com.faigenbloom.familybudget.datasources.firebase
 import com.faigenbloom.familybudget.common.throughJson
 import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
+import com.faigenbloom.familybudget.datasources.firebase.models.RepeatableOptionModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingDetailModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingModel
 import com.faigenbloom.familybudget.datasources.firebase.models.Wrapper
@@ -38,5 +39,14 @@ class SpendingsNetworkSource(
 
     suspend fun loadDetails(): List<SpendingDetailModel> {
         return client.get("/spendings/details/${idSource[ID.FAMILY]}").body<Wrapper<SpendingDetailModel>>().list
+    }
+
+    suspend fun loadRepeatableOptions(): List<RepeatableOptionModel> {
+        return client.get("/spendings/repeatable/get/${idSource[ID.FAMILY]}").body<Wrapper<RepeatableOptionModel>>().list
+    }
+    suspend fun saveRepeatableOptions(repeatableOptionModel: RepeatableOptionModel)  {
+        client.post("/spendings/repeatable/save") {
+            setBody(repeatableOptionModel)
+        }
     }
 }

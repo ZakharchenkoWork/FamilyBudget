@@ -2,13 +2,14 @@ package com.faigenbloom.familybudget.datasources
 
 import android.util.Log
 import com.faigenbloom.familybudget.common.findDatesBetween
+import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetEntity
 import com.faigenbloom.familybudget.datasources.db.entities.BudgetLineEntity
 import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DateRange
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
-import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatableOptionEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
@@ -145,6 +146,14 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         appDatabase.spendingsDao().addSpending(spending)
     }
 
+    override suspend fun saveRepeatables(repeatableOptions: List<RepeatableOptionEntity>) {
+        appDatabase.spendingsDao().saveRepeatableOptions(repeatableOptions)
+    }
+
+    override suspend fun saveRepeatable(repeatableOptions: RepeatableOptionEntity) {
+        appDatabase.spendingsDao().saveRepeatableOption(repeatableOptions)
+    }
+
     override suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity> {
         return appDatabase.spendingsDao().getSpendings(isPlanned)
     }
@@ -156,9 +165,14 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     ): List<SpendingEntity> {
         val allSpendings = mutableListOf<SpendingEntity>()
         if (isPlanned) {
+            val repeatableOptions = appDatabase.spendingsDao().getRepeatableOptions()
             appDatabase.spendingsDao().getSpendingsRepeatable().forEach { repeatedSpending->
-                findDatesBetween(from, to, repeatedSpending.date, repeatedSpending.repeatOptions).forEach{ date ->
-                    allSpendings.add(repeatedSpending.copy(id = "$date$REPEAT_INFIX${repeatedSpending.id}", date = date))
+                val option = repeatableOptions.first { it.id == repeatedSpending.repeatOptionsId }
+                findDatesBetween(from, to, repeatedSpending.date, option.repeatType).forEach{ date ->
+                    val id = "$date$REPEAT_INFIX${repeatedSpending.id}"
+                    if (option.excludedIDs.contains(id).not()) {
+                        allSpendings.add(repeatedSpending.copy(id = id, date = date))
+                    }
                 }
             }
         }
@@ -221,6 +235,10 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun getDetailCrossRefs(detailId: String): List<SpendingDetailsCrossRef> {
         return appDatabase.spendingsDao().getDetailCrossRefs(detailId)
+    }
+
+    override suspend fun getRepeatableOption(id: String): RepeatableOptionEntity {
+        return appDatabase.spendingsDao().getRepeatableOption(id)
     }
 
     override suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef) {

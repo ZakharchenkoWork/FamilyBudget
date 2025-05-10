@@ -48,6 +48,7 @@ import com.faigenbloom.familybudget.ui.categories.CategoriesState
 import com.faigenbloom.familybudget.ui.categories.mockCategoriesList
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
 import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
+import com.faigenbloom.familybudget.ui.spendings.RepeatableOptionDataUi
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.hint
 import java.util.Currency
@@ -93,7 +94,10 @@ fun SpendingEditPage(
                 Information(
                     state = state,
                     onPhotoRequest = onPhotoRequest,
-                    onCalendarOpened = onCalendarOpened,
+                    onCalendarOpened = {
+                        state.onChangeRepeatDateRequested(false)
+                        onCalendarOpened(it)
+                    },
                     onSpendingDialogRequest = { onSpendingDialogRequest(state.detailsList) },
                 )
             } else {
@@ -109,17 +113,22 @@ fun SpendingEditPage(
             }
         }
     }
-    if (state.showRepeatDialog){
+    if (state.showRepeatDialog) {
         SpendingRepeatDialog(
-            chosenOptions = state.repeatOptions,
-            onDismiss = {state.onShowRepeatDialogChanged(false)},
-            onChoose = state.onRepeatChanged
+            chosenOptions = state.repeatOptions ?: RepeatableOptionDataUi(repeatType = RepeatOptionsUi.NONE),
+            onDismiss = { state.onShowRepeatDialogChanged(false) },
+            onChoose = state.onRepeatChanged,
+            onCalendarRequested = {
+                state.onChangeRepeatDateRequested(true)
+                onCalendarOpened(state.repeatOptions?.endDate ?: "")
+            },
         )
     }
     val isLoadingCategory by remember { categoryState.isLoading }
     val isLoading by remember { state.isLoading }
     Loading(isShown = isLoading || isLoadingCategory)
 }
+
 
 @Composable
 fun Information(
@@ -356,7 +365,7 @@ fun SpacerStripe(
                     .weight(0.5f)
                     .padding(end = 16.dp),
                 horizontalArrangement = Arrangement.End,
-                ) {
+            ) {
                 if (state.isHidden) {
                     Image(
                         modifier = Modifier
@@ -377,25 +386,30 @@ fun SpacerStripe(
                         contentDescription = "",
                     )
                 }
-                if (state.repeatOptions != RepeatOptionsUi.NONE) {
-                    Box(
-                        modifier = Modifier.size(32.dp).aspectRatio(1f).padding(start = 8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
+                state.repeatOptions?.let {
+                    if (state.repeatOptions.repeatType != RepeatOptionsUi.NONE) {
+                        Box(
                             modifier = Modifier
-                                .height(32.dp)
-                                .aspectRatio(1f),
-                            painter = painterResource(id = state.repeatOptions.icon),
-                            contentDescription = "",
-                        )
-                        Text(
-                            modifier = Modifier,
-                            text = stringResource(state.repeatOptions.stringResource)[0].toString(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                        )
+                                .size(32.dp)
+                                .aspectRatio(1f)
+                                .padding(start = 8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .height(32.dp)
+                                    .aspectRatio(1f),
+                                painter = painterResource(id = state.repeatOptions.repeatType.icon),
+                                contentDescription = "",
+                            )
+                            Text(
+                                modifier = Modifier,
+                                text = stringResource(state.repeatOptions.repeatType.stringResource)[0].toString(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
                     }
                 }
             }
@@ -442,6 +456,7 @@ fun SpendingEditPageCategoriesPreview() {
                     onRepeatChanged = {},
                     showRepeatDialog = false,
                     onShowRepeatDialogChanged = {},
+                    onChangeRepeatDateRequested = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList = mockCategoriesList,
@@ -460,7 +475,7 @@ fun SpendingEditPageCategoriesPreview() {
                     onDeleteCategory = {},
                     isCategoryError = false,
                     onCategoryError = {},
-                    ),
+                ),
                 onPhotoRequest = {},
                 onCategoryPhotoRequest = { _ -> },
                 onCalendarOpened = { },
@@ -508,10 +523,11 @@ fun SpendingEditPageDetailsPreview() {
                     isCategoryError = false,
                     onRepeatChanged = {},
                     onShowRepeatDialogChanged = {},
+                    onChangeRepeatDateRequested = {},
                 ),
                 categoryState = CategoriesState(
                     categoriesList =
-                    mockCategoriesList,
+                        mockCategoriesList,
                     selectedIndex = 1,
                     onSelectionChanged = {},
                     newCategoryName = "",

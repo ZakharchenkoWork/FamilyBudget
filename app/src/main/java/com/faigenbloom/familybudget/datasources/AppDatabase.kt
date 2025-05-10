@@ -14,6 +14,7 @@ import com.faigenbloom.familybudget.datasources.db.entities.CategoryEntity
 import com.faigenbloom.familybudget.datasources.db.entities.DefaultCategories
 import com.faigenbloom.familybudget.datasources.db.entities.FamilyEntity
 import com.faigenbloom.familybudget.datasources.db.entities.PersonEntity
+import com.faigenbloom.familybudget.datasources.db.entities.RepeatableOptionEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SettingsEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailEntity
 import com.faigenbloom.familybudget.datasources.db.entities.SpendingDetailsCrossRef
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
         SpendingDetailsCrossRef::class,
         FamilyEntity::class,
         PersonEntity::class,
+        RepeatableOptionEntity::class,
     ],
     version = 3,
     exportSchema = false,

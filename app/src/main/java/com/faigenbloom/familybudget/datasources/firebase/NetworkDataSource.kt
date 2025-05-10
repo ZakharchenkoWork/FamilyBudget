@@ -4,8 +4,14 @@ import com.faigenbloom.familybudget.datasources.ID
 import com.faigenbloom.familybudget.datasources.IdSource
 import com.faigenbloom.familybudget.datasources.firebase.models.BudgetLineModel
 import com.faigenbloom.familybudget.datasources.firebase.models.CategoryModel
+import com.faigenbloom.familybudget.datasources.firebase.models.RepeatableOptionModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingDetailModel
 import com.faigenbloom.familybudget.datasources.firebase.models.SpendingModel
+import com.faigenbloom.familybudget.datasources.firebase.models.Wrapper
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
 class NetworkDataSource(
     private val familyNetworkSource: FamilyNetworkSource,
@@ -19,15 +25,6 @@ class NetworkDataSource(
         spendingsNetworkSource.saveSpending(model)
         model.photoUri?.let {
             imageSource.upload(it)
-        }
-
-        familyNetworkSource.getFamily(idSource[ID.FAMILY])?.let { family ->
-            val oldSpendings = family.spendings ?: emptyList()
-            familyNetworkSource.createFamily(
-                family.copy(
-                    spendings = ArrayList(oldSpendings).apply { add(model.id) },
-                ),
-            )
         }
     }
 
@@ -54,6 +51,12 @@ class NetworkDataSource(
         return spendingsNetworkSource.loadDetails()
     }
 
+    suspend fun loadRepeatableOptions(): List<RepeatableOptionModel> {
+        return spendingsNetworkSource.loadRepeatableOptions()
+    }
+    suspend fun saveRepeatableOptions(repeatableOptionModel: RepeatableOptionModel)  {
+        spendingsNetworkSource.saveRepeatableOptions(repeatableOptionModel)
+    }
     suspend fun loadCategories(): List<CategoryModel> {
         val loadCategories = categoryNetworkSource.loadCategories()
         loadCategories.forEach {

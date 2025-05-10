@@ -183,7 +183,7 @@ fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
             ),
             MenuItemState(
                 label = R.string.button_repeat,
-                icon = state.repeatOptions.icon,
+                icon = state.repeatOptions?.repeatType?.icon,
                 onClick = {state.onShowRepeatDialogChanged(true)},
             ),
             MenuItemState(

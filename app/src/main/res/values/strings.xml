@@ -124,6 +124,8 @@
     <string name="share">Share link</string>
     <string name="family_leave">Leave family</string>
     <string name="are_you_shure">Are you shure?</string>
+    <string name="repeatable_end_date">Add End Date</string>
+    <string name="repeatable_end_date_till">Until %1$s</string>
     <string name="leaveFamily">You are about to leave the family. All your personal data will be moved to your new family. Please enter new family name.</string>
     <string name="repeat_dialog_title">Repeat:</string>
 
