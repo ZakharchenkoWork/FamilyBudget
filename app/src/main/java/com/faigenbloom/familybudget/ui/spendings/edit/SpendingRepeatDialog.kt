@@ -67,6 +67,7 @@ fun SpendingRepeatDialog(
             )
             Item(
                 R.string.spendings_filter_daily,
+                semantics = SPENDING_DAILY_OPTION,
                 isSelected = selectedType == RepeatOptionsUi.DAILY,
                 onSelect = { selectedType = RepeatOptionsUi.DAILY },
             )
@@ -142,13 +143,15 @@ fun SpendingRepeatDialog(
 fun Item(
     @StringRes id: Int,
     isSelected: Boolean,
+    semantics: String = "",
     onSelect: () -> Unit,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable(onClick = onSelect),
+            .clickable(onClick = onSelect)
+            .semantics{contentDescription = semantics},
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
                 colorScheme.primary

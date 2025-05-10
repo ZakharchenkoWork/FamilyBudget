@@ -5,6 +5,8 @@
 package com.faigenbloom.familybudget.common
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,8 +22,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -53,12 +57,24 @@ fun BaseTextField(
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     textFieldType: TextFieldType = TextFieldType.Normal,
     onTextChange: (String) -> Unit,
+    onClick: (() -> Unit)? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val containerColor = MaterialTheme.colorScheme.transparent()
     TextField(
         modifier = modifier,
+        readOnly = onClick != null,
+        interactionSource =onClick?.let {  remember { MutableInteractionSource() }
+            .also { interactionSource ->
+                LaunchedEffect(interactionSource) {
+                    interactionSource.interactions.collect {
+                        if (it is PressInteraction.Release) {
+                            onClick()
+                        }
+                    }
+                }
+            }},
         colors = TextFieldDefaults.colors(
             focusedTextColor = textColor,
             unfocusedTextColor = textColor,

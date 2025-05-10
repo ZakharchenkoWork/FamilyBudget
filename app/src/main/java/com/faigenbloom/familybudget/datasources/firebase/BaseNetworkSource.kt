@@ -19,7 +19,7 @@ import io.ktor.http.takeFrom
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private const val BASE_URL = "http://192.168.68.55:8080"
+const val BASE_URL = "http://192.168.68.55:8080"
 
 open class BaseNetworkSource(
     private val firestore: FirebaseFirestore,

@@ -36,8 +36,8 @@ class MockDataSource : BaseDataSource {
                 isManualTotal = true,
                 isHidden = false,
                 ownerId = "asdf",
-                repeatOptionsId = TODO(),
-                isDuplicate = TODO(),
+                repeatOptionsId ="",
+                isDuplicate = false,
             )
         },
     )

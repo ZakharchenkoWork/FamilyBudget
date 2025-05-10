@@ -34,6 +34,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.toReadableDate
+import com.faigenbloom.familybudget.common.toReadableMoney
 import com.faigenbloom.familybudget.common.toReadableMonth
 import com.faigenbloom.familybudget.common.toReadableYear
 import com.faigenbloom.familybudget.common.ui.LoadingIndicator
@@ -78,6 +79,7 @@ fun DynamicPlatesHolder(
                             .fillMaxWidth()
                             .padding(bottom = 16.dp)
                             .background(MaterialTheme.colorScheme.secondary),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
                             modifier = Modifier.padding(16.dp),
@@ -87,6 +89,13 @@ fun DynamicPlatesHolder(
                                 is FilterType.Monthly -> datedPattern.date.toReadableMonth()
                                 is FilterType.Yearly -> datedPattern.date.toReadableYear()
                             },
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                        )
+                        val totalAmount : Long = datedPattern.patterns.sumOf { it.items.sumOf { it.amount }}
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = totalAmount.toReadableMoney(),//TODO: add currency
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                         )

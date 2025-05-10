@@ -27,6 +27,7 @@ import com.faigenbloom.familybudget.ui.categories.CategoriesState
 import com.faigenbloom.familybudget.ui.categories.CategoriesViewModel
 import com.faigenbloom.familybudget.ui.categories.NO_INDEX
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -183,7 +184,8 @@ fun getEditSpendingMenuState(state: SpendingEditState): FloatingMenuState {
             ),
             MenuItemState(
                 label = R.string.button_repeat,
-                icon = state.repeatOptions?.repeatType?.icon,
+                icon = state.repeatOptions?.repeatType?.icon?: RepeatOptionsUi.NONE.icon,
+                semantics = SPENDING_REPEATABLE_OPTIONS,
                 onClick = {state.onShowRepeatDialogChanged(true)},
             ),
             MenuItemState(

@@ -18,11 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.BaseButton
 import com.faigenbloom.familybudget.common.ui.Loading
+import com.faigenbloom.familybudget.ui.spendings.detail.LOGIN_BUTTON
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 import com.faigenbloom.familybudget.ui.theme.circle
 
@@ -67,7 +70,9 @@ fun OnboardingPage(
         )
         if (isLoading.not()) {
             BaseButton(
-                modifier = Modifier.padding(top = 24.dp),
+                modifier = Modifier.padding(top = 24.dp).semantics {
+                    contentDescription = LOGIN_BUTTON
+                },
                 textRes = R.string.login,
                 onClick = onLogin,
             )

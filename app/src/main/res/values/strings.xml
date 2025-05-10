@@ -100,6 +100,7 @@
     <string name="photo_chooser_gallery">Gallery</string>
     <string name="photo_chooser_camera">Photo</string>
     <string name="date">Date</string>
+    <string name="date_today">Today</string>
     <string name="spending_mark_purchased">Mark purchased</string>
     <string name="message_saved">Saved</string>
     <string name="message_hidden">Spending will be shown</string>

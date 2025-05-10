@@ -1,5 +1,6 @@
 package com.faigenbloom.familybudget.ui.spendings.show
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,9 @@ fun SpendingShowPage(
     state: SpendingShowState,
     onBack: () -> Unit,
 ) {
+    BackHandler {
+        onBack()
+    }
     Column {
         TopBar(
             title = if (state.isCurrentUserOwner) {

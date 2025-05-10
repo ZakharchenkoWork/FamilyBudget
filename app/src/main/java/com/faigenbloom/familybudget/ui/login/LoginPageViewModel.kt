@@ -14,7 +14,7 @@ class LoginPageViewModel(
     private val loginUserUseCase: LoginUserUseCase,
 ) : ViewModel() {
     var onLoggedIn: () -> Unit = {}
-    val loginField = StateAble("baskinaerobins@gmail.com") { onDropError() }
+    val loginField = StateAble("baskinaaaerobins@gmail.com") { onDropError() }
     private fun onLoginClicked() {
 
         viewModelScope.launch {

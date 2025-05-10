@@ -198,6 +198,8 @@ class RegisterPageViewModel(
         }
         _stateFlow.update {
             it.copy(
+                familyNameText = "Test1",
+                surNameText = "Test1",
                 emailText = "baskinaaaerobins@gmail.com",
                 passwordText = "philips2010",
                 nameText = "Nataly",
@@ -225,7 +227,7 @@ data class RegisterPageState(
     val emailError: Boolean = false,
     val isSameFamilyName: Boolean = true,
     val isRegistrationEnabled: Boolean = false,
-    val isLoading: MutableState<Boolean> = mutableStateOf(true),
+    val isLoading: MutableState<Boolean> = mutableStateOf(false),
     val onRegisterClicked: () -> Unit,
     var onFamilyNameChanged: (String) -> Unit,
     var onSurNameChanged: (String) -> Unit,

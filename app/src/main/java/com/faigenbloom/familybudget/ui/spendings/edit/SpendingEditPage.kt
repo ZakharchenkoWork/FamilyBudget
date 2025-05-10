@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -217,19 +218,38 @@ private fun TopInfo(
                     onTextChange = state.onAmountTextChanged,
                 )
             }
-            Text(
+            BaseTextField(
                 modifier = Modifier
-                    .padding(horizontal = 32.dp, vertical = 4.dp)
-                    .clickable {
-                        onCalendarOpened(state.dateText)
+                    .background(
+                        color = colorScheme.background,
+                    )
+                    .semantics {
+                        contentDescription = SPENDING_DATE_INPUT
                     },
+                onClick = {
+                    onCalendarOpened(state.dateText)
+                },
                 text = state.dateText.ifEmpty {
                     stringResource(
-                        id = R.string.date,
+                        id = R.string.date_today,
                     )
                 },
-                color = MaterialTheme.colorScheme.onPrimary,
+                labelId = R.string.date,
+                onTextChange = {},
             )
+            /* Text(
+                 modifier = Modifier
+                     .padding(horizontal = 16.dp, vertical = 4.dp)
+                     .clickable {
+                         onCalendarOpened(state.dateText)
+                     },
+                 text = state.dateText.ifEmpty {
+                     stringResource(
+                         id = R.string.date,
+                     )
+                 },
+                 color = MaterialTheme.colorScheme.onPrimary,
+             )*/
         }
     }
 }

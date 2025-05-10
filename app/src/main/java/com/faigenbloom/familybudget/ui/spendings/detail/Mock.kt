@@ -8,6 +8,7 @@ const val DETAIL_DIALOG_AMOUNT_INPUT = "DETAIL_DIALOG_AMOUNT_INPUT"
 const val SUGGESTION_TITLE = "SUGGESTION_TITLE"
 const val DETAIL_NAME_TITLE = "DETAIL_NAME_TITLE"
 const val OK_BUTTON = "OK_BUTTON"
+const val LOGIN_BUTTON = "LOGIN_BUTTON"
 
 val mockSuggestions = listOf(
     DetailUiData(

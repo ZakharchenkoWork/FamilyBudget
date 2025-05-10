@@ -1,16 +1,12 @@
 package com.faigenbloom.familybudget.common
 
+import java.util.Locale
+
 const val NO_ANSWER = Long.MIN_VALUE
 
-fun Long.toReadableMoney(): String {
-    var result = ((this.toDouble()) / 100).toString()
-    if (result.contains(".")) {
-        if (result.split(".")[1].length == 1) {
-            result += "0"
-        }
-    }
-    return result
-}
+fun Long.toReadableMoney() = ((this.toDouble()) / 100)
+    .let { "%,.2f".format(Locale.US, it) }
+    .replace(',', ' ')
 
 fun String.toLongMoney(): Long = if (this.contains(".")) {
     val parts = this.split(".")

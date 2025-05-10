@@ -1,6 +1,5 @@
 package com.faigenbloom.familybudget
 
-import androidx.compose.ui.text.intl.Locale
 import com.faigenbloom.familybudget.common.findDatesBetween
 import com.faigenbloom.familybudget.common.getMonthEndDate
 import com.faigenbloom.familybudget.common.getMonthStartDate
@@ -8,8 +7,6 @@ import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toReadableDate
 import com.faigenbloom.familybudget.datasources.db.entities.RepeatOptions
 import io.kotest.matchers.shouldBe
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.junit.Test
 
 
@@ -50,6 +47,7 @@ class DateTests {
         val datesDaily = findDatesBetween(start, end, spendingDate, RepeatOptions.DAILY)
         datesDaily.size shouldBe 3
     }
+
     @Test
     fun `findDatesBetween days is correct in past repeatable`() {
         val start = "01.01.2025".toLongDate()

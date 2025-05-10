@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -26,10 +28,12 @@ import androidx.compose.ui.unit.dp
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.BaseButton
 import com.faigenbloom.familybudget.common.BaseTextField
+import com.faigenbloom.familybudget.common.MENU_FLOATING_BUTTON
 import com.faigenbloom.familybudget.common.StripeBar
 import com.faigenbloom.familybudget.common.TextFieldType
 import com.faigenbloom.familybudget.common.TopBar
 import com.faigenbloom.familybudget.common.ui.Loading
+import com.faigenbloom.familybudget.ui.spendings.detail.LOGIN_BUTTON
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -78,7 +82,10 @@ fun LoginPage(
             AuthError()
         }
         BaseButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp)
+                .semantics {
+                    contentDescription = LOGIN_BUTTON
+                },
             textRes = R.string.login,
             onClick = state.onLoginClicked,
         )

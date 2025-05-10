@@ -2,6 +2,7 @@ package com.faigenbloom.familybudget
 
 import com.faigenbloom.familybudget.datasources.BaseDataSource
 import com.faigenbloom.familybudget.datasources.MockDataSource
+import com.faigenbloom.familybudget.datasources.databaseModule
 import com.faigenbloom.familybudget.datasources.firebase.networkModule
 import com.faigenbloom.familybudget.domain.domainModule
 import com.faigenbloom.familybudget.repositories.repositoryModule
@@ -20,7 +21,7 @@ class TestApp : App() {
     override fun onCreate() {
         super.onCreate()
         koinApplication.modules(
-            mockedDataSource,
+            databaseModule,
             networkModule,
             domainModule,
             repositoryModule,
