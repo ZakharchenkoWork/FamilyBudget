@@ -129,7 +129,7 @@ fun SpendingRepeatDialog(
                 Text(
                     modifier = Modifier
                         .padding(end = 16.dp)
-                        .semantics { contentDescription = OK_BUTTON }
+                        .semantics { contentDescription = SPENDING_REPEATABLE_OPTIONS_OK }
                         .clickable { onChoose(selected.copy(repeatType = selectedType)) },
                     text = stringResource(id = R.string.button_ok),
                     color = colorScheme.onBackground,

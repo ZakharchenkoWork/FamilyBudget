@@ -5,12 +5,17 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.printToLog
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.faigenbloom.familybudget.common.BACK_BUTTON
 import com.faigenbloom.familybudget.common.MENU_FLOATING_BUTTON
@@ -28,8 +33,10 @@ import com.faigenbloom.familybudget.ui.spendings.edit.ADD_DETAIL_BUTTON
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_AMOUNT_INPUT
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_DAILY_OPTION
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_DATE_INPUT
+import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_DATE_INPUT_OK
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_NAME_INPUT
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_REPEATABLE_OPTIONS
+import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_REPEATABLE_OPTIONS_OK
 import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_SAVE_BUTTON
 import com.faigenbloom.familybudget.ui.spendings.edit.SpendingEditRoute
 import io.ktor.client.HttpClient
@@ -89,6 +96,7 @@ abstract class BaseTest {
     protected fun startUp() {
         waitForIdle()
         try {
+            Thread.sleep(1000L)
             getTestRule().onNodeWithContentDescription(LOGIN_BUTTON).assertDoesNotExist()
         } catch (assertionError: AssertionError) {
             getTestRule().onNodeWithContentDescription(LOGIN_BUTTON).performClick()
@@ -139,10 +147,11 @@ abstract class BaseTest {
             .performTextInput(amount)
     }
 
-    protected fun setupDate(day: Int) {
+    protected fun setupDate() {
 
         getTestRule().onNodeWithContentDescription(SPENDING_DATE_INPUT).performClick()
-        getTestRule().onNodeWithText("$day").performClick()
+        getTestRule().onNodeWithText("Thursday, May 1, 2025").performClick()
+        getTestRule().onNodeWithContentDescription(SPENDING_DATE_INPUT_OK).performClick()
     }
     protected fun clickRepeatableOption() {
         clickMenuButton()
@@ -150,6 +159,7 @@ abstract class BaseTest {
     }
     protected fun clickRepeatableDaily() {
         getTestRule().onNodeWithContentDescription(SPENDING_DAILY_OPTION).performClick()
+        getTestRule().onNodeWithContentDescription(SPENDING_REPEATABLE_OPTIONS_OK).performClick()
     }
     protected fun clickSaveSpending() {
         getTestRule().onNodeWithContentDescription(SPENDING_SAVE_BUTTON).performClick()

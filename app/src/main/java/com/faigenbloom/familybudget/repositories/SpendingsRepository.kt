@@ -33,7 +33,9 @@ class SpendingsRepository(
         lastSpendingDuplicate?.let {
             return@let if (it.id == id)
                 lastSpendingDuplicate else null
-        } ?: dataBaseDataSource.getSpending(id)
+        } ?: dataBaseDataSource.getSpending(id).also {
+            println("getSpending: $it")
+        }
 
     suspend fun getSpendings(isPlanned: Boolean) =
         dataBaseDataSource.getSpendings(isPlanned)
@@ -48,15 +50,18 @@ class SpendingsRepository(
 
 
     suspend fun markSpendingPurchased(spendingId: String) {
-        val spending = if (spendingId.contains(REPEAT_INFIX)) {
+        var spendingDate : Long?= null
+
+        val baseSpending = if (spendingId.contains(REPEAT_INFIX)) {
+            spendingDate = spendingId.split(REPEAT_INFIX)[0].toLong()
             dataBaseDataSource.getSpending(spendingId.split(REPEAT_INFIX)[1])
         } else{
             dataBaseDataSource.getSpending(spendingId)
         }
-        val purchasedSpending = spending.copy(isPlanned = false, repeatOptionsId="")
+        val purchasedSpending = baseSpending.copy(id = spendingId, date = spendingDate?: baseSpending.date, isPlanned = false, repeatOptionsId="")
 
-        if (spending.repeatOptionsId.isNotBlank()){
-            val repeatableOptionModel = repeatablesSourceMapper.forServer(dataBaseDataSource.getRepeatableOption(spending.repeatOptionsId))
+        if (baseSpending.repeatOptionsId.isNotBlank()){
+            val repeatableOptionModel = repeatablesSourceMapper.forServer(dataBaseDataSource.getRepeatableOption(baseSpending.repeatOptionsId))
                 .let { it.copy(excludedIDs = it.excludedIDs + spendingId) }
 
 

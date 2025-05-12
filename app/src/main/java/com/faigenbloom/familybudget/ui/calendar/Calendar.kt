@@ -27,11 +27,15 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.faigenbloom.familybudget.R
 import com.faigenbloom.familybudget.common.toLongDate
 import com.faigenbloom.familybudget.common.toReadableDate
+import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_DATE_INPUT
+import com.faigenbloom.familybudget.ui.spendings.edit.SPENDING_DATE_INPUT_OK
 import com.faigenbloom.familybudget.ui.theme.FamillySpandingsTheme
 
 @Composable
@@ -73,6 +77,9 @@ fun Calendar(
                                 } ?: onDatePicked(start.toReadableDate(), start.toReadableDate())
                             }
                         }
+                    }
+                    .semantics {
+                        contentDescription = SPENDING_DATE_INPUT_OK
                     },
                 painter = painterResource(id = R.drawable.icon_ok),
                 contentDescription = null,
@@ -111,9 +118,6 @@ fun DateRangePickerComposable(
                 shape = RoundedCornerShape(5),
             ),
         state = state,
-        /*  dateFormatter =  DatePickerFormatter(
-              selectedDateSkeleton = "dd.MM.YYYY",
-          ),*/
         colors = getDatePickerColors(),
     )
 }

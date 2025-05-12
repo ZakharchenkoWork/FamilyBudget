@@ -52,7 +52,14 @@ class SaveSpendingUseCase(
                 )
                 it.copy(id = repeatableOptionsId!!)
             }
-        } else null
+        } else {
+            spending.repeatOptions?.let {
+                spendingsRepository.saveRepeatableOptions(
+                    repeatableOptionsMapper.forDB(spending.repeatOptions.copy(excludedIDs = spending.repeatOptions.excludedIDs + spendingId))
+                )
+            }
+            null
+        }
         return repeatOptions
     }
 }

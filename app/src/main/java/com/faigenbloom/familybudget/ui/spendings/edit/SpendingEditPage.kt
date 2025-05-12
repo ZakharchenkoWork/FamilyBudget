@@ -237,19 +237,6 @@ private fun TopInfo(
                 labelId = R.string.date,
                 onTextChange = {},
             )
-            /* Text(
-                 modifier = Modifier
-                     .padding(horizontal = 16.dp, vertical = 4.dp)
-                     .clickable {
-                         onCalendarOpened(state.dateText)
-                     },
-                 text = state.dateText.ifEmpty {
-                     stringResource(
-                         id = R.string.date,
-                     )
-                 },
-                 color = MaterialTheme.colorScheme.onPrimary,
-             )*/
         }
     }
 }

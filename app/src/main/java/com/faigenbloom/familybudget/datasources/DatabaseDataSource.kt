@@ -183,8 +183,15 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
 
     override suspend fun getSpending(id: String): SpendingEntity {
         return if (id.contains(REPEAT_INFIX)){
-            val splited = id.split(REPEAT_INFIX)
-            appDatabase.spendingsDao().getSpending(splited[1]).copy(id = id, date = splited[0].toLong())
+            val spending = appDatabase.spendingsDao().getSpending(id)
+            if (spending == null) {
+                val splited = id.split(REPEAT_INFIX)
+                appDatabase.spendingsDao().getSpending(splited[1])
+                    .copy(id = id,
+                        date = splited[0].toLong(),
+                        isPlanned = true,
+                    )
+            } else spending
         } else{
             appDatabase.spendingsDao().getSpending(id)
         }

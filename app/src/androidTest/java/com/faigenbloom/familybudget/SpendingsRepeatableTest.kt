@@ -38,7 +38,7 @@ class SpendingsRepeatableTest : BaseTest() {
             mockSpendingsWithCategoryList[0].name,
             mockSpendingsWithCategoryList[0].amount.toReadableMoney(),
         )
-        setupDate(1)
+        setupDate()
         clickRepeatableOption()
         clickRepeatableDaily()
         moveToSpendingInfo()
