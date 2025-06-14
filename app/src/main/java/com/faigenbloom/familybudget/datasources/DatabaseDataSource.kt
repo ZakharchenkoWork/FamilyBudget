@@ -162,6 +162,7 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
         isPlanned: Boolean,
         from: Long,
         to: Long,
+        isArchived: Boolean,
     ): List<SpendingEntity> {
         val allSpendings = mutableListOf<SpendingEntity>()
         if (isPlanned) {
@@ -177,7 +178,7 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
             }
         }
 
-        return allSpendings.apply{ addAll(appDatabase.spendingsDao().getSpendingsByDate(isPlanned, from, to))}
+        return allSpendings.apply{ addAll(appDatabase.spendingsDao().getSpendingsByDate(isPlanned, from, to, isArchived))}
     }
 
 
@@ -258,11 +259,6 @@ class DatabaseDataSource(val appDatabase: AppDatabase) : BaseDataSource {
     override suspend fun deleteSpendingDetail(id: String) {
         appDatabase.spendingsDao().deleteSpendingDetail(id)
     }
-
-    override suspend fun deleteSpending(id: String) {
-        appDatabase.spendingsDao().deleteSpending(id)
-    }
-
     override suspend fun getSpendingsByCategory(id: String): List<SpendingEntity> {
         return appDatabase.spendingsDao().getSpendingsByCategory(id)
     }

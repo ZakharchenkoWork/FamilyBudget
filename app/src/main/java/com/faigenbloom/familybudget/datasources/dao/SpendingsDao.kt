@@ -108,12 +108,6 @@ interface SpendingsDao {
     suspend fun getSpendingDetailDuplicate(name: String, amount: Long): SpendingDetailEntity?
 
     @Query(
-        "DELETE FROM ${SpendingEntity.TABLE_NAME} WHERE " +
-                "${SpendingEntity.COLUMN_ID} = :id",
-    )
-    suspend fun deleteSpending(id: String)
-
-    @Query(
         "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
                 "WHERE ${SpendingEntity.COLUMN_CATEGORY} = :id ",
     )
@@ -123,9 +117,10 @@ interface SpendingsDao {
         "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +
                 "WHERE ${SpendingEntity.COLUMN_IS_PLANNED} = :isPlanned " +
                 "AND ${SpendingEntity.COLUMN_DATE} >= :from " +
-                "AND ${SpendingEntity.COLUMN_DATE} <= :to",
+                "AND ${SpendingEntity.COLUMN_DATE} <= :to " +
+                "AND ${SpendingEntity.COLUMN_IS_ARCHIVED} = :isArchived ",
     )
-    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long, isArchived: Boolean): List<SpendingEntity>
 
     @Query(
         "SELECT * FROM ${SpendingEntity.TABLE_NAME} " +

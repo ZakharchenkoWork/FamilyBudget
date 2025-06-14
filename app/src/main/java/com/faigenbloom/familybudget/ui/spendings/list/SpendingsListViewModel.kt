@@ -91,12 +91,19 @@ class SpendingsListViewModel(
         )
         reloadData(filterType)
     }
+    private fun onArchivedSwitched() {
+        val filterType = state.filterType.copy(
+            isArchived = state.filterType.isArchived.not(),
+        )
+        reloadData(filterType)
+    }
 
     private val state: SpendingsState
         get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
         SpendingsState(
             onPlannedSwitched = ::onPlannedSwitched,
+            onArchivedSwitched = ::onArchivedSwitched,
             onRangeFiltered = ::onRangeFiltered,
             onDailyFiltered = ::onDailyFiltered,
             onMonthlyFiltered = ::onMonthlyFiltered,
@@ -130,6 +137,7 @@ data class SpendingsState(
     val filterType: FilterType = FilterType.Daily(false),
     val isLoading: MutableState<Boolean> = mutableStateOf(true),
     val onPlannedSwitched: (() -> Unit) = {},
+    val onArchivedSwitched: (() -> Unit) = {},
     val onRangeFiltered: (() -> Unit) = {},
     val onDailyFiltered: (() -> Unit) = {},
     val onMonthlyFiltered: (() -> Unit) = {},

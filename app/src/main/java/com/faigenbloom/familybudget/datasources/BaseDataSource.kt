@@ -31,7 +31,7 @@ interface BaseDataSource {
     suspend fun saveRepeatables(repeatableOptions: List<RepeatableOptionEntity>)
     suspend fun saveRepeatable(repeatableOptions: RepeatableOptionEntity)
     suspend fun getSpendings(isPlanned: Boolean): List<SpendingEntity>
-    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity>
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long, isArchived: Boolean): List<SpendingEntity>
     suspend fun getSpending(id: String): SpendingEntity
     suspend fun getBudgetData(): BudgetEntity
     suspend fun saveBudgetData(budget: BudgetEntity)
@@ -49,7 +49,6 @@ interface BaseDataSource {
     suspend fun getRepeatableOption(string: String): RepeatableOptionEntity
     suspend fun deleteCrossRef(spendingDetailsCrossRef: SpendingDetailsCrossRef)
     suspend fun deleteSpendingDetail(id: String)
-    suspend fun deleteSpending(id: String)
     suspend fun getSpendingsByCategory(id: String): List<SpendingEntity>
     suspend fun deleteCategory(id: String)
     suspend fun changeCategoryHidden(id: String, isHidden: Boolean)

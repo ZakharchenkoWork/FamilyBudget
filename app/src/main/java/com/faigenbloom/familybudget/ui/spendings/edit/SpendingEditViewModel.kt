@@ -23,6 +23,7 @@ import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.ui.categories.CategoryUiData
 import com.faigenbloom.familybudget.ui.spendings.DetailUiData
+import com.faigenbloom.familybudget.ui.spendings.RepeatOptionsUi
 import com.faigenbloom.familybudget.ui.spendings.RepeatableOptionDataUi
 import com.faigenbloom.familybudget.ui.spendings.SpendingDetailListWrapper
 import com.faigenbloom.familybudget.ui.spendings.SpendingUiData
@@ -188,7 +189,7 @@ class SpendingEditViewModel(
             } else{
                 _stateFlow.update {
                     state.copy(
-                        repeatOptions = it.repeatOptions?.copy(endDate = date),
+                        repeatOptions = it.repeatOptions?.copy(endDate = date)?: RepeatableOptionDataUi(repeatType = RepeatOptionsUi.NONE, endDate = date),
                     )
                 }
             }

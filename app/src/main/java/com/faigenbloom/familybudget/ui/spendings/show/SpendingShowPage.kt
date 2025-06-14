@@ -330,6 +330,7 @@ fun SpendingEditPageDetailsPreview() {
                     onMarkPurchasedClicked = { },
                     onDuplicateClicked = {},
                     onEditClicked = {},
+                    deleteSpending = {},
                 ),
                 onBack = {},
             )

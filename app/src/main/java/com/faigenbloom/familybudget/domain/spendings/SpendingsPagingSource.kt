@@ -39,6 +39,7 @@ class SpendingsPagingSource(
                         isPlanned = filter.isPlanned,
                         from = filter.from,
                         to = filter.to,
+                        isArchived = filter.isArchived,
                     ).map {
                         spendingsWithCategoryMapper.forUI(it, getCategoryByIdUseCase(it.categoryId))
                     }

@@ -34,6 +34,8 @@ data class SpendingEntity(
     val repeatOptionsId: String,
     @ColumnInfo(name = COLUMN_IS_DUPLICATE)
     val isDuplicate: Boolean = false,
+    @ColumnInfo(name = COLUMN_IS_ARCHIVED)
+    val isArchived: Boolean = false,
 ) : Countable {
 
     override fun getSortableValue(): Long {
@@ -58,6 +60,7 @@ data class SpendingEntity(
         const val COLUMN_IS_HIDDEN = "is_hidden"
         const val COLUMN_REPEAT_OPTIONS = "repeat_options"
         const val COLUMN_IS_DUPLICATE = "is_duplicate"
+        const val COLUMN_IS_ARCHIVED = "is_archived"
     }
 }
 enum class RepeatOptions{

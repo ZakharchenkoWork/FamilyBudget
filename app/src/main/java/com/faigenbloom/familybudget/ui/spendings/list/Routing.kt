@@ -96,6 +96,11 @@ fun getMainMenu(
                     )
                 },
             ),
+            MenuItemState(
+                label = R.string.spendings_filter_archive,
+                icon = R.drawable.icon_archive,
+                onClick = state.onArchivedSwitched,
+            ),
         ),
     )
 }

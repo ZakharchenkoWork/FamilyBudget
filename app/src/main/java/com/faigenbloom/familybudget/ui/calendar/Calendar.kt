@@ -46,7 +46,7 @@ fun Calendar(
 ) {
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = startDate.toLongDate(),
-        initialSelectedEndDateMillis = endDate.toLongDate(),
+        initialSelectedEndDateMillis = if (endDate.isNotBlank()) endDate.toLongDate() else null,
     )
 
     val datePickerState = rememberDatePickerState(

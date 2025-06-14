@@ -33,6 +33,7 @@ fun NavGraphBuilder.spendingShowPage(
         val viewModel = koinViewModel<SpendingShowViewModel>()
 
         viewModel.onEditSpending = onEditClicked
+        viewModel.onBack = onBack
 
         val state by viewModel
             .stateFlow
@@ -66,6 +67,11 @@ fun getShowSpendingMenuState(state: SpendingShowState): FloatingMenuState {
                 label = R.string.button_edit,
                 icon = R.drawable.icon_edit,
                 onClick = state.onEditClicked,
+            ),
+            MenuItemState(
+                label = R.string.button_delete,
+                icon = R.drawable.icon_delete,
+                onClick = state.deleteSpending,
             ),
         ),
     )

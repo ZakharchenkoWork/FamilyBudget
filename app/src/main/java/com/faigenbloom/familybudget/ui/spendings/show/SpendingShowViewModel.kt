@@ -14,6 +14,7 @@ import com.faigenbloom.familybudget.domain.currency.GetChosenCurrencyUseCase
 import com.faigenbloom.familybudget.domain.details.GetSpendingDetailsByIdUseCase
 import com.faigenbloom.familybudget.domain.details.SaveDetailsUseCase
 import com.faigenbloom.familybudget.domain.family.GetPersonNameUseCase
+import com.faigenbloom.familybudget.domain.spendings.DeleteSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.GetSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SaveSpendingUseCase
 import com.faigenbloom.familybudget.domain.spendings.SetPurchasedSpendingUseCase
@@ -40,12 +41,14 @@ class SpendingShowViewModel(
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     private val getChosenCurrencyUseCase: GetChosenCurrencyUseCase,
     private val getPersonNameUseCase: GetPersonNameUseCase,
+    private val deleteSpendingUseCase: DeleteSpendingUseCase,
     private val idSource: IdSource,
 ) : ViewModel() {
     private var spendingId: String = savedStateHandle[ID_ARG] ?: ""
     private var isManualTotal: Boolean = false
 
     var onEditSpending: (String) -> Unit = {}
+    var onBack: () -> Unit = {}
     private fun onEditClicked() {
         state.isLoading.value = true
         onEditSpending(spendingId)
@@ -96,6 +99,13 @@ class SpendingShowViewModel(
         }
     }
 
+    private fun deleteSpending() {
+        viewModelScope.launch {
+            deleteSpendingUseCase(spendingId)
+            onBack()
+        }
+    }
+
     private val state: SpendingShowState
         get() = _stateFlow.value
     private val _stateFlow = MutableStateFlow(
@@ -103,6 +113,7 @@ class SpendingShowViewModel(
             onMarkPurchasedClicked = ::markPurchased,
             onDuplicateClicked = ::createDuplicate,
             onEditClicked = ::onEditClicked,
+            deleteSpending = ::deleteSpending,
         ),
     )
     val stateFlow = _stateFlow.asStateFlow()
@@ -151,6 +162,7 @@ data class SpendingShowState(
     val isPlanned: Boolean = false,
     val repeatOptions: RepeatableOptionDataUi? = null,
     val isLoading: MutableState<Boolean> = mutableStateOf(true),
+    val deleteSpending: () -> Unit,
     val onEditClicked: () -> Unit,
     val onDuplicateClicked: () -> Unit,
     val onMarkPurchasedClicked: () -> Unit,

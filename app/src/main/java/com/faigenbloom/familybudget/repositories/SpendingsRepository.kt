@@ -40,9 +40,9 @@ class SpendingsRepository(
     suspend fun getSpendings(isPlanned: Boolean) =
         dataBaseDataSource.getSpendings(isPlanned)
 
-    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long): List<SpendingEntity> {
+    suspend fun getSpendingsByDate(isPlanned: Boolean, from: Long, to: Long, isArchived: Boolean = false): List<SpendingEntity> {
 
-        return dataBaseDataSource.getSpendingsByDate(isPlanned, from, to)
+        return dataBaseDataSource.getSpendingsByDate(isPlanned, from, to, isArchived)
     }
 
     suspend fun getSpendingsMinMaxDate(isPlanned: Boolean) =
@@ -61,20 +61,31 @@ class SpendingsRepository(
         val purchasedSpending = baseSpending.copy(id = spendingId, date = spendingDate?: baseSpending.date, isPlanned = false, repeatOptionsId="")
 
         if (baseSpending.repeatOptionsId.isNotBlank()){
-            val repeatableOptionModel = repeatablesSourceMapper.forServer(dataBaseDataSource.getRepeatableOption(baseSpending.repeatOptionsId))
-                .let { it.copy(excludedIDs = it.excludedIDs + spendingId) }
-
-
-            dataBaseDataSource.saveRepeatable(repeatablesSourceMapper.forDB(repeatableOptionModel))
-            networkDataSource.saveRepeatableOptions(repeatableOptionModel)
+            excludeSpending(spendingId, baseSpending.repeatOptionsId)
         }
         dataBaseDataSource.saveSpending(purchasedSpending)
         networkDataSource.saveSpending(spendingSourceMapper.forServer(purchasedSpending))
 
     }
-
+private suspend fun excludeSpending(spendingId: String, repeatOptionsId: String) {
+    val repeatableOptionModel = repeatablesSourceMapper.forServer(dataBaseDataSource.getRepeatableOption(repeatOptionsId))
+        .let { it.copy(excludedIDs = it.excludedIDs + spendingId) }
+    dataBaseDataSource.saveRepeatable(repeatablesSourceMapper.forDB(repeatableOptionModel))
+    networkDataSource.saveRepeatableOptions(repeatableOptionModel)
+}
     suspend fun deleteSpending(spendingId: String) {
-        dataBaseDataSource.deleteSpending(spendingId)
+       val spending = dataBaseDataSource.getSpending(spendingId).copy(isArchived = true).also {
+           if (spendingId.contains(REPEAT_INFIX)){
+               val repeatOptionsId = if (it.repeatOptionsId.isEmpty()){
+                   dataBaseDataSource.getSpending(spendingId.split(REPEAT_INFIX)[1]).repeatOptionsId
+               } else{
+                   it.repeatOptionsId
+               }
+               excludeSpending(spendingId, repeatOptionsId)
+           }
+            networkDataSource.saveSpending(spendingSourceMapper.forServer(it))
+        }
+        dataBaseDataSource.saveSpending(spending)
     }
 
     suspend fun getSpendingsTotalSpent(planned: Boolean, from: Long, to: Long): Long {

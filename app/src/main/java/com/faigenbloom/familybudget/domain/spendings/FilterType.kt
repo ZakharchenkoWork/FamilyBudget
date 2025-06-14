@@ -5,14 +5,15 @@ import com.faigenbloom.familybudget.common.getMonthStartDate
 import com.faigenbloom.familybudget.common.getYearEndDate
 import com.faigenbloom.familybudget.common.getYearStartDate
 
-sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
+sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean, val isArchived: Boolean) {
     var isMovedForward: Boolean? = null
 
     class Daily(
         from: Long = getMonthStartDate(),
         to: Long = getMonthEndDate(),
         isPlanned: Boolean = false,
-    ) : FilterType(from, to, isPlanned) {
+        isArchived: Boolean = false
+    ) : FilterType(from, to, isPlanned, isArchived) {
         constructor(isPlanned: Boolean) : this(
             from = getMonthStartDate(),
             to = getMonthEndDate(future = if (isPlanned) 1 else 0),
@@ -39,9 +40,11 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
     }
 
     class Monthly(
-        from: Long = getYearStartDate(), to: Long = getYearEndDate(),
+        from: Long = getYearStartDate(),
+        to: Long = getYearEndDate(),
         isPlanned: Boolean = false,
-    ) : FilterType(from, to, isPlanned) {
+        isArchived: Boolean = false
+    ) : FilterType(from, to, isPlanned, isArchived) {
         constructor(isPlanned: Boolean) : this(
             from = getYearStartDate(),
             to = getYearEndDate(),
@@ -71,7 +74,8 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
         from: Long = getYearStartDate(past = 5),
         to: Long = getYearEndDate(),
         isPlanned: Boolean = false,
-    ) : FilterType(from, to, isPlanned) {
+        isArchived: Boolean = false
+    ) : FilterType(from, to, isPlanned, isArchived) {
         constructor(isPlanned: Boolean) : this(
             from = getYearStartDate(past = 5),
             to = getYearEndDate(future = 5),
@@ -102,11 +106,12 @@ sealed class FilterType(val from: Long, val to: Long, val isPlanned: Boolean) {
         from: Long = this.from,
         to: Long = this.to,
         isPlanned: Boolean = this.isPlanned,
+        isArchived: Boolean = this.isArchived,
     ): FilterType {
         return when (this) {
-            is Daily -> Daily(from, to, isPlanned)
-            is Monthly -> Monthly(from, to, isPlanned)
-            is Yearly -> Yearly(from, to, isPlanned)
+            is Daily -> Daily(from, to, isPlanned, isArchived)
+            is Monthly -> Monthly(from, to, isPlanned, isArchived)
+            is Yearly -> Yearly(from, to, isPlanned, isArchived)
         }
     }
 }

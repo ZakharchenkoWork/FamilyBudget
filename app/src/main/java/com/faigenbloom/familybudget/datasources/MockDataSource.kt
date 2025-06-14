@@ -93,6 +93,7 @@ class MockDataSource : BaseDataSource {
         isPlanned: Boolean,
         from: Long,
         to: Long,
+        isArchived: Boolean,
     ): List<SpendingEntity> {
         TODO("Not yet implemented")
     }
@@ -166,10 +167,6 @@ class MockDataSource : BaseDataSource {
 
     override suspend fun deleteSpendingDetail(id: String) {
 
-    }
-
-    override suspend fun deleteSpending(id: String) {
-        spendingsEntity.removeIf { it.id == id }
     }
 
     override suspend fun getSpendingsByCategory(id: String): List<SpendingEntity> {

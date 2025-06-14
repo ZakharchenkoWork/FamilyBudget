@@ -18,6 +18,7 @@ class SpendingSourceMapper {
             planned = entity.isPlanned,
             hidden = entity.isHidden,
             repeatOptions = entity.repeatOptionsId,
+            isArchived = entity.isArchived,
             details = listOf(),
         )
     }
@@ -35,6 +36,7 @@ class SpendingSourceMapper {
             isPlanned = model.planned,
             isHidden = model.hidden,
             repeatOptionsId = model.repeatOptions,
+            isArchived = model.isArchived,
             isDuplicate = false,
         )
     }

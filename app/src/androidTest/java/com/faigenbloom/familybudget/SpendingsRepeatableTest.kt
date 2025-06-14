@@ -40,6 +40,7 @@ class SpendingsRepeatableTest : BaseTest() {
         )
         setupDate()
         clickRepeatableOption()
+        chooseRepeatableEndDate()
         clickRepeatableDaily()
         moveToSpendingInfo()
         chooseFirstCategory()

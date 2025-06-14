@@ -39,11 +39,7 @@ fun SpendingsListPage(
     Column(modifier = modifier) {
         TopBar(
             title = stringResource(
-                id = if (state.filterType.isPlanned) {
-                    R.string.spendings_planned_title
-                } else {
-                    R.string.spendings_previous_title
-                },
+                id = getTitle(state)
             ),
         )
         val lazyPagingItems = state.spendingsPager.collectAsLazyPagingItems()
@@ -185,5 +181,14 @@ fun SpandingsPagePreview() {
                 ),
             )
         }
+    }
+}
+private fun getTitle(state: SpendingsState): Int {
+    return  if (state.filterType.isArchived){
+        R.string.spendings_filter_archive
+    } else if (state.filterType.isPlanned) {
+        R.string.spendings_planned_title
+    } else {
+        R.string.spendings_previous_title
     }
 }

@@ -161,6 +161,10 @@ abstract class BaseTest {
         getTestRule().onNodeWithContentDescription(SPENDING_DAILY_OPTION).performClick()
         getTestRule().onNodeWithContentDescription(SPENDING_REPEATABLE_OPTIONS_OK).performClick()
     }
+    protected fun chooseRepeatableEndDate() {
+        getTestRule().onNodeWithContentDescription(SPENDING_DAILY_OPTION).performClick()
+        getTestRule().onNodeWithContentDescription(SPENDING_REPEATABLE_OPTIONS_OK).performClick()
+    }
     protected fun clickSaveSpending() {
         getTestRule().onNodeWithContentDescription(SPENDING_SAVE_BUTTON).performClick()
     }
